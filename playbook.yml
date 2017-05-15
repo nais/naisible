@@ -24,9 +24,9 @@
     become: yes
     file: state=directory path=/etc/pki/ca-trust/source/anchors/
 
-  - name: Install comodo cert
+  - name: Install proxy cert
     become: yes
-    copy: src=webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy3.crt
+    copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy3.crt
     notify: update_cert_index
   
   - meta: flush_handlers

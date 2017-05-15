@@ -5,7 +5,7 @@
     proxy_env:
       http_proxy: http://webproxy-utvikler.nav.no:8088
       https_proxy: http://webproxy-utvikler.nav.no:8088
-      no_proxy: localhost,127.0.0.1,.local,.adeo.no,.nav.no,.aetat.no,.devillo.no,.oera.no,10.
+      no_proxy: localhost,127.0.0.1,.local,.adeo.no,.nav.no,.aetat.no,.devillo.no,.oera.no,{{ansible_default_ipv4.address}}
   tasks:
   - name: Add kubernetes repository
     become: yes
@@ -19,10 +19,6 @@
       gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
       gpgcheck: true
       state: present
-
-  - name: Workaround to https://github.com/kubernetes/kubernetes/pull/33555
-    command: setenforce 0
-    ignore_errors: true
 
   - name: Ensure certs directory exists
     become: yes
@@ -55,6 +51,7 @@
 
   - name: Initialize kubeadm
     become: yes
+    environment: "{{proxy_env}}"
     shell: kubeadm init
 
   handlers:

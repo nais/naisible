@@ -1,0 +1,63 @@
+---
+- hosts: all
+  user: deployer
+  vars:
+    proxy_env:
+      http_proxy: http://webproxy-utvikler.nav.no:8088
+      https_proxy: http://webproxy-utvikler.nav.no:8088
+      no_proxy: localhost,127.0.0.1,.local,.adeo.no,.nav.no,.aetat.no,.devillo.no,.oera.no,10.
+  tasks:
+  - name: Add kubernetes repository
+    become: yes
+    yum_repository:
+      name: Kubernetes
+      description: Kubernetes
+      file: kubernetes
+      baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+      enabled: true
+      gpgcakey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
+      gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
+      gpgcheck: true
+      state: present
+
+  - name: Workaround to https://github.com/kubernetes/kubernetes/pull/33555
+    command: setenforce 0
+    ignore_errors: true
+
+  - name: Ensure certs directory exists
+    become: yes
+    file: state=directory path=/etc/pki/ca-trust/source/anchors/
+
+  - name: Install comodo cert
+    become: yes
+    copy: src=webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy3.crt
+    notify: update_cert_index
+  
+  - meta: flush_handlers
+
+  - name: Install kubeadm
+    become: yes
+    environment: "{{proxy_env}}"
+    yum:
+      name: kubeadm
+      state: latest
+
+  - name: Install kubelet
+    become: yes
+    environment: "{{proxy_env}}"
+    yum:
+      name: kubelet
+      state: latest
+
+  - name: Enable kubelet
+    become: yes
+    systemd: name=kubelet state=started enabled=yes
+
+  - name: Initialize kubeadm
+    become: yes
+    shell: kubeadm init
+
+  handlers:
+  - name: update_cert_index
+    become: yes
+    shell: /usr/bin/update-ca-trust

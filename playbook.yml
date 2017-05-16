@@ -1,12 +1,15 @@
 ---
+
+# Common initialization play
+
 - hosts: all
   user: deployer
-  vars:
-    proxy_env:
-      http_proxy: http://webproxy-utvikler.nav.no:8088
-      https_proxy: http://webproxy-utvikler.nav.no:8088
-      no_proxy: localhost,127.0.0.1,.local,.adeo.no,.nav.no,.aetat.no,.devillo.no,.oera.no,{{ansible_default_ipv4.address}}
   tasks:
+
+  - name: test
+    environment: "{{proxy_env}}"
+    shell: echo {{proxy_env['banankake']}}
+
   - name: Add kubernetes repository
     become: yes
     yum_repository:
@@ -31,30 +34,18 @@
   
   - meta: flush_handlers
 
-  - name: Install kubeadm
-    become: yes
-    environment: "{{proxy_env}}"
-    yum:
-      name: kubeadm
-      state: latest
-
-  - name: Install kubelet
-    become: yes
-    environment: "{{proxy_env}}"
-    yum:
-      name: kubelet
-      state: latest
-
-  - name: Enable kubelet
-    become: yes
-    systemd: name=kubelet state=started enabled=yes
-
-  - name: Initialize kubeadm
-    become: yes
-    environment: "{{proxy_env}}"
-    shell: kubeadm init
-
   handlers:
   - name: update_cert_index
     become: yes
     shell: /usr/bin/update-ca-trust
+
+  - name: load_sysctl_config
+    become: yes
+    shell: /sbin/sysctl -p /etc/sysctl.d/k8s.conf
+
+#- hosts: {{environment}}_masters
+#  user: deployer
+#  
+#  tasks: 
+#  - name: test
+#    shell: echo hei 

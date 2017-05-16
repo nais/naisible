@@ -1,3 +1,4 @@
 *.retry
 *.swp
-hosts
+*_inventory
+kubeadm-inspiration

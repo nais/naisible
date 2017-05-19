@@ -1,0 +1,16 @@
+{
+  "CN": "kube-apiserver",
+  "hosts": [
+    "127.0.0.1",
+    "kubernetes",
+    "kubernetes.default",
+    "kubernetes.default.svc",
+    "kubernetes.default.svc.cluster.local",
+    "*.{{ domain }}",
+    "{{hostvars[groups['master'][0]]['ansible_hostname']}}"
+  ],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  }
+}

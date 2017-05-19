@@ -1,0 +1,13 @@
+---
+# Certificate creation play
+- name: Ensure PKI directory exists
+  file: state=directory path=pki/
+
+- name: Generate ca-csr.json
+  template: src=templates/ca-csr.j2 dest=pki/ca-csr.json
+
+- name: Copy ca-config.json
+  copy: src=files/ca-config.json dest=pki/ca-config.json
+
+- name: Initializing the CA
+  shell: bin/cfssl gencert -initca pki/ca-csr.json | bin/cfssljson -bare pki/ca

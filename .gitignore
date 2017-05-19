@@ -2,3 +2,5 @@
 *.swp
 *_inventory
 kubeadm-inspiration
+inventory/
+pki/

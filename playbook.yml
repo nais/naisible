@@ -1,14 +1,67 @@
 ---
+# Check and copy CA from master play
+- hosts: master
+  user: deployer
+  tasks:
+
+  - name: Check master for CA cert
+    stat: 
+      path: /etc/kubernetes/pki/ca.pem
+    register: ca
+
+  - name: Check master for CA cert
+    stat: 
+      path: /etc/kubernetes/pki/kube-apiserver-server.pem
+    register: apiserver
+
+  - fetch: 
+      src: /etc/kubernetes/pki/ca.pem
+      dest: pki/
+      flat: yes
+    when: ca.stat.exists 
+
+  - fetch: 
+      src: /etc/kubernetes/pki/ca-key.pem
+      dest: pki/
+      flat: yes
+    when: ca.stat.exists 
+
+  - fetch: 
+      src: /etc/kubernetes/pki/kube-apiserver-server.pem
+      dest: pki/
+      flat: yes
+    when: apiserver.stat.exists
+
+# Generate CA certificates
+- hosts: localhost
+  tasks:
+  - name: Ensure PKI directory exists
+    file: state=directory path=pki/
+
+  - name: Generate ca-csr.json
+    template: src=templates/ca-csr.j2 dest=pki/ca-csr.json
+
+  - name: Generate ca-csr.json
+    template: src=templates/kube-apiserver-server-csr.j2 dest=pki/kube-apiserver-server-csr.json
+  
+  - name: Copy ca-config.json
+    copy: src=files/ca-config.json dest=pki/ca-config.json
+
+  - name: Initializing the CA
+    shell: bin/cfssl gencert -initca pki/ca-csr.json | bin/cfssljson -bare pki/ca
+    args:
+      creates: pki/ca.pem
+
+  - name: Creating kube apiserver certificate
+    shell: bin/cfssl gencert -ca=pki/ca.pem -ca-key=pki/ca-key.pem -config=pki/ca-config.json -profile=server pki/kube-apiserver-server-csr.json | bin/cfssljson -bare pki/kube-apiserver-server
+    args:
+      creates: pki/kube-apiserver-server.pem
 
 # Common initialization play
 
 - hosts: all
   user: deployer
   tasks:
-
-  - name: test
-    environment: "{{proxy_env}}"
-    shell: echo {{proxy_env['banankake']}}
 
   - name: Add kubernetes repository
     become: yes
@@ -29,7 +82,7 @@
 
   - name: Install proxy cert
     become: yes
-    copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy3.crt
+    copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
     notify: update_cert_index
   
   - meta: flush_handlers
@@ -49,3 +102,4 @@
 #  tasks: 
 #  - name: test
 #    shell: echo hei 
+#

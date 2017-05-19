@@ -1,16 +1,7 @@
 {
-  "CN": "NAIS CA",
+  "CN": "NAIS dev CA",
 "key": {
     "algo": "rsa",
     "size": 2048
-  },
-  "names": [
-    {
-      "C": "NO",
-      "L": "Oslo",
-      "O": "NAV IT",
-      "OU": "CA",
-      "ST": "Oslo"
-    }
-  ]
+  }
 }

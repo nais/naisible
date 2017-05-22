@@ -7,7 +7,7 @@
     "kubernetes.default.svc",
     "kubernetes.default.svc.cluster.local",
     "*.{{ domain }}",
-    "{{hostvars[groups['master'][0]]['ansible_hostname']}}"
+    "{{hostvars[groups['masters'][0]]['ansible_hostname']}}"
   ],
   "key": {
     "algo": "rsa",

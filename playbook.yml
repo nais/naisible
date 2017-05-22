@@ -1,6 +1,6 @@
 ---
 # Check and copy CA from master play
-- hosts: master
+- hosts: masters
   user: deployer
   tasks:
 
@@ -9,7 +9,7 @@
       path: /etc/kubernetes/pki/ca.pem
     register: ca
 
-  - name: Check master for CA cert
+  - name: Check master for api-server-server cert
     stat: 
       path: /etc/kubernetes/pki/kube-apiserver-server.pem
     register: apiserver
@@ -31,8 +31,14 @@
       dest: pki/
       flat: yes
     when: apiserver.stat.exists
+  
+  - fetch: 
+      src: /etc/kubernetes/pki/kube-apiserver-server-key.pem
+      dest: pki/
+      flat: yes
+    when: apiserver.stat.exists
 
-# Generate CA certificates
+# Generate certificates
 - hosts: localhost
   tasks:
   - name: Ensure PKI directory exists
@@ -41,7 +47,7 @@
   - name: Generate ca-csr.json
     template: src=templates/ca-csr.j2 dest=pki/ca-csr.json
 
-  - name: Generate ca-csr.json
+  - name: Generate kube-apiserver-csr.json
     template: src=templates/kube-apiserver-server-csr.j2 dest=pki/kube-apiserver-server-csr.json
   
   - name: Copy ca-config.json
@@ -57,8 +63,12 @@
     args:
       creates: pki/kube-apiserver-server.pem
 
-# Common initialization play
+  - name: Creating apiserver kubelet client certificates
+    shell: bin/cfssl gencert -ca=pki/ca.pem -ca-key=pki/ca-key.pem -config=pki/ca-config.json -profile=server files/kube-apiserver-kubelet-client-csr.json | bin/cfssljson -bare pki/kube-apiserver-kubelet-client
+    args:
+      creates: pki/kube-apiserver-kubelet-client-server.pem
 
+# Common initialization play
 - hosts: all
   user: deployer
   tasks:
@@ -91,10 +101,6 @@
   - name: update_cert_index
     become: yes
     shell: /usr/bin/update-ca-trust
-
-  - name: load_sysctl_config
-    become: yes
-    shell: /sbin/sysctl -p /etc/sysctl.d/k8s.conf
 
 #- hosts: {{environment}}_masters
 #  user: deployer

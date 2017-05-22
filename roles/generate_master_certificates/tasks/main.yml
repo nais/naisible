@@ -1,0 +1,37 @@
+- name: Ensure PKI directory exists
+  file: state=directory path=target/pki/
+
+- name: Ensure master directory exists
+  file: state=directory path=target/pki/master
+
+- name: Ensure worker directory exists
+  file: state=directory path=target/pki/worker
+
+- name: Generate ca-csr.json
+  template: src=templates/ca-csr.j2 dest=target/pki/ca-csr.json
+
+- name: Generate kube-apiserver-csr.json
+  template: src=templates/kube-apiserver-server-csr.j2 dest=target/pki/kube-apiserver-server-csr.json
+
+- name: Copy ca-config.json
+  copy: src=files/ca-config.json dest=target/pki/ca-config.json
+
+- name: Initializing the CA
+  shell: bin/cfssl gencert -initca target/pki/ca-csr.json | bin/cfssljson -bare target/pki/master/ca
+  args:
+    creates: target/pki/master/ca.pem
+
+- name: Creating kube apiserver certificate
+  shell: bin/cfssl gencert -ca=target/pki/master/ca.pem -ca-key=target/pki/master/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/kube-apiserver-server-csr.json | bin/cfssljson -bare target/pki/master/kube-apiserver-server
+  args:
+    creates: target/pki/master/kube-apiserver-server.pem
+
+- name: Creating apiserver kubelet client certificates
+  shell: bin/cfssl gencert -ca=target/pki/master/ca.pem -ca-key=target/pki/master/ca-key.pem -config=target/pki/ca-config.json -profile=server files/kube-apiserver-kubelet-client-csr.json | bin/cfssljson -bare target/pki/master/kube-apiserver-kubelet-client
+  args:
+    creates: target/pki/master/kube-apiserver-kubelet-client.pem
+
+- name: Creating service account keypair
+  shell: /usr/bin/openssl genpkey -algorithm RSA -out target/pki/master/sa.key -pkeyopt rsa_keygen_bits:2048 && /usr/bin/openssl rsa -pubout -in target/pki/master/sa.key -out target/pki/master/sa.pub
+  args:
+    creates: target/pki/master/sa.key

@@ -1,0 +1,44 @@
+- name: Check master for CA cert
+  stat:
+    path: /etc/kubernetes/pki/ca.pem
+  register: ca
+
+- name: Check master for api-server-server cert
+  stat:
+    path: /etc/kubernetes/pki/kube-apiserver-server.pem
+  register: apiserver
+
+- name: Check master for service account key
+  stat:
+    path: /etc/kubernetes/pki/sa.key
+  register: sa
+
+- fetch:
+    src: /etc/kubernetes/pki/ca.pem
+    dest: target/pki/master/
+    flat: yes
+  when: ca.stat.exists
+
+- fetch:
+    src: /etc/kubernetes/pki/ca-key.pem
+    dest: target/pki/master/
+    flat: yes
+  when: ca.stat.exists
+
+- fetch:
+    src: /etc/kubernetes/pki/kube-apiserver-server.pem
+    dest: target/pki/master/
+    flat: yes
+  when: apiserver.stat.exists
+
+- fetch:
+    src: /etc/kubernetes/pki/kube-apiserver-server-key.pem
+    dest: target/pki/master/
+    flat: yes
+  when: apiserver.stat.exists
+
+- fetch:
+    src: /etc/kubernetes/pki/sa.key
+    dest: target/pki/master/
+    flat: yes
+  when: sa.stat.exists

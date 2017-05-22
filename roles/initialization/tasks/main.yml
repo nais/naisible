@@ -1,0 +1,21 @@
+- name: Add kubernetes repository
+  become: yes
+  yum_repository:
+    name: Kubernetes
+    description: Kubernetes
+    file: kubernetes
+    baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+    enabled: true
+    gpgcakey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    gpgcheck: true
+    state: present
+
+- name: Ensure certs directory exists
+  become: yes
+  file: state=directory path=/etc/pki/ca-trust/source/anchors/
+
+- name: Install proxy cert
+  become: yes
+  copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
+  notify: update_cert_index

@@ -1,94 +1,20 @@
 ---
+# Common initialization play
+- hosts: all
+  user: deployer
+  roles:
+    - initialization
+
 # Check and copy CA from master play
 - hosts: masters
   user: deployer
-  tasks:
+  roles:
+    - check_for_and_copy_master_certificates
 
-  - name: Check master for CA cert
-    stat: 
-      path: /etc/kubernetes/pki/ca.pem
-    register: ca
-
-  - name: Check master for api-server-server cert
-    stat: 
-      path: /etc/kubernetes/pki/kube-apiserver-server.pem
-    register: apiserver
-
-  - name: Check master for service account key
-    stat: 
-      path: /etc/kubernetes/pki/sa.key
-    register: sa
-
-  - fetch: 
-      src: /etc/kubernetes/pki/ca.pem
-      dest: target/pki/master/
-      flat: yes
-    when: ca.stat.exists 
-
-  - fetch: 
-      src: /etc/kubernetes/pki/ca-key.pem
-      dest: target/pki/master/
-      flat: yes
-    when: ca.stat.exists 
-
-  - fetch: 
-      src: /etc/kubernetes/pki/kube-apiserver-server.pem
-      dest: target/pki/master/
-      flat: yes
-    when: apiserver.stat.exists
-  
-  - fetch: 
-      src: /etc/kubernetes/pki/kube-apiserver-server-key.pem
-      dest: target/pki/master/
-      flat: yes
-    when: apiserver.stat.exists
-
-  - fetch: 
-      src: /etc/kubernetes/pki/sa.key
-      dest: target/pki/master/
-      flat: yes
-    when: sa.stat.exists
-
-# Generate certificates
+# Generate master certificates
 - hosts: localhost
-  tasks:
-  - name: Ensure PKI directory exists
-    file: state=directory path=target/pki/
-
-  - name: Ensure master directory exists
-    file: state=directory path=target/pki/master
-  
-  - name: Ensure worker directory exists
-    file: state=directory path=target/pki/worker
-
-  - name: Generate ca-csr.json
-    template: src=templates/ca-csr.j2 dest=target/pki/ca-csr.json
-
-  - name: Generate kube-apiserver-csr.json
-    template: src=templates/kube-apiserver-server-csr.j2 dest=target/pki/kube-apiserver-server-csr.json
-  
-  - name: Copy ca-config.json
-    copy: src=files/ca-config.json dest=target/pki/ca-config.json
-
-  - name: Initializing the CA
-    shell: bin/cfssl gencert -initca target/pki/ca-csr.json | bin/cfssljson -bare target/pki/master/ca
-    args:
-      creates: target/pki/master/ca.pem
-
-  - name: Creating kube apiserver certificate
-    shell: bin/cfssl gencert -ca=target/pki/master/ca.pem -ca-key=target/pki/master/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/kube-apiserver-server-csr.json | bin/cfssljson -bare target/pki/master/kube-apiserver-server
-    args:
-      creates: target/pki/master/kube-apiserver-server.pem
-
-  - name: Creating apiserver kubelet client certificates
-    shell: bin/cfssl gencert -ca=target/pki/master/ca.pem -ca-key=target/pki/master/ca-key.pem -config=target/pki/ca-config.json -profile=server files/kube-apiserver-kubelet-client-csr.json | bin/cfssljson -bare target/pki/master/kube-apiserver-kubelet-client
-    args:
-      creates: target/pki/master/kube-apiserver-kubelet-client.pem
-
-  - name: Creating service account keypair 
-    shell: /usr/bin/openssl genpkey -algorithm RSA -out target/pki/master/sa.key -pkeyopt rsa_keygen_bits:2048 && /usr/bin/openssl rsa -pubout -in target/pki/master/sa.key -out target/pki/master/sa.pub
-    args:
-      creates: target/pki/master/sa.key
+  roles:
+    - generate_master_certificates
 
 # Copy certificates to master
 - hosts: masters
@@ -101,45 +27,3 @@
 
   - name: Copy certificates
     copy: src=target/pki/master/ dest=/etc/kubernetes/pki/
-
-# Common initialization play
-- hosts: all
-  user: deployer
-  tasks:
-
-  - name: Add kubernetes repository
-    become: yes
-    yum_repository:
-      name: Kubernetes
-      description: Kubernetes
-      file: kubernetes
-      baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
-      enabled: true
-      gpgcakey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
-      gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
-      gpgcheck: true
-      state: present
-
-  - name: Ensure certs directory exists
-    become: yes
-    file: state=directory path=/etc/pki/ca-trust/source/anchors/
-
-  - name: Install proxy cert
-    become: yes
-    copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
-    notify: update_cert_index
-  
-  - meta: flush_handlers
-
-  handlers:
-  - name: update_cert_index
-    become: yes
-    shell: /usr/bin/update-ca-trust
-
-#- hosts: {{environment}}_masters
-#  user: deployer
-#  
-#  tasks: 
-#  - name: test
-#    shell: echo hei 
-#

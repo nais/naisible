@@ -1,0 +1,13 @@
+[Unit]
+Description=kubelet: The Kubernetes Node Agent
+Documentation=http://kubernetes.io/docs/
+
+[Service]
+ExecStart=/usr/bin/kubelet --api-servers=http://127.0.0.1:8080 --allow-privileged=true --pod-manifest-path=/etc/kubernetes/manifests --v=2
+
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

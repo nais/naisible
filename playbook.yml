@@ -1,5 +1,5 @@
 ---
-# Common initialization play
+# Common initialization play (webproxy, certificates, repositories)
 - hosts: all
   user: deployer
   roles:
@@ -27,3 +27,23 @@
 
   - name: Copy certificates
     copy: src=target/pki/master/ dest=/etc/kubernetes/pki/
+
+# Configure kubernetes Master node
+- hosts: masters
+  user: deployer
+  become: yes
+  tasks:
+  
+  - name: Copy kubelet service manifest
+    copy: src=files/kubelet.service dest=/etc/systemd/system/kubelet.service
+
+  - name: Ensure kubelet is installed
+    environment: "{{ proxy_env}}"
+    yum: name=kubelet state=latest
+
+  - name: Enable kubelet
+    systemd:
+      daemon_reload=yes
+      name=kubelet
+      state=started
+      enabled=yes

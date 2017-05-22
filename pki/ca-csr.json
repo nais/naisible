@@ -1,7 +1,0 @@
-{
-  "CN": "NAIS dev CA",
-"key": {
-    "algo": "rsa",
-    "size": 2048
-  }
-}

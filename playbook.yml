@@ -40,10 +40,6 @@
   - name: Copy kubelet service manifest
     copy: src=files/kubelet.service dest=/etc/systemd/system/kubelet.service
 
-  - name: Ensure kubelet is installed
-    environment: "{{ proxy_env}}"
-    yum: name=kubelet state=latest
-
   - name: Ensure kubectl is installed
     environment: "{{ proxy_env}}"
     yum: name=kubectl state=latest

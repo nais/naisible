@@ -11,6 +11,19 @@
     gpgcheck: true
     state: present
 
+
+- name: Add docker repository
+  become: yes
+  yum_repository:
+    name: Docker
+    description: Docker
+    file: docker
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    enabled: true
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    gpgcheck: true
+    state: present
+
 - name: Ensure certs directory exists
   become: yes
   file: state=directory path=/etc/pki/ca-trust/source/anchors/
@@ -19,3 +32,12 @@
   become: yes
   copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
   notify: update_cert_index
+
+- name: Install required packages
+  become: yes
+  environment: "{{ proxy_env }}"
+  yum: name={{ item }} state=latest
+  with_items:
+    - docker
+    - kubelet
+    - kubernetes-cni

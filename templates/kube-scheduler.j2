@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    component: kube-scheduler
+    tier: control-plane
+  name: kube-scheduler
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - kube-scheduler
+    - --address=127.0.0.1
+    - --leader-elect=true
+    - --kubeconfig=/etc/kubernetes/scheduler.conf
+    env:
+    - name: http_proxy
+      value: http://webproxy-utvikler.nav.no:8088
+    - name: https_proxy
+      value: http://webproxy-utvikler.nav.no:8088
+    - name: HTTPS_PROXY
+      value: http://webproxy-utvikler.nav.no:8088
+    - name: no_proxy
+      value: localhost,127.0.0.1,.local,.adeo.no,preprod.local,test.local,.nav.no,.devillo.no,.oera.no,oera-q.local,oera-t.local,{{ansible_default_ipv4.address}},10.254.0.1
+    image: gcr.io/google_containers/kube-scheduler-amd64:v1.6.3
+    livenessProbe:
+      failureThreshold: 8
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: 10251
+        scheme: HTTP
+      initialDelaySeconds: 15
+      timeoutSeconds: 15
+    name: kube-scheduler
+    resources:
+      requests:
+        cpu: 100m
+    volumeMounts:
+    - mountPath: /etc/kubernetes/
+      name: k8s
+      readOnly: true
+  hostNetwork: true
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes
+    name: k8s
+status: {}

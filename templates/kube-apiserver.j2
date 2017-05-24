@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    component: kube-apiserver
+    tier: control-plane
+  name: kube-apiserver
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - kube-apiserver
+    - --allow-privileged=true
+#    - --requestheader-allowed-names=front-proxy-client
+    - --kubelet-client-certificate=/etc/kubernetes/pki/kube-apiserver-kubelet-client.pem
+#    - --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.crt
+    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --tls-cert-file=/etc/kubernetes/pki/kube-apiserver-server.pem
+    - --tls-private-key-file=/etc/kubernetes/pki/kube-apiserver-server-key.pem
+    - --secure-port=6443
+    - --experimental-bootstrap-token-auth=true
+    - --storage-backend=etcd3
+    - --service-cluster-ip-range=10.254.0.0/16
+    - --service-account-key-file=/etc/kubernetes/pki/sa.pub
+    - --client-ca-file=/etc/kubernetes/pki/ca.pem
+    - --kubelet-client-key=/etc/kubernetes/pki/kube-apiserver-kubelet-client-key.pem
+    - --insecure-port=8080
+    - --insecure-bind-address=127.0.0.1
+    - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
+#    - --requestheader-username-headers=X-Remote-User
+#    - --requestheader-group-headers=X-Remote-Group
+#    - --requestheader-extra-headers-prefix=X-Remote-Extra-
+    - --authorization-mode=RBAC
+    - --advertise-address={{ansible_default_ipv4.address}}
+    - --etcd-servers=http://127.0.0.1:2379
+    env:
+    - name: http_proxy
+      value: http://webproxy-utvikler.nav.no:8088
+    - name: https_proxy
+      value: http://webproxy-utvikler.nav.no:8088
+    - name: HTTPS_PROXY
+      value: http://webproxy-utvikler.nav.no:8088
+    - name: no_proxy
+      value: localhost,127.0.0.1,.local,.adeo.no,preprod.local,test.local,.nav.no,.devillo.no,.oera.no,oera-q.local,oera-t.local,{{ansible_default_ipv4.address}}
+    image: gcr.io/google_containers/kube-apiserver-amd64:v1.6.3
+    livenessProbe:
+      failureThreshold: 8
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: 6443
+        scheme: HTTPS
+      initialDelaySeconds: 15
+      timeoutSeconds: 15
+    name: kube-apiserver
+    resources:
+      requests:
+        cpu: 250m
+    volumeMounts:
+    - mountPath: /etc/kubernetes/
+      name: k8s
+      readOnly: true
+    - mountPath: /etc/ssl/certs
+      name: certs
+    - mountPath: /etc/pki
+      name: pki
+  hostNetwork: true
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes
+    name: k8s
+  - hostPath:
+      path: /etc/ssl/certs
+    name: certs
+  - hostPath:
+      path: /etc/pki
+    name: pki
+status: {}

@@ -34,6 +34,9 @@
   become: yes
   tasks:
   
+  - name: Ensure manifests directory exists on master
+    file: state=directory path=/etc/kubernetes/manifests
+
   - name: Copy kubelet service manifest
     copy: src=files/kubelet.service dest=/etc/systemd/system/kubelet.service
 
@@ -41,9 +44,29 @@
     environment: "{{ proxy_env}}"
     yum: name=kubelet state=latest
 
+  - name: Ensure kubectl is installed
+    environment: "{{ proxy_env}}"
+    yum: name=kubectl state=latest
+  
+  - name: Copy API server pod description
+    file: src=files/kubectl-config dest=/root/.kube/config
+
   - name: Enable kubelet
     systemd:
       daemon_reload=yes
       name=kubelet
       state=started
       enabled=yes
+
+  - name: Copy ETCD pod description
+    copy: src=files/etcd.yaml dest=/etc/kubernetes/manifests
+
+  - name: Copy API server pod description
+    template: src=templates/kube-apiserver.j2 dest=/etc/kubernetes/manifests/kube-apiserver.yaml
+  
+  - name: Copy scheduler configuration file
+    copy: src=files/scheduler.conf dest=/etc/kubernetes/scheduler.conf
+
+  - name: Copy scheduler server pod description
+    template: src=templates/kube-scheduler.j2 dest=/etc/kubernetes/manifests/kube-scheduler.yaml
+  

@@ -34,5 +34,4 @@
 - name: Creating service account keypair
   shell: /usr/bin/openssl genpkey -algorithm RSA -out target/pki/master/sa.key -pkeyopt rsa_keygen_bits:2048 && /usr/bin/openssl rsa -pubout -in target/pki/master/sa.key -out target/pki/master/sa.pub
   args:
-    creates: target/pki/master/sa.key
     creates: target/pki/master/sa.pub

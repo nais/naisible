@@ -12,9 +12,7 @@ spec:
   - command:
     - kube-apiserver
     - --allow-privileged=true
-#    - --requestheader-allowed-names=front-proxy-client
     - --kubelet-client-certificate=/etc/kubernetes/pki/kube-apiserver-kubelet-client.pem
-#    - --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.crt
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
     - --tls-cert-file=/etc/kubernetes/pki/kube-apiserver-server.pem
     - --tls-private-key-file=/etc/kubernetes/pki/kube-apiserver-server-key.pem
@@ -28,9 +26,6 @@ spec:
     - --insecure-port=8080
     - --insecure-bind-address=127.0.0.1
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
-#    - --requestheader-username-headers=X-Remote-User
-#    - --requestheader-group-headers=X-Remote-Group
-#    - --requestheader-extra-headers-prefix=X-Remote-Extra-
     - --authorization-mode=RBAC
     - --advertise-address={{ansible_default_ipv4.address}}
     - --etcd-servers=http://127.0.0.1:2379

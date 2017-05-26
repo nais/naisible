@@ -21,6 +21,11 @@
   args:
     creates: target/pki/master/ca.pem
 
+- name: Creating admin certificate
+  shell: bin/cfssl gencert -ca=target/pki/master/ca.pem -ca-key=target/pki/master/ca-key.pem -config=target/pki/ca-config.json -profile=client files/admin-csr.json | bin/cfssljson -bare target/pki/master/admin
+  args:
+    creates: target/pki/master/admin.pem
+
 - name: Creating kube apiserver certificate
   shell: bin/cfssl gencert -ca=target/pki/master/ca.pem -ca-key=target/pki/master/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/kube-apiserver-server-csr.json | bin/cfssljson -bare target/pki/master/kube-apiserver-server
   args:

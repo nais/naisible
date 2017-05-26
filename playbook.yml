@@ -41,7 +41,7 @@
     copy: src=files/kubelet.service dest=/etc/systemd/system/kubelet.service
 
   - name: Ensure kubectl is installed
-    environment: "{{ proxy_env}}"
+    environment: "{{ proxy_env }}"
     yum: name=kubectl state=latest
   
   - name: Copy API server pod description
@@ -61,7 +61,7 @@
     template: src=templates/kube-apiserver.j2 dest=/etc/kubernetes/manifests/kube-apiserver.yaml
   
   - name: Copy scheduler configuration file
-    copy: src=files/scheduler.conf dest=/etc/kubernetes/scheduler.conf
+    template: src=templates/scheduler-kubeconfig.j2 dest=/etc/kubernetes/scheduler.conf
 
   - name: Copy scheduler server pod description
     template: src=templates/kube-scheduler.j2 dest=/etc/kubernetes/manifests/kube-scheduler.yaml

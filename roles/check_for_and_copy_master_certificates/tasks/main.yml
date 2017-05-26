@@ -13,6 +13,11 @@
     path: /etc/kubernetes/pki/sa.key
   register: sa
 
+- name: Check master for admin cert
+  stat:
+    path: /etc/kubernetes/pki/admin.pem
+  register: admin
+
 - fetch:
     src: /etc/kubernetes/pki/ca.pem
     dest: target/pki/master/
@@ -24,6 +29,19 @@
     dest: target/pki/master/
     flat: yes
   when: ca.stat.exists
+
+
+- fetch:
+    src: /etc/kubernetes/pki/admin.pem
+    dest: target/pki/master/
+    flat: yes
+  when: admin.stat.exists
+
+- fetch:
+    src: /etc/kubernetes/pki/admin-key.pem
+    dest: target/pki/master/
+    flat: yes
+  when: admin.stat.exists
 
 - fetch:
     src: /etc/kubernetes/pki/kube-apiserver-server.pem

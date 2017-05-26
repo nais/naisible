@@ -1,0 +1,10 @@
+{
+  "CN": "admin",
+  "names": [{
+    "O": "system:masters"
+  }],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  }
+}

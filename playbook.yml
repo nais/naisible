@@ -63,6 +63,15 @@
   - name: Copy scheduler configuration file
     template: src=templates/scheduler-kubeconfig.j2 dest=/etc/kubernetes/scheduler.conf
 
-  - name: Copy scheduler server pod description
+  - name: Copy scheduler pod description
     template: src=templates/kube-scheduler.j2 dest=/etc/kubernetes/manifests/kube-scheduler.yaml
-  
+
+
+  - name: Copy controller manager configuration file
+    template: src=templates/controller-manager-kubeconfig.j2 dest=/etc/kubernetes/controller-manager.conf
+
+  - name: Copy controller-manager pod description
+    template: src=templates/kube-controller-manager-yaml.j2 dest=/etc/kubernetes/manifests/kube-controller-manager.yaml
+
+  - name: Restart docker
+    service: name=docker state=restarted

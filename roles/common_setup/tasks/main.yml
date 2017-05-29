@@ -17,7 +17,7 @@
     name: Docker
     description: Docker
     file: docker
-    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    baseurl: https://download.docker.com/linux/centos/7/x86_64/stable
     enabled: true
     gpgkey: https://download.docker.com/linux/centos/gpg
     gpgcheck: true
@@ -37,6 +37,14 @@
   environment: "{{ proxy_env }}"
   yum: name={{ item }} state=latest
   with_items:
-    - docker-ce
-    - kubelet
-    - kubernetes-cni
+    - "docker-ce-{{ docker_version }}"
+    - "kubernetes-cni-{{ cni_version }}"
+    - "kubelet-{{ k8s_version }}"
+
+- name: Enable docker
+  become: yes
+  systemd:
+    daemon_reload=yes
+    name=docker
+    state=started
+    enabled=yes

@@ -3,20 +3,18 @@
 - hosts: all
   user: deployer
   roles:
-    - initialization
+    - common_setup
 
-# Check and copy CA from master play
 - hosts: masters
   user: deployer
   roles:
-    - check_for_and_copy_master_certificates
+    - fetch_existing_certificates
 
-# Generate master certificates
 - hosts: localhost
   roles:
-    - generate_master_certificates
+    - create_certificates
 
-# Copy certificates to master
+# Configure kubernetes Master node
 - hosts: masters
   user: deployer
   become: yes
@@ -26,19 +24,24 @@
     file: state=directory path=/etc/kubernetes/pki
 
   - name: Copy certificates
-    copy: src=target/pki/master/ dest=/etc/kubernetes/pki/
+    copy: src=target/pki/{{ item }} dest=/etc/kubernetes/pki/
+    with_items:
+      - admin.pem
+      - admin-key.pem
+      - ca.pem
+      - ca-key.pem
+      - kube-apiserver-kubelet-client-key.pem
+      - kube-apiserver-kubelet-client.pem
+      - kube-apiserver-server-key.pem
+      - kube-apiserver-server.pem
+      - sa.key
+      - sa.pub
 
-# Configure kubernetes Master node
-- hosts: masters
-  user: deployer
-  become: yes
-  tasks:
-  
   - name: Ensure manifests directory exists on master
     file: state=directory path=/etc/kubernetes/manifests
 
   - name: Copy kubelet service manifest
-    copy: src=files/kubelet.service dest=/etc/systemd/system/kubelet.service
+    copy: src=files/master-kubelet.service dest=/etc/systemd/system/kubelet.service
 
   - name: Ensure kubectl is installed
     environment: "{{ proxy_env }}"
@@ -51,11 +54,45 @@
     systemd:
       daemon_reload=yes
       name=kubelet
-      state=started
+      state=restarted
       enabled=yes
 
-  - name: Copy ETCD pod description
-    copy: src=files/etcd.yaml dest=/etc/kubernetes/manifests
+  - name: Download and copy etcd binaries
+    become: yes
+    environment: "{{ proxy_env }}"
+    shell: curl --insecure https://storage.googleapis.com/etcd/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz | \
+           tar xzf - -C /tmp && \
+           cp "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" /usr/bin && \
+           cp "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" /usr/bin
+    args:
+      creates: /tmp/etcd-v{{ etcd_version }}-linux-amd64
+
+  - name: Ensure etcd directory exists
+    file: state=directory path=/var/lib/etcd
+
+  - name: 
+    template: src=templates/etcd.service.j2 dest=/etc/systemd/system/etcd.service
+
+  - name: Enable etcd
+    systemd:
+      daemon_reload=yes
+      name=etcd
+      state=restarted
+      enabled=yes
+
+  - name: Check if flannel config exists (OK if this fails)
+    shell: /usr/bin/etcdctl ls /nais/network/config
+    register: flannelconfig
+    ignore_errors: yes
+    tags:
+      - dev
+
+  - name: Set flannel configuration in etcd
+    shell: "/usr/bin/etcdctl mkdir /nais/network && \
+           /usr/bin/etcdctl mk /nais/network/config \"{ 'Network': '172.30.0.0/16', 'SubnetLen': 23, 'Backend': { 'Type': 'vxlan' } }\""
+    tags:
+      - dev
+    when: flannelconfig.rc != 0
 
   - name: Copy API server pod description
     template: src=templates/kube-apiserver.j2 dest=/etc/kubernetes/manifests/kube-apiserver.yaml
@@ -66,8 +103,7 @@
   - name: Copy scheduler pod description
     template: src=templates/kube-scheduler.j2 dest=/etc/kubernetes/manifests/kube-scheduler.yaml
 
-
-  - name: Copy controller manager configuration file
+  - name: Copy controller manager kubeconfig
     template: src=templates/controller-manager-kubeconfig.j2 dest=/etc/kubernetes/controller-manager.conf
 
   - name: Copy controller-manager pod description
@@ -75,3 +111,54 @@
 
   - name: Restart docker
     service: name=docker state=restarted
+
+
+# Configure workers
+- hosts: workers
+  user: deployer
+  become: yes
+  tasks:
+  
+  - name: Copy certificates
+    copy: src=target/pki/{{ item }} dest=/etc/kubernetes/pki/ # to ensure idempotency
+    with_items:
+      - admin.pem
+      - admin-key.pem
+      - ca.pem
+
+  - name: Copy kubelet service manifest
+    template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
+
+  - name: Copy controller manager kubeconfig
+    template: src=templates/kubelet-kubeconfig.j2 dest=/etc/kubernetes/kubelet.conf
+
+  - name: Enable kubelet
+    systemd:
+      daemon_reload=yes
+      name=kubelet
+      state=restarted
+      enabled=yes
+
+  - name: Download kube-proxy binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
+    become: yes
+    environment: "{{ proxy_env }}"
+    shell: curl --insecure https://storage.googleapis.com/kubernetes-release/release/v{{ k8s_version }}/bin/linux/amd64/kube-proxy > /usr/bin/kube-proxy
+    args:
+      creates: /usr/bin/kube-proxy
+
+  - name: Make kube-proxy executable
+    file: path=/usr/bin/kube-proxy mode=0755
+
+  - name: Copy kube-proxy service file
+    template: src=templates/kube-proxy.service.j2 dest=/etc/systemd/system/kube-proxy.service
+
+  - name: Copy kube-proxy kubeconfig
+    template: src=templates/kube-proxy.conf.j2 dest=/etc/kubernetes/kube-proxy.conf
+
+  - name: Enable kube-proxy
+    systemd:
+      daemon_reload=yes
+      name=kube-proxy
+      state=restarted
+      enabled=yes
+

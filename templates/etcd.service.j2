@@ -1,0 +1,12 @@
+[Unit]
+Description=etcd
+Documentation=https://coreos.com/etcd/
+
+[Service]
+ExecStart=/usr/bin/etcd --listen-client-urls=http://127.0.0.1:2379 --advertise-client-urls=http://127.0.0.1:2379 --data-dir=/var/lib/etcd
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

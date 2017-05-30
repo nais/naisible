@@ -1,0 +1,21 @@
+- name: Download and copy etcd binaries
+  environment: "{{ proxy_env }}"
+  shell: curl --insecure https://storage.googleapis.com/etcd/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz | \
+         tar xzf - -C /tmp && \
+         cp "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" /usr/bin && \
+         cp "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" /usr/bin
+  args:
+    creates: /tmp/etcd-v{{ etcd_version }}-linux-amd64
+
+- name: Ensure etcd directory exists
+  file: state=directory path=/var/lib/etcd
+
+- name:
+  template: src=templates/etcd.service.j2 dest=/etc/systemd/system/etcd.service
+
+- name: Enable etcd
+  systemd:
+    daemon_reload=yes
+    name=etcd
+    state=restarted
+    enabled=yes

@@ -5,3 +5,4 @@ kubeadm-inspiration
 inventory/
 pki/
 target/
+ansible.cfg

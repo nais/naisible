@@ -3,7 +3,7 @@
 - hosts: all
   user: deployer
   roles:
-    - common_setup
+    - common
 
 - hosts: masters
   user: deployer
@@ -18,8 +18,10 @@
 - hosts: masters
   user: deployer
   become: yes
-  tasks:
+  roles: 
+    - etcd
 
+  tasks:
   - name: Ensure PKI directory exists on master
     file: state=directory path=/etc/kubernetes/pki
 
@@ -57,29 +59,6 @@
       state=restarted
       enabled=yes
 
-  - name: Download and copy etcd binaries
-    become: yes
-    environment: "{{ proxy_env }}"
-    shell: curl --insecure https://storage.googleapis.com/etcd/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz | \
-           tar xzf - -C /tmp && \
-           cp "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" /usr/bin && \
-           cp "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" /usr/bin
-    args:
-      creates: /tmp/etcd-v{{ etcd_version }}-linux-amd64
-
-  - name: Ensure etcd directory exists
-    file: state=directory path=/var/lib/etcd
-
-  - name: 
-    template: src=templates/etcd.service.j2 dest=/etc/systemd/system/etcd.service
-
-  - name: Enable etcd
-    systemd:
-      daemon_reload=yes
-      name=etcd
-      state=restarted
-      enabled=yes
-
   - name: Check if flannel config exists (OK if this fails)
     shell: /usr/bin/etcdctl ls /nais/network/config
     register: flannelconfig
@@ -89,7 +68,7 @@
 
   - name: Set flannel configuration in etcd
     shell: "/usr/bin/etcdctl mkdir /nais/network && \
-           /usr/bin/etcdctl mk /nais/network/config \"{ 'Network': '172.30.0.0/16', 'SubnetLen': 23, 'Backend': { 'Type': 'vxlan' } }\""
+           /usr/bin/etcdctl mk /nais/network/config \"{ 'Network': '{{ pod_network_cidr }}', 'SubnetLen': 23, 'Backend': { 'Type': 'vxlan' } }\""
     tags:
       - dev
     when: flannelconfig.rc != 0

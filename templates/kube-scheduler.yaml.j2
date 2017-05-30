@@ -13,7 +13,7 @@ spec:
     - kube-scheduler
     - --address=127.0.0.1
     - --leader-elect=true
-    - --kubeconfig=/etc/kubernetes/scheduler.conf
+    - --kubeconfig=/etc/kubernetes/kube-scheduler.conf
     image: gcr.io/google_containers/kube-scheduler-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8

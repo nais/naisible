@@ -75,19 +75,19 @@
     when: flannelconfig.rc != 0
 
   - name: Copy API server pod description
-    template: src=templates/kube-apiserver.j2 dest=/etc/kubernetes/manifests/kube-apiserver.yaml
+    template: src=templates/kube-apiserver.yaml.j2 dest=/etc/kubernetes/manifests/kube-apiserver.yaml
   
   - name: Copy scheduler configuration file
-    template: src=templates/scheduler-kubeconfig.j2 dest=/etc/kubernetes/scheduler.conf
+    template: src=templates/kube-scheduler.conf.j2 dest=/etc/kubernetes/kube-scheduler.conf
 
   - name: Copy scheduler pod description
-    template: src=templates/kube-scheduler.j2 dest=/etc/kubernetes/manifests/kube-scheduler.yaml
+    template: src=templates/kube-scheduler.yaml.j2 dest=/etc/kubernetes/manifests/kube-scheduler.yaml
 
   - name: Copy controller manager kubeconfig
-    template: src=templates/controller-manager-kubeconfig.j2 dest=/etc/kubernetes/controller-manager.conf
+    template: src=templates/kube-controller-manager.conf.j2 dest=/etc/kubernetes/kube-controller-manager.conf
 
   - name: Copy controller-manager pod description
-    template: src=templates/kube-controller-manager-yaml.j2 dest=/etc/kubernetes/manifests/kube-controller-manager.yaml
+    template: src=templates/kube-controller-manager.yaml.j2 dest=/etc/kubernetes/manifests/kube-controller-manager.yaml
 
   - name: Restart docker
     service: name=docker state=restarted
@@ -110,7 +110,7 @@
     template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
 
   - name: Copy controller manager kubeconfig
-    template: src=templates/kubelet-kubeconfig.j2 dest=/etc/kubernetes/kubelet.conf
+    template: src=templates/kubelet.conf.j2 dest=/etc/kubernetes/kubelet.conf
 
   - name: Enable kubelet
     systemd:

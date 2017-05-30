@@ -1,5 +1,4 @@
 - name: Add kubernetes repository
-  become: yes
   yum_repository:
     name: Kubernetes
     description: Kubernetes
@@ -12,7 +11,6 @@
     state: present
 
 - name: Add docker repository
-  become: yes
   yum_repository:
     name: Docker
     description: Docker
@@ -24,16 +22,13 @@
     state: present
 
 - name: Ensure certs directory exists
-  become: yes
   file: state=directory path=/etc/pki/ca-trust/source/anchors/
 
 - name: Install proxy cert
-  become: yes
   copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
   notify: update_cert_index
 
 - name: Install required packages
-  become: yes
   environment: "{{ proxy_env }}"
   yum: name={{ item }} state=latest
   with_items:
@@ -41,10 +36,15 @@
     - "kubernetes-cni-{{ cni_version }}"
     - "kubelet-{{ k8s_version }}"
 
+- name: Ensure docker dropin directory exists
+  file: path=/etc/systemd/system/docker.service.d state=directory
+
+- name: Docker proxy settings
+  template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf
+
 - name: Enable docker
-  become: yes
   systemd:
     daemon_reload=yes
     name=docker
-    state=started
+    state=restarted
     enabled=yes

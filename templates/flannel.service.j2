@@ -1,0 +1,13 @@
+[Unit]
+Description=flannel
+Documentation=https://coreos.com/flannel
+
+[Service]
+ExecStart=/usr/bin/flanneld -etcd-endpoints=http://{{ master_ip }}:2379 -etcd-prefix=/nais/network
+
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

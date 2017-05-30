@@ -2,6 +2,7 @@
 # Common initialization play (webproxy, certificates, repositories)
 - hosts: all
   user: deployer
+  become: yes
   roles:
     - common
 
@@ -119,7 +120,6 @@
       enabled=yes
 
   - name: Download kube-proxy binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
-    become: yes
     environment: "{{ proxy_env }}"
     shell: curl --insecure https://storage.googleapis.com/kubernetes-release/release/v{{ k8s_version }}/bin/linux/amd64/kube-proxy > /usr/bin/kube-proxy
     args:
@@ -141,3 +141,23 @@
       state=restarted
       enabled=yes
 
+  - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
+    environment: "{{ proxy_env }}"
+    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | \
+           tar xzf - -C /tmp flanneld && \
+           mv /tmp/flanneld /usr/bin/flanneld-{{flannel_version}}
+    args:
+      creates: /usr/bin/flanneld-{{flannel_version}}
+
+  - name: Symlink flannel
+    file: src=/usr/bin/flanneld-{{flannel_version}} dest=/usr/bin/flanneld state=link
+
+  - name: Copy flannel service file
+    template: src=templates/flannel.service.j2 dest=/etc/systemd/system/flannel.service
+
+  - name: Enable flannel
+    systemd:
+      daemon_reload=yes
+      name=flannel
+      state=restarted
+      enabled=yes

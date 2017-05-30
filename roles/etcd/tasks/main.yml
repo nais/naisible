@@ -2,10 +2,16 @@
   environment: "{{ proxy_env }}"
   shell: curl --insecure https://storage.googleapis.com/etcd/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz | \
          tar xzf - -C /tmp && \
-         cp "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" /usr/bin && \
-         cp "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" /usr/bin
+         mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" /usr/bin/etcd-{{ etcd_version }} && \
+         mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" /usr/bin/etcdctl-{{ etcd_version }}
   args:
-    creates: /tmp/etcd-v{{ etcd_version }}-linux-amd64
+    creates: /usr/bin/etcd-{{ etcd_version }}
+
+- name: Symlink etcd
+  file: src=/usr/bin/etcd-{{etcd_version}} dest=/usr/bin/etcd state=link
+
+- name: Symlink etcdctl
+  file: src=/usr/bin/etcdctl-{{etcd_version}} dest=/usr/bin/etcdctl state=link
 
 - name: Ensure etcd directory exists
   file: state=directory path=/var/lib/etcd

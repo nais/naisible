@@ -1,17 +1,23 @@
 ---
 # Common initialization play (webproxy, certificates, repositories)
 - hosts: all
+  tags:
+    - test
   user: deployer
   become: yes
   roles:
     - common
 
 - hosts: masters
+  tags:
+      - test
   user: deployer
   roles:
     - fetch_existing_certificates
 
 - hosts: localhost
+  tags:
+      - test
   roles:
     - create_certificates
 

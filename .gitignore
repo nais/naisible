@@ -6,3 +6,4 @@ inventory/
 pki/
 target/
 ansible.cfg
+.idea

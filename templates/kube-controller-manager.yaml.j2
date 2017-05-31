@@ -11,7 +11,7 @@ spec:
   containers:
   - command:
     - kube-controller-manager
-    - --kubeconfig=/etc/kubernetes/controller-manager.conf
+    - --kubeconfig=/etc/kubernetes/kube-controller-manager.conf
     - --root-ca-file=/etc/kubernetes/pki/ca.pem
     - --service-account-private-key-file=/etc/kubernetes/pki/sa.key
     - --cluster-signing-cert-file=/etc/kubernetes/pki/ca.pem

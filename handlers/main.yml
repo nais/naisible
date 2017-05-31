@@ -1,7 +1,3 @@
-- name: update_cert_index
-  become: yes
-  shell: /usr/bin/update-ca-trust
-
 - name: restart_docker
   systemd:
     daemon_reload=yes

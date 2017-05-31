@@ -62,35 +62,36 @@
 
   - name: Check if flannel config exists (OK if this fails)
     shell: /usr/bin/etcdctl ls /nais/network/config
+    environment: 
+      - ETCDCTL_API: 2
     register: flannelconfig
     ignore_errors: yes
-    tags:
-      - dev
 
   - name: Set flannel configuration in etcd
     shell: "/usr/bin/etcdctl mkdir /nais/network && \
-           /usr/bin/etcdctl mk /nais/network/config \"{ 'Network': '{{ pod_network_cidr }}', 'SubnetLen': 23, 'Backend': { 'Type': 'vxlan' } }\""
-    tags:
-      - dev
+           /usr/bin/etcdctl mk /nais/network/config  `echo \"{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" } \"`"
+    environment: 
+      - ETCDCTL_API: 2
+      
     when: flannelconfig.rc != 0
 
-  - name: Copy API server pod description
-    template: src=templates/kube-apiserver.yaml.j2 dest=/etc/kubernetes/manifests/kube-apiserver.yaml
-  
-  - name: Copy scheduler configuration file
-    template: src=templates/kube-scheduler.conf.j2 dest=/etc/kubernetes/kube-scheduler.conf
+  - name: Copy manifests and kubeconfigs
+    template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/manifests/{{ item }}
+    with_items:
+      - kube-apiserver.yaml
+      - kube-scheduler.yaml
+      - kube-scheduler.conf
+      - kube-controller-manager.yaml
+      - kube-controller-manager.conf
+    notify: 
+      - restart_docker
 
-  - name: Copy scheduler pod description
-    template: src=templates/kube-scheduler.yaml.j2 dest=/etc/kubernetes/manifests/kube-scheduler.yaml
-
-  - name: Copy controller manager kubeconfig
-    template: src=templates/kube-controller-manager.conf.j2 dest=/etc/kubernetes/kube-controller-manager.conf
-
-  - name: Copy controller-manager pod description
-    template: src=templates/kube-controller-manager.yaml.j2 dest=/etc/kubernetes/manifests/kube-controller-manager.yaml
-
-  - name: Restart docker
-    service: name=docker state=restarted
+  handlers:
+    - name: restart_docker
+      systemd:
+        daemon_reload=yes
+        name=docker
+        state=restarted
 
 
 # Configure workers

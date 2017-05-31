@@ -1,5 +1,2 @@
-- name: remove certificates
-  file: path=/etc/kubernetes/pki/* state=absent
-
 - name: remove pki directory
   file: path=/etc/kubernetes/pki state=absent

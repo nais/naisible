@@ -44,10 +44,12 @@
 
 - name: Docker proxy settings
   template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf
+  notify:
+    - restart_docker
 
 - name: Enable docker
   systemd:
     daemon_reload=yes
     name=docker
-    state=restarted
+    state=started
     enabled=yes

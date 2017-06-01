@@ -40,9 +40,6 @@
       - sa.key
       - sa.pub
 
-  - name: Ensure manifests directory exists on master
-    file: state=directory path=/etc/kubernetes/manifests
-
   - name: Copy kubelet service manifest
     copy: src=files/master-kubelet.service dest=/etc/systemd/system/kubelet.service
 
@@ -74,14 +71,18 @@
       - ETCDCTL_API: 2
     when: flannelconfig.rc != 0
 
+  - name: Ensure manifests directory exists on master
+    file: state=directory path=/etc/kubernetes/manifests
+
+
   - name: Copy manifests and kubeconfigs
-    template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/manifests/{{ item }}
+    template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/{{ item }}
     with_items:
-      - kube-apiserver.yaml
-      - kube-scheduler.yaml
-      - kube-scheduler.conf
-      - kube-controller-manager.yaml
-      - kube-controller-manager.conf
+      - manifests/kube-apiserver.yaml
+      - manifests/kube-scheduler.yaml
+      - manifests/kube-controller-manager.yaml
+      - kubeconfigs/kube-scheduler.conf
+      - kubeconfigs/kube-controller-manager.conf
     notify: 
       - restart_docker
 
@@ -109,8 +110,13 @@
   - name: Copy kubelet service manifest
     template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
 
-  - name: Copy controller manager kubeconfig
-    template: src=templates/kubelet.conf.j2 dest=/etc/kubernetes/kubelet.conf
+  - name: Copy kubeconfigs
+    template: src=templates/kubeconfigs/{{ item }}.j2 dest=/etc/kubernetes/kubeconfigs/{{ item }}
+    with_items:
+      - kubelet.conf
+      - kube-proxy.conf
+    notify: 
+      - restart_docker
 
   - name: Enable kubelet
     systemd:
@@ -130,9 +136,6 @@
 
   - name: Copy kube-proxy service file
     template: src=templates/kube-proxy.service.j2 dest=/etc/systemd/system/kube-proxy.service
-
-  - name: Copy kube-proxy kubeconfig
-    template: src=templates/kube-proxy.conf.j2 dest=/etc/kubernetes/kube-proxy.conf
 
   - name: Enable kube-proxy
     systemd:
@@ -161,3 +164,10 @@
       name=flannel
       state=restarted
       enabled=yes
+
+  handlers:
+    - name: restart_docker
+      systemd:
+        daemon_reload=yes
+        name=docker
+        state=restarted

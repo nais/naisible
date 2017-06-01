@@ -68,11 +68,10 @@
     ignore_errors: yes
 
   - name: Set flannel configuration in etcd
-    shell: "/usr/bin/etcdctl mkdir /nais/network && \
-           /usr/bin/etcdctl mk /nais/network/config  `echo \"{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" } \"`"
+    shell: '/usr/bin/etcdctl mkdir /nais/network && \
+           /usr/bin/etcdctl mk /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
     environment: 
       - ETCDCTL_API: 2
-      
     when: flannelconfig.rc != 0
 
   - name: Copy manifests and kubeconfigs

@@ -37,6 +37,7 @@
     creates: target/pki/kube-apiserver-kubelet-client.pem
 
 - name: Creating service account keypair
-  shell: /usr/bin/openssl genpkey -algorithm RSA -out target/pki/sa.key -pkeyopt rsa_keygen_bits:2048 && /usr/bin/openssl rsa -pubout -in target/pki/sa.key -out target/pki/sa.pub
+  shell: /usr/bin/openssl genrsa -out sa.key 2048 && /usr/bin/openssl rsa -pubout -in sa.key -out sa.pub
   args:
-    creates: target/pki/sa.pub
+    chdir: target/pki
+    creates: sa.pub

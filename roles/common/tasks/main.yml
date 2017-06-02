@@ -41,7 +41,7 @@
   yum: name={{ item }} state=latest
   with_items:
     - "docker-ce-{{ docker_version }}"
-    - "kubernetes-cni-{{ cni_version }}"
+    #- "kubernetes-cni-{{ cni_version }}"
     - "kubelet-{{ k8s_version }}"
 
 - name: Docker proxy settings

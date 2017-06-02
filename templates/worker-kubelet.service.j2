@@ -3,7 +3,7 @@ Description=kubelet: The Kubernetes Node Agent
 Documentation=http://kubernetes.io/docs/
 
 [Service]
-ExecStart=/usr/bin/kubelet --api-servers=https://{{ master_ip }}:6443 --kubeconfig=/etc/kubernetes/kubelet.conf
+ExecStart=/usr/bin/kubelet --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf
 
 Restart=always
 StartLimitInterval=0

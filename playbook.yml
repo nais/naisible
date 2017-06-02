@@ -46,7 +46,7 @@
     yum: name=kubectl state=latest
   
   - name: Copy API server pod description
-    file: src=files/kubectl-config dest=/root/.kube/config
+    copy: src=files/kubectl-config dest=/root/.kube/config
 
   - name: Enable kubelet
     systemd:
@@ -103,23 +103,25 @@
       - admin.pem
       - admin-key.pem
       - ca.pem
+    notify:
+      - restart_kubelet
+      - restart_kubeproxy
 
   - name: Copy kubelet service manifest
     template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
-
-  - name: Copy kubeconfigs
-    template: src=templates/kubeconfigs/{{ item }}.j2 dest=/etc/kubernetes/kubeconfigs/{{ item }}
-    with_items:
-      - kubelet.conf
-      - kube-proxy.conf
     notify: 
-      - restart_docker
+      - restart_kubelet
+
+  - name: Copy kubelet kubeconfig
+    template: src=templates/kubeconfigs/kubelet.conf.j2 dest=/etc/kubernetes/kubeconfigs/kubelet.conf
+    notify: 
+      - restart_kubelet
 
   - name: Enable kubelet
     systemd:
       daemon_reload=yes
       name=kubelet
-      state=restarted
+      state=started
       enabled=yes
 
   - name: Download kube-proxy binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
@@ -133,18 +135,25 @@
 
   - name: Copy kube-proxy service file
     template: src=templates/kube-proxy.service.j2 dest=/etc/systemd/system/kube-proxy.service
+    notify:
+      - restart_kubeproxy
+
+  - name: Copy kube-proxy kubeconfig
+    template: src=templates/kubeconfigs/kube-proxy.conf.j2 dest=/etc/kubernetes/kubeconfigs/kube-proxy.conf
+    notify: 
+      - restart_kubeproxy
 
   - name: Enable kube-proxy
     systemd:
       daemon_reload=yes
       name=kube-proxy
-      state=restarted
+      state=started
       enabled=yes
 
   - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | \
-           tar xzf - -C /tmp flanneld && \
+           tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
            mv /tmp/flanneld /usr/bin/flanneld-{{flannel_version}}
     args:
       creates: /usr/bin/flanneld-{{flannel_version}}
@@ -162,9 +171,31 @@
       state=restarted
       enabled=yes
 
+  - name: Create docker flannel config
+    shell: /bin/sh /tmp/mk-docker-opts.sh
+    args:
+      creates: /run/docker_opts.env
+
+  - name: Copy docker service file
+    copy: src=files/docker.service dest=/etc/systemd/system/docker.service
+    notify:
+      - restart_docker
+
   handlers:
     - name: restart_docker
       systemd:
         daemon_reload=yes
         name=docker
+        state=restarted
+
+    - name: restart_kubeproxy
+      systemd:
+        daemon_reload=yes
+        name=kube-proxy
+        state=restarted
+
+    - name: restart_kubelet
+      systemd:
+        daemon_reload=yes
+        name=kubelet
         state=restarted

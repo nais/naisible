@@ -23,8 +23,6 @@
     - etcd
 
   tasks:
-  - name: Ensure PKI directory exists on master
-    file: state=directory path=/etc/kubernetes/pki
 
   - name: Copy certificates
     copy: src=target/pki/{{ item }} dest=/etc/kubernetes/pki/
@@ -73,7 +71,6 @@
 
   - name: Ensure manifests directory exists on master
     file: state=directory path=/etc/kubernetes/manifests
-
 
   - name: Copy manifests and kubeconfigs
     template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/{{ item }}

@@ -29,15 +29,6 @@ spec:
     - --authorization-mode=RBAC
     - --advertise-address={{ansible_default_ipv4.address}}
     - --etcd-servers=http://127.0.0.1:2379
-    env:
-    - name: http_proxy
-      value: http://webproxy-utvikler.nav.no:8088
-    - name: https_proxy
-      value: http://webproxy-utvikler.nav.no:8088
-    - name: HTTPS_PROXY
-      value: http://webproxy-utvikler.nav.no:8088
-    - name: no_proxy
-      value: localhost,127.0.0.1,.local,.adeo.no,preprod.local,test.local,.nav.no,.devillo.no,.oera.no,oera-q.local,oera-t.local,{{ansible_default_ipv4.address}}
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8

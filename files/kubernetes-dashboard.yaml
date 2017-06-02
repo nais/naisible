@@ -57,10 +57,6 @@ spec:
           initialDelaySeconds: 30
           timeoutSeconds: 30
       serviceAccountName: kubernetes-dashboard
-      # Comment the following tolerations if Dashboard must not be deployed on master
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        effect: NoSchedule
 ---
 kind: Service
 apiVersion: v1

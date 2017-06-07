@@ -97,6 +97,18 @@
   become: yes
   tasks:
   
+  - name: Ensure CNI directory exists on workers
+    file: state=directory path=/etc/kubernetes/cni/net.d
+
+  - name: Copy Flannel CNI configuration file
+    copy: src=files/flannel-cni.conf dest=/etc/kubernetes/cni/net.d/flannel.conf
+
+  - name: Copy Docker CNI options file
+    copy: src=files/docker_opts_cni.env dest=/etc/kubernetes/cni/docker_opts_cni.env
+
+  - name: Copy Docker flannel configuration file
+    copy: src=files/docker-flannel.conf dest=/etc/systemd/system/docker.service.d/flannel.conf
+
   - name: Copy certificates
     copy: src=target/pki/{{ item }} dest=/etc/kubernetes/pki/ # to ensure idempotency
     with_items:
@@ -153,7 +165,7 @@
   - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | \
-           tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
+           tar xzf - -C /tmp flanneld && \
            mv /tmp/flanneld /usr/bin/flanneld-{{flannel_version}}
     args:
       creates: /usr/bin/flanneld-{{flannel_version}}
@@ -170,16 +182,6 @@
       name=flannel
       state=restarted
       enabled=yes
-
-  - name: Create docker flannel config
-    shell: /bin/sh /tmp/mk-docker-opts.sh
-    args:
-      creates: /run/docker_opts.env
-
-  - name: Copy docker service file
-    copy: src=files/docker.service dest=/etc/systemd/system/docker.service
-    notify:
-      - restart_docker
 
   handlers:
     - name: restart_docker

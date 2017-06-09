@@ -19,7 +19,7 @@ spec:
     - --secure-port=6443
     - --experimental-bootstrap-token-auth=true
     - --storage-backend=etcd3
-    - --service-cluster-ip-range={{ cluster_cidr }}
+    - --service-cluster-ip-range={{ service_cidr }}
     - --service-account-key-file=/etc/kubernetes/pki/sa.pub
     - --client-ca-file=/etc/kubernetes/pki/ca.pem
     - --kubelet-client-key=/etc/kubernetes/pki/kube-apiserver-kubelet-client-key.pem

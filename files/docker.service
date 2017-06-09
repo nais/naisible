@@ -1,0 +1,14 @@
+[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.com
+
+[Service]
+EnvironmentFile=-/run/docker_opts.env
+ExecStart=/usr/bin/dockerd --iptables=false $DOCKER_OPTS
+
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

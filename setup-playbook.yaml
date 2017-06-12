@@ -40,6 +40,8 @@
 
   - name: Copy kubelet service manifest
     copy: src=files/master-kubelet.service dest=/etc/systemd/system/kubelet.service
+    notify: 
+      - restart_kubelet
 
   - name: Ensure kubectl is installed
     environment: "{{ proxy_env }}"
@@ -52,7 +54,7 @@
     systemd:
       daemon_reload=yes
       name=kubelet
-      state=restarted
+      state=started
       enabled=yes
 
   - name: Check if flannel config exists (OK if this fails)
@@ -90,6 +92,13 @@
         name=docker
         state=restarted
 
+    - name: restart_kubelet
+      systemd:
+        daemon_reload=yes
+        name=kubelet
+        state=restarted
+        enabled=yes
+
 
 # Configure workers
 - hosts: workers
@@ -108,7 +117,7 @@
       - restart_kubeproxy
 
   - name: Copy kubelet service manifest
-    template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
+    copy: src=files/worker-kubelet.service dest=/etc/systemd/system/kubelet.service
     notify: 
       - restart_kubelet
 
@@ -154,7 +163,8 @@
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | \
            tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
-           mv /tmp/flanneld /usr/bin/flanneld-{{flannel_version}}
+           mv /tmp/flanneld /usr/bin/flanneld-{{flannel_version}} && \
+           mv /tmp/mk-docker-opts.sh /usr/libexec
     args:
       creates: /usr/bin/flanneld-{{flannel_version}}
 
@@ -170,11 +180,6 @@
       name=flannel
       state=restarted
       enabled=yes
-
-  - name: Create docker flannel config
-    shell: /bin/sh /tmp/mk-docker-opts.sh
-    args:
-      creates: /run/docker_opts.env
 
   - name: Copy docker service file
     copy: src=files/docker.service dest=/etc/systemd/system/docker.service

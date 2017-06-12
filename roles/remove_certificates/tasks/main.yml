@@ -1,2 +1,0 @@
-- name: Remove target directory on ansible-master
-  file: state=absent path=target/

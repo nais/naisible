@@ -4,6 +4,7 @@ Documentation=https://coreos.com/flannel
 
 [Service]
 ExecStart=/usr/bin/flanneld -etcd-endpoints=http://{{ master_ip }}:2379 -etcd-prefix=/nais/network
+ExecStartPost=/usr/libexec/mk-docker-opts.sh -d /run/docker_opts.env
 
 Restart=always
 StartLimitInterval=0

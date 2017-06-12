@@ -173,6 +173,8 @@
 
   - name: Copy flannel service file
     template: src=templates/flannel.service.j2 dest=/etc/systemd/system/flannel.service
+    tags:
+      - dev
 
   - name: Enable flannel
     systemd:
@@ -180,11 +182,15 @@
       name=flannel
       state=restarted
       enabled=yes
+    tags:
+      - dev
 
   - name: Copy docker service file
     copy: src=files/docker.service dest=/etc/systemd/system/docker.service
     notify:
       - restart_docker
+    tags:
+      - dev
 
   handlers:
     - name: restart_docker

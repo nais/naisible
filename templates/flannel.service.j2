@@ -5,7 +5,6 @@ Before=docker.service
 
 [Service]
 ExecStart=/usr/bin/flanneld -etcd-endpoints=http://{{ master_ip }}:2379 -etcd-prefix=/nais/network
-ExecStartPost=/usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /run/docker_opts.env
 
 Restart=always
 StartLimitInterval=0

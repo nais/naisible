@@ -31,8 +31,6 @@
       - admin-key.pem
       - ca.pem
       - ca-key.pem
-      - kube-apiserver-kubelet-client-key.pem
-      - kube-apiserver-kubelet-client.pem
       - kube-apiserver-server-key.pem
       - kube-apiserver-server.pem
       - sa.key
@@ -84,6 +82,12 @@
       - kubeconfigs/kube-controller-manager.conf
     notify: 
       - restart_docker
+  
+  - name: Ensure addons directory exists
+    file: state=directory path=/etc/kubernetes/addons
+
+  - name: Install kubernetes-dashboard
+    copy: src=files/kubernetes-dashboard.yaml dest=/etc/kubernetes/addons
 
   handlers:
     - name: restart_docker
@@ -173,8 +177,6 @@
 
   - name: Copy flannel service file
     template: src=templates/flannel.service.j2 dest=/etc/systemd/system/flannel.service
-    tags:
-      - dev
 
   - name: Enable flannel
     systemd:
@@ -182,15 +184,14 @@
       name=flannel
       state=restarted
       enabled=yes
-    tags:
-      - dev
+
+  - name: Make flannel configuration for docker
+    shell: rm -f /run/docker_opts.env && /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /run/docker_opts.env
 
   - name: Copy docker service file
     copy: src=files/docker.service dest=/etc/systemd/system/docker.service
     notify:
       - restart_docker
-    tags:
-      - dev
 
   handlers:
     - name: restart_docker
@@ -210,3 +211,26 @@
         daemon_reload=yes
         name=kubelet
         state=restarted
+
+
+# Install kubernetes addons
+- hosts: masters
+  user: deployer
+  become: yes
+
+  tasks:
+  - name: Ensure addons directory exists
+    file: state=directory path=/etc/kubernetes/addons
+
+  - name: copy kubernetes-addons manifests
+    copy: src=files/{{ item }} dest=/etc/kubernetes/addons
+    with_items:
+      - kubernetes-dashboard.yaml
+
+  - name: Create addons
+    shell: /usr/bin/kubectl -f /etc/kubernetes/addons/{{ item }}
+    with_items:
+      - kubernetes-dashboard.yaml
+    ignore_errors: yes
+
+

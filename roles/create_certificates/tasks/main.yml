@@ -31,11 +31,6 @@
   args:
     creates: target/pki/kube-apiserver-server.pem
 
-- name: Creating apiserver kubelet client certificates
-  shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server files/kube-apiserver-kubelet-client-csr.json | bin/cfssljson -bare target/pki/kube-apiserver-kubelet-client
-  args:
-    creates: target/pki/kube-apiserver-kubelet-client.pem
-
 - name: Creating service account keypair
   shell: /usr/bin/openssl genrsa -out sa.key 2048 && /usr/bin/openssl rsa -pubout -in sa.key -out sa.pub
   args:

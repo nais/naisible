@@ -1,7 +1,0 @@
-{
-  "CN": "kube-apiserver-kubelet-client",
-  "key": {
-    "algo": "rsa",
-    "size": 2048
-  }
-}

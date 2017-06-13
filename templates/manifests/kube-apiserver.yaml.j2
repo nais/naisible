@@ -12,7 +12,8 @@ spec:
   - command:
     - kube-apiserver
     - --allow-privileged=true
-    - --kubelet-client-certificate=/etc/kubernetes/pki/kube-apiserver-kubelet-client.pem
+    - --kubelet-client-certificate=/etc/kubernetes/pki/admin.pem
+    - --kubelet-client-key=/etc/kubernetes/pki/admin-key.pem
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
     - --tls-cert-file=/etc/kubernetes/pki/kube-apiserver-server.pem
     - --tls-private-key-file=/etc/kubernetes/pki/kube-apiserver-server-key.pem
@@ -22,7 +23,6 @@ spec:
     - --service-cluster-ip-range={{ service_cidr }}
     - --service-account-key-file=/etc/kubernetes/pki/sa.pub
     - --client-ca-file=/etc/kubernetes/pki/ca.pem
-    - --kubelet-client-key=/etc/kubernetes/pki/kube-apiserver-kubelet-client-key.pem
     - --insecure-port=8080
     - --insecure-bind-address=127.0.0.1
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds

@@ -6,7 +6,7 @@
     "kubernetes",
     "kubernetes.default",
     "kubernetes.default.svc",
-    "kubernetes.default.svc.cluster.local",
+    "kubernetes.default.svc.{{ cluster_domain }}",
     "*.{{ domain }}",
     "{{ hostvars[groups['masters'][0]]['ansible_hostname'] }}",
     "{{ master_ip }}"

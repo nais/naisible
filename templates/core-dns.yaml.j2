@@ -50,8 +50,8 @@ data:
         errors
         log stdout
         health
-        kubernetes CLUSTER_DOMAIN {
-          cidrs SERVICE_CIDR
+        kubernetes {{ cluster_domain }} {
+          cidrs {{ service_cidr }}
         }
         proxy . /etc/resolv.conf
         cache 30
@@ -82,7 +82,7 @@ spec:
       serviceAccountName: coredns
       containers:
       - name: coredns
-        image: coredns/coredns:latest
+        image: coredns/coredns:{{ coredns_version }}
         imagePullPolicy: Always
         args: [ "-conf", "/etc/coredns/Corefile" ]
         volumeMounts:
@@ -128,7 +128,7 @@ metadata:
 spec:
   selector:
     k8s-app: coredns
-  clusterIP: CLUSTER_DNS_IP
+  clusterIP: {{ cluster_dns_ip }}
   ports:
   - name: dns
     port: 53

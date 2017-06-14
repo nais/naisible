@@ -6,7 +6,7 @@ After=flannel.service
 
 [Service]
 EnvironmentFile=/run/docker_opts.env
-ExecStart=/usr/bin/dockerd --iptables=false $DOCKER_OPTS
+ExecStart=/usr/bin/dockerd --ip-forward=true $DOCKER_OPTS
 
 Restart=always
 StartLimitInterval=0

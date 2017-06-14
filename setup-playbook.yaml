@@ -121,7 +121,7 @@
       - restart_kubeproxy
 
   - name: Copy kubelet service manifest
-    copy: src=files/worker-kubelet.service dest=/etc/systemd/system/kubelet.service
+    template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
     notify: 
       - restart_kubelet
 
@@ -222,15 +222,23 @@
   - name: Ensure addons directory exists
     file: state=directory path=/etc/kubernetes/addons
 
-  - name: copy kubernetes-addons manifests
+  - name: Copy kubernetes-addons manifests
     copy: src=files/{{ item }} dest=/etc/kubernetes/addons
     with_items:
       - kubernetes-dashboard.yaml
 
+  - name: Copy kubernetes-addons manifest templates
+    template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/addons/{{ item }}
+    with_items:
+      - core-dns.yaml
+      - traefik.yaml
+
   - name: Create addons
-    shell: /usr/bin/kubectl -f /etc/kubernetes/addons/{{ item }}
+    shell: /usr/bin/kubectl create -f /etc/kubernetes/addons/{{ item }}
     with_items:
       - kubernetes-dashboard.yaml
+      - core-dns.yaml
+      - traefik.yaml
     ignore_errors: yes
 
 

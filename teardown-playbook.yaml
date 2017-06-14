@@ -47,13 +47,15 @@
     - name: Remove files
       file: path={{ item }} state=absent 
       with_items:
+        - /root/.helm/repository/repositories.yaml
+        - /usr/bin/helm-{{helm_version}}
+        - /usr/bin/helm
         - /usr/bin/etcd-{{etcd_version}}
         - /usr/bin/etcd
         - /usr/bin/etcdctl-{{etcd_version}}
         - /usr/bin/etcdctl
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
-
     - name: Disable etcd 
       systemd: name=etcd enabled=no state=stopped 
       ignore_errors: yes

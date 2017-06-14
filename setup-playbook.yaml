@@ -240,5 +240,18 @@
       - core-dns.yaml
       - traefik.yaml
     ignore_errors: yes
+  
+  - name: Download helm binaries
+    environment: "{{ proxy_env }}"
+    shell: curl -L --insecure https://storage.googleapis.com/kubernetes-helm/helm-v{{ helm_version }}-linux-amd64.tar.gz | \
+           tar xzf - -C /tmp linux-amd64/helm && \
+           mv /tmp/linux-amd64/helm /usr/bin/helm-{{ helm_version }}
+    args:
+      creates: /usr/bin/helm-{{ helm_version }}
+   
+  - name: Symlink helm
+    file: src=/usr/bin/helm-{{ helm_version }} dest=/usr/bin/helm state=link
 
-
+  - name: Initialize helm
+    environment: "{{ proxy_env }}"
+    shell: /usr/bin/helm init

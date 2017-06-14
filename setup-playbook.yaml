@@ -86,8 +86,6 @@
   - name: Ensure addons directory exists
     file: state=directory path=/etc/kubernetes/addons
 
-  - name: Install kubernetes-dashboard
-    copy: src=files/kubernetes-dashboard.yaml dest=/etc/kubernetes/addons
 
   handlers:
     - name: restart_docker
@@ -222,14 +220,10 @@
   - name: Ensure addons directory exists
     file: state=directory path=/etc/kubernetes/addons
 
-  - name: Copy kubernetes-addons manifests
-    copy: src=files/{{ item }} dest=/etc/kubernetes/addons
+  - name: Copy kubernetes-addons manifest templates
+    template: src=templates/addons/{{ item }}.j2 dest=/etc/kubernetes/addons/{{ item }}
     with_items:
       - kubernetes-dashboard.yaml
-
-  - name: Copy kubernetes-addons manifest templates
-    template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/addons/{{ item }}
-    with_items:
       - core-dns.yaml
       - traefik.yaml
 

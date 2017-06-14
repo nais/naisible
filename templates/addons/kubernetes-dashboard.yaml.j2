@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
       - name: kubernetes-dashboard
-        image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.1
+        image: gcr.io/google_containers/kubernetes-dashboard-amd64:v{{ dashboard_version }}
         ports:
         - containerPort: 9090
           protocol: TCP
@@ -71,3 +71,17 @@ spec:
     targetPort: 9090
   selector:
     k8s-app: kubernetes-dashboard
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubernetes-dashboard
+  namespace: kube-system
+spec:
+  rules:
+  - host: dashboard.{{ cluster_lb_suffix }}
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 80

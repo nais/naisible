@@ -39,6 +39,10 @@
         - /etc/systemd/system/kubelet.service
         - /etc/kubernetes
         - /etc/docker
+    
+    - name: Unmount docker resources
+      shell: /bin/umount /run/docker/netns/*
+      ignore_errors: yes
 
 - hosts: masters
   user: deployer

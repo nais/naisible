@@ -81,6 +81,8 @@ spec:
         - --kubernetes
         - --web.metrics
         - --web.metrics.prometheus
+    nodeSelector:
+        nais.io/type: worker
 ---
 apiVersion: v1
 kind: Service

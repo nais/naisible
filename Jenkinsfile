@@ -15,8 +15,6 @@ node {
         }
 
         stage("teardown existing CI environment") {
-		sh('whoami')
-		sh('ls')
 		sh('ansible-playbook -i ./nais-inventory/ci teardown-playbook.yaml')
         }
 

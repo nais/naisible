@@ -45,9 +45,6 @@
     environment: "{{ proxy_env }}"
     yum: name=kubectl state=latest
   
-  - name: Copy API server pod description
-    copy: src=files/kubectl-config dest=/root/.kube/config
-
   - name: Enable kubelet
     systemd:
       daemon_reload=yes
@@ -68,6 +65,12 @@
     environment: 
       - ETCDCTL_API: 2
     when: flannelconfig.rc != 0
+
+  - name: Ensure kubectl config directory exists on master
+    file: state=directory path=/root/.kube
+
+  - name: Copy API server pod description
+    copy: src=files/kubectl-config dest=/root/.kube/config
 
   - name: Ensure manifests directory exists on master
     file: state=directory path=/etc/kubernetes/manifests

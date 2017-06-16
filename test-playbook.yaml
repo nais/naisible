@@ -1,0 +1,63 @@
+---
+
+
+- hosts: masters
+  user: deployer
+  become: yes
+  vars:
+    HOST_COUNT: "{{ groups['all'] | length }}"
+  tasks:
+
+    - name: Ensure required processes is running 2
+      shell: /bin/pgrep {{ item }} | wc -l 
+      with_items:
+        - dockerd
+        - kubelet
+        - etcd
+      register: process_count
+      failed_when: process_count.stdout != "1"
+
+    - name: Ensure docker interfaces is present
+      shell: ip link show docker0
+    
+    - name: Ensure all kubernetes components are healthy
+      shell: /usr/bin/kubectl get componentstatuses 
+      register: componentstatuses
+      failed_when: "'Unhealthy' in componentstatuses.stdout"
+
+    - name: Verify that all nodes are in Ready-state
+      shell: /usr/bin/kubectl get nodes | grep -iw 'Ready' | wc -l 
+      register: ready_count
+      failed_when: ready_count.stdout != "{{ HOST_COUNT }}"
+
+    - name: Ensure addons are deployed and available
+      shell: "/usr/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep '\"availableReplicas\": 1' | wc -l"
+      with_items:
+        - coredns
+        - kubernetes-dashboard
+        - tiller-deploy    
+      register: matches_spec
+      failed_when: matches_spec.stdout != "1"
+      
+
+- hosts: workers
+  user: deployer
+  become: yes
+  tasks:
+
+    - name: Ensure required processes is running 2
+      shell: /bin/pgrep {{ item }} | wc -l 
+      with_items:
+        - dockerd
+        - kubelet
+        - flanneld
+        - kube-proxy
+      register: process_count
+      failed_when: process_count.stdout != "1"
+
+    - name: Ensure required interfaces is present
+      shell: ip link show {{ item }} 
+      with_items:
+        - docker0
+        - flannel.1 
+

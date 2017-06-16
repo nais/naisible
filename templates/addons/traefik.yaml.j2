@@ -60,6 +60,8 @@ spec:
         k8s-app: traefik-ingress-lb
         name: traefik-ingress-lb
     spec:
+      nodeSelector:
+        nais.io/type: worker
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
       containers:
@@ -81,8 +83,6 @@ spec:
         - --kubernetes
         - --web.metrics
         - --web.metrics.prometheus
-    nodeSelector:
-        nais.io/type: worker
 ---
 apiVersion: v1
 kind: Service

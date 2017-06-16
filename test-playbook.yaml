@@ -8,7 +8,7 @@
     HOST_COUNT: "{{ groups['all'] | length }}"
   tasks:
 
-    - name: Ensure required processes is running 2
+    - name: Ensure required processes is running
       shell: /bin/pgrep {{ item }} | wc -l 
       with_items:
         - dockerd
@@ -45,7 +45,7 @@
   become: yes
   tasks:
 
-    - name: Ensure required processes is running 2
+    - name: Ensure required processes is running
       shell: /bin/pgrep {{ item }} | wc -l 
       with_items:
         - dockerd

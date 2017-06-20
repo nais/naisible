@@ -69,7 +69,7 @@
     - name: Remove target folder
       file: path=target state=absent
 
-- hosts: workers
+- hosts: all
   user: deployer
   become: yes
   tasks:

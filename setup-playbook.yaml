@@ -120,6 +120,9 @@
       state=started
       enabled=yes
 
+  - name: Clean up /etc/hosts after puppet
+    shell: /bin/sed -i "s/$(/sbin/ifconfig docker0 | grep inet | awk '{print $2}')/$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}')/g" /etc/hosts
+
   handlers:
     - name: restart_docker
       systemd:
@@ -175,9 +178,6 @@
     notify: 
       - restart_docker
   
-  - name: Ensure addons directory exists
-    file: state=directory path=/etc/kubernetes/addons
-
   handlers:
     - name: restart_docker
       systemd:

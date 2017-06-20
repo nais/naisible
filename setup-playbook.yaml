@@ -253,6 +253,7 @@
       - kubernetes-dashboard.yaml
       - core-dns.yaml
       - traefik.yaml
+      - heapster.yaml
 
   - name: Create addons
     shell: /usr/bin/kubectl create -f /etc/kubernetes/addons/{{ item }}
@@ -260,6 +261,7 @@
       - kubernetes-dashboard.yaml
       - core-dns.yaml
       - traefik.yaml
+      - heapster.yaml
     ignore_errors: yes
   
   - name: Download helm binaries

@@ -36,11 +36,10 @@
         - coredns
         - kubernetes-dashboard
         - tiller-deploy    
+        - heapster
+        - monitoring-influxdb
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
-
-    - name: Ensure heapster works
-      shell: /usr/bin/kubectl top nodes
 
 - hosts: workers
   user: deployer

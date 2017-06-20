@@ -80,7 +80,7 @@
       enabled=yes
 
   - name: Make flannel configuration for docker
-    shell: rm -f /run/docker_opts.env && /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /run/docker_opts.env
+    shell: mkdir -p /var/lib/docker && rm -f /var/lib/docker/docker_opts.env && /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env
 
   - name: Copy docker service file
     copy: src=files/docker.service dest=/etc/systemd/system/docker.service
@@ -93,6 +93,11 @@
       name=docker
       state=started
       enabled=yes
+
+  - name: Enable IP forwarding
+    iptables:
+      chain: FORWARD
+      jump: ACCEPT
 
   - name: Download kube-proxy binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"

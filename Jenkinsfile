@@ -24,6 +24,7 @@ node {
         }
 
         stage("test CI environment") {
+			sleep 15 // allow addons to start
 			sh('ansible-playbook -i ./nais-inventory/ci test-playbook.yaml')
         }
 

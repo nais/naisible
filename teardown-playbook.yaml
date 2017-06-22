@@ -121,5 +121,5 @@
     shell: ip link delete flannel.1 
     ignore_errors: yes
 
-    - name: Remove nais sensu check directory
-      file: path=/etc/sensu/plugins/checks/nais state=absent
+  - name: Remove nais sensu check directory
+    file: path=/etc/sensu/plugins/checks/nais state=absent

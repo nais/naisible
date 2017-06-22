@@ -1,0 +1,92 @@
+{
+  "checks": {
+    "check_process_dockerd": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-process.sh dockerd",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_process_kubelet": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-process.sh kubelet",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_process_etcd": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-process.sh etcd",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_interface_docker0": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-interface.sh docker0",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_component_controller_manager": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-component.sh controller-manager",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_component_scheduler": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-component.sh scheduler",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_component_etcd-0": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-component.sh etcd-0",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_nodes": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-nodes.sh",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_addon_coredns": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-addon.sh coredns",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_addon_kubernetes_dashboard": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-addon.sh kubernetes-dashboard",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_addon_tiller_deploy": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/nais/check-addon.sh tiller-deploy",
+      "interval": 100,
+      "standalone": true
+    }
+  }
+}

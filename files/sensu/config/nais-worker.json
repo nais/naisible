@@ -1,0 +1,52 @@
+{
+  "checks": {
+    "check_process_dockerd": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/check-process.sh dockerd",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_process_kubelet": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/check-process.sh kubelet",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_process_flanneld": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/check-process.sh flanneld",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_process_kube_proxy": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/check-process.sh kube-proxy",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_interface_docker": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/check-interface.sh docker0",
+      "interval": 100,
+      "standalone": true
+    },
+    "check_interface_flannel.1": {
+      "handlers": [
+        "default"
+      ],
+      "command": "/etc/sensu/plugins/checks/check-interface.sh flannel.1",
+      "interval": 100,
+      "standalone": true
+    }
+  }
+}

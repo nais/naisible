@@ -3,3 +3,9 @@
     daemon_reload=yes
     name=docker
     state=restarted
+
+- name: restart_sensu
+  systemd:
+    daemon_reload=yes
+    name=sensu-client
+    state=restarted

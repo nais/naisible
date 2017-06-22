@@ -283,3 +283,44 @@
   - name: Initialize helm
     environment: "{{ proxy_env }}"
     shell: /usr/bin/helm init
+
+# Configure sensu cluster checks
+- hosts: all
+  user: deployer
+  become: yes
+
+  tasks:
+  - name: Ensure sensu monitoring script folder exists
+    file: state=directory path=/etc/sensu/plugins/nais/checks
+
+  - name: Ensure sensu monitoring scripts exist
+    copy: src=files/checks/{{ item }} dest=/etc/sensu/plugins/nais/checks/{{ item }} mode=0775
+    with_items:
+      - check-addon.sh
+      - check-component.sh
+      - check-interface.sh
+      - check-nodes.sh
+      - ckeck-process.sh
+    notify:
+      - restart_sensu
+
+- hosts: masters
+  user: deployer
+  become: yes
+
+  tasks:
+  - name: Ensure sensu monitoring config for master node exists
+    copy: src=files/config/nais-master.json dest=/etc/sensu/conf.d/nais-master.json
+    notify:
+      - restart_sensu
+
+- hosts: workers
+  user: deployer
+  become: yes
+
+  tasks:
+  - name: Ensure sensu monitoring config for worker nodes exist
+    copy: src=files/config/nais-worker.json dest=/etc/sensu/conf.d/nais-worker.json
+    notify:
+      - restart_sensu
+

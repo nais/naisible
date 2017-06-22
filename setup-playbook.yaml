@@ -293,10 +293,10 @@
 
   tasks:
   - name: Ensure sensu monitoring script folder exists
-    file: state=directory path=/etc/sensu/plugins/nais/checks
+    file: state=directory path=/etc/sensu/plugins/checks/nais
 
   - name: Ensure sensu monitoring scripts exist
-    copy: src=files/sensu/checks/{{ item }} dest=/etc/sensu/plugins/nais/checks/{{ item }} mode=0775
+    copy: src=files/sensu/checks/{{ item }} dest=/etc/sensu/plugins/checks/nais{{ item }} mode=0775
     with_items:
       - check-addon.sh
       - check-component.sh
@@ -305,6 +305,7 @@
       - ckeck-process.sh
     notify:
       - restart_sensu
+
   handlers:
   - name: restart_sensu
     systemd:
@@ -321,6 +322,7 @@
     copy: src=files/sensu/config/nais-master.json dest=/etc/sensu/conf.d/nais-master.json
     notify:
       - restart_sensu
+
   handlers:
    - name: restart_sensu
      systemd:
@@ -337,6 +339,7 @@
     copy: src=files/sensu/config/nais-worker.json dest=/etc/sensu/conf.d/nais-worker.json
     notify:
       - restart_sensu
+
   handlers:
   - name: restart_sensu
     systemd:

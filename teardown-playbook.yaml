@@ -60,9 +60,19 @@
         - /usr/bin/etcdctl
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
-    - name: Disable etcd 
+        - /etc/sensu/conf.d/nais-master.json
+    - name: Disable etcd
       systemd: name=etcd enabled=no state=stopped 
       ignore_errors: yes
+
+- hosts: workers
+  user: deployer
+  become: yes
+  tasks:
+    - name: Remove files
+      file: path={{ item }} state=absent
+      with_items:
+        - /etc/sensu/conf.d/nais-worker.json
 
 - hosts: localhost
   tasks:
@@ -110,3 +120,6 @@
   - name: Remove flannel interface
     shell: ip link delete flannel.1 
     ignore_errors: yes
+
+    - name: Remove nais sensu check directory
+      file: path=/etc/sensu/plugins/checks/nais state=absent

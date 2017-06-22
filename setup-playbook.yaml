@@ -302,7 +302,7 @@
       - check-component.sh
       - check-interface.sh
       - check-nodes.sh
-      - ckeck-process.sh
+      - check-process.sh
     notify:
       - restart_sensu
 

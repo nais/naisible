@@ -242,7 +242,6 @@
         name=kubelet
         state=restarted
 
-
 # Install kubernetes addons
 - hosts: masters
   user: deployer
@@ -259,6 +258,9 @@
       - core-dns.yaml
       - traefik.yaml
       - heapster.yaml
+
+  - name: Wait for API servver to become available
+    wait_for: port=8080 host=127.0.0.1 delay=5
 
   - name: Create addons
     shell: /usr/bin/kubectl create -f /etc/kubernetes/addons/{{ item }}

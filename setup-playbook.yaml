@@ -305,12 +305,12 @@
       - ckeck-process.sh
     notify:
       - restart_sensu
-    handlers:
-    - name: restart_sensu
-      systemd:
-        daemon_reload=yes
-        name=sensu-client
-        state=restarted
+  handlers:
+  - name: restart_sensu
+    systemd:
+      daemon_reload=yes
+      name=sensu-client
+      state=restarted
 
 - hosts: masters
   user: deployer
@@ -321,12 +321,12 @@
     copy: src=files/sensu/config/nais-master.json dest=/etc/sensu/conf.d/nais-master.json
     notify:
       - restart_sensu
-    handlers:
-    - name: restart_sensu
-      systemd:
-        daemon_reload=yes
-        name=sensu-client
-        state=restarted
+  handlers:
+   - name: restart_sensu
+     systemd:
+      daemon_reload=yes
+      name=sensu-client
+      state=restarted
 
 - hosts: workers
   user: deployer
@@ -337,10 +337,10 @@
     copy: src=files/sensu/config/nais-worker.json dest=/etc/sensu/conf.d/nais-worker.json
     notify:
       - restart_sensu
-    handlers:
-    - name: restart_sensu
-      systemd:
-        daemon_reload=yes
-        name=sensu-client
-        state=restarted
+  handlers:
+  - name: restart_sensu
+    systemd:
+      daemon_reload=yes
+      name=sensu-client
+      state=restarted
 

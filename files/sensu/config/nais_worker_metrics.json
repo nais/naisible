@@ -1,6 +1,7 @@
 {
   "checks": {
-    "check_process_dockerd": {
+    "metric_process_dockerd": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -8,7 +9,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_process_kubelet": {
+    "metric_process_kubelet": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -16,7 +18,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_process_flanneld": {
+    "metric_process_flanneld": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -24,7 +27,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_process_kube_proxy": {
+    "metric_process_kube_proxy": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -32,7 +36,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_interface_docker": {
+    "metric_interface_docker": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -40,7 +45,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_interface_flannel.1": {
+    "metric_interface_flannel.1": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],

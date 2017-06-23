@@ -1,6 +1,7 @@
 {
   "checks": {
-    "check_process_dockerd": {
+    "metric_process_dockerd": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -8,7 +9,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_process_kubelet": {
+    "metric_process_kubelet": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -16,7 +18,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_process_etcd": {
+    "metric_process_etcd": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -24,7 +27,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_interface_docker0": {
+    "metric_interface_docker0": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -32,7 +36,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_component_controller_manager": {
+    "metric_component_controller_manager": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -40,7 +45,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_component_scheduler": {
+    "metric_component_scheduler": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -48,7 +54,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_component_etcd-0": {
+    "metric_component_etcd-0": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -56,7 +63,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_nodes": {
+    "metric_nodes": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -64,7 +72,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_addon_coredns": {
+    "metric_addon_coredns": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -72,7 +81,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_addon_kubernetes_dashboard": {
+    "metric_addon_kubernetes_dashboard": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],
@@ -80,7 +90,8 @@
       "interval": 100,
       "standalone": true
     },
-    "check_addon_tiller_deploy": {
+    "metric_addon_tiller_deploy": {
+      "type": "metric",
       "handlers": [
         "metrics"
       ],

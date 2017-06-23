@@ -1,90 +1,90 @@
 {
-  "checks": {
+  "metrics": {
     "check_process_dockerd": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-process.sh dockerd",
+      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh dockerd",
       "interval": 100,
       "standalone": true
     },
     "check_process_kubelet": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-process.sh kubelet",
+      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh kubelet",
       "interval": 100,
       "standalone": true
     },
     "check_process_etcd": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-process.sh etcd",
+      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh etcd",
       "interval": 100,
       "standalone": true
     },
     "check_interface_docker0": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-interface.sh docker0",
+      "command": "/etc/sensu/plugins/metrics/nais/interface-metrics.sh docker0",
       "interval": 100,
       "standalone": true
     },
     "check_component_controller_manager": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-component.sh controller-manager",
+      "command": "/etc/sensu/plugins/metrics/nais/component-metrics.sh controller-manager",
       "interval": 100,
       "standalone": true
     },
     "check_component_scheduler": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-component.sh scheduler",
+      "command": "/etc/sensu/plugins/metrics/nais/component-metrics.sh scheduler",
       "interval": 100,
       "standalone": true
     },
     "check_component_etcd-0": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-component.sh etcd-0",
+      "command": "/etc/sensu/plugins/metrics/nais/component-metrics.sh etcd-0",
       "interval": 100,
       "standalone": true
     },
     "check_nodes": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-nodes.sh",
+      "command": "/etc/sensu/plugins/metrics/nais/nodes-metrics.sh",
       "interval": 100,
       "standalone": true
     },
     "check_addon_coredns": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-addon.sh coredns",
+      "command": "/etc/sensu/plugins/metrics/nais/addon-metrics.sh coredns",
       "interval": 100,
       "standalone": true
     },
     "check_addon_kubernetes_dashboard": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-addon.sh kubernetes-dashboard",
+      "command": "/etc/sensu/plugins/metrics/nais/addon-metrics.sh kubernetes-dashboard 2>/dev/null",
       "interval": 100,
       "standalone": true
     },
     "check_addon_tiller_deploy": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-addon.sh tiller-deploy",
+      "command": "/etc/sensu/plugins/metrics/nais/addon-metrics.sh tiller-deploy",
       "interval": 100,
       "standalone": true
     }

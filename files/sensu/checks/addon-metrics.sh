@@ -5,11 +5,10 @@
 # /usr/bin/kubectl -n kube-system get deploy ${ADDON} -o json | grep '\"availableReplicas\": 1' | wc -l
 
 ADDON=$1
+TIMESTAMP=$(date '+%s')
 
 if [[ $(/usr/bin/kubectl -n kube-system get deploy ${ADDON} -o json | grep '\"availableReplicas\": 1' | wc -l) == 1 ]]; then
-    echo "Addon deployment check for ${ADDON}: PASSED"
-    exit 0
+    echo "nais.addon.eventtags.addon.${ADDON} 0 ${TIMESTAMP}"
 else
-    echo "Addon deployment for ${ADDON}: FAILED"
-    exit 1
+    echo "nais.addon.eventtags.addon.${ADDON} 1 ${TIMESTAMP}"
 fi

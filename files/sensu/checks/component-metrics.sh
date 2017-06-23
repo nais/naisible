@@ -5,11 +5,10 @@
 # /usr/bin/kubectl get componentstatus ${COMPONENT}
 
 COMPONENT=$1
+TIMESTAMP=$(date '+%s')
 
 if [[ $(/usr/bin/kubectl get componentstatus ${COMPONENT}) ]]; then
-    echo "Health check for ${COMPONENT}: PASSED"
-    exit 0
+    echo "nais.component.eventtags.component.${COMPONENT} 0 ${TIMESTAMP}"
 else
-    echo "Health check for ${COMPONENT}: FAILED"
-    exit 1
+    echo "nais.component.eventtags.component.${COMPONENT} 1 ${TIMESTAMP}"
 fi

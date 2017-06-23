@@ -60,7 +60,7 @@
         - /usr/bin/etcdctl
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
-        - /etc/sensu/conf.d/nais-master.json
+        - /etc/sensu/conf.d/nais_master_metrics.json
     - name: Disable etcd
       systemd: name=etcd enabled=no state=stopped 
       ignore_errors: yes
@@ -72,7 +72,7 @@
     - name: Remove files
       file: path={{ item }} state=absent
       with_items:
-        - /etc/sensu/conf.d/nais-worker.json
+        - /etc/sensu/conf.d/nais_worker_metrics.json
 
 - hosts: localhost
   tasks:
@@ -122,4 +122,4 @@
     ignore_errors: yes
 
   - name: Remove nais sensu check directory
-    file: path=/etc/sensu/plugins/checks/nais state=absent
+    file: path=/etc/sensu/plugins/metrics/nais state=absent

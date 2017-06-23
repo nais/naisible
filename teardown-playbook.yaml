@@ -58,6 +58,7 @@
         - /usr/bin/etcd
         - /usr/bin/etcdctl-{{etcd_version}}
         - /usr/bin/etcdctl
+        - /usr/bin/kubectl
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
         - /etc/sensu/conf.d/nais_master_metrics.json

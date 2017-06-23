@@ -1,5 +1,5 @@
 {
-  "metrics": {
+  "checks": {
     "check_process_dockerd": {
       "handlers": [
         "metrics"

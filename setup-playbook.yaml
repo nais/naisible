@@ -286,7 +286,7 @@
     environment: "{{ proxy_env }}"
     shell: /usr/bin/helm init
 
-# Configure sensu cluster checks
+# Configure sensu cluster metrics
 - hosts: all
   user: deployer
   become: yes

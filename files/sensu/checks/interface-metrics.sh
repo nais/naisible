@@ -5,11 +5,10 @@
 # ip link show ${INTERFACE}
 
 INTERFACE=$1
+TIMESTAMP=$(date '+%s')
 
 if [[ $(ip link show ${INTERFACE}) ]]; then
-    echo "Interface check for ${INTERFACE}: PASSED"
-    exit 0
+    echo "nais.interface.eventtags.interface.${INTERFACE} 0 ${TIMESTAMP}"
 else
-    echo "Interface check for ${INTERFACE}: FAILED"
-    exit 1
+    echo "nais.interface.eventtags.interface.${INTERFACE} 1 ${TIMESTAMP}"
 fi

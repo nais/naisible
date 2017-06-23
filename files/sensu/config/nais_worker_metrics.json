@@ -2,49 +2,49 @@
   "checks": {
     "check_process_dockerd": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-process.sh dockerd",
+      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh dockerd",
       "interval": 100,
       "standalone": true
     },
     "check_process_kubelet": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-process.sh kubelet",
+      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh kubelet",
       "interval": 100,
       "standalone": true
     },
     "check_process_flanneld": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-process.sh flanneld",
+      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh flanneld",
       "interval": 100,
       "standalone": true
     },
     "check_process_kube_proxy": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-process.sh kube-proxy",
+      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh kube-proxy",
       "interval": 100,
       "standalone": true
     },
     "check_interface_docker": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-interface.sh docker0",
+      "command": "/etc/sensu/plugins/metrics/nais/interface-metrics.sh docker0",
       "interval": 100,
       "standalone": true
     },
     "check_interface_flannel.1": {
       "handlers": [
-        "default"
+        "metrics"
       ],
-      "command": "/etc/sensu/plugins/checks/nais/check-interface.sh flannel.1",
+      "command": "/etc/sensu/plugins/metrics/nais/interface-metrics.sh flannel.1",
       "interval": 100,
       "standalone": true
     }

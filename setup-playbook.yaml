@@ -293,16 +293,16 @@
 
   tasks:
   - name: Ensure sensu monitoring script folder exists
-    file: state=directory path=/etc/sensu/plugins/checks/nais
+    file: state=directory path=/etc/sensu/plugins/metrics/nais
 
   - name: Ensure sensu monitoring scripts exist
-    copy: src=files/sensu/checks/{{ item }} dest=/etc/sensu/plugins/checks/nais/{{ item }} mode=0775
+    copy: src=files/sensu/checks/{{ item }} dest=/etc/sensu/plugins/metrics/nais/{{ item }} mode=0775
     with_items:
-      - check-addon.sh
-      - check-component.sh
-      - check-interface.sh
-      - check-nodes.sh
-      - check-process.sh
+      - addon-metrics.sh
+      - component-metrics.sh
+      - interface-metrics.sh
+      - nodes-metrics.sh
+      - process-metrics.sh
     notify:
       - restart_sensu
 
@@ -319,7 +319,7 @@
 
   tasks:
   - name: Ensure sensu monitoring config for master node exists
-    copy: src=files/sensu/config/nais-master.json dest=/etc/sensu/conf.d/nais-master.json
+    copy: src=files/sensu/config/nais_master_metrics.json dest=/etc/sensu/conf.d/nais_master_metrics.json
     notify:
       - restart_sensu
 
@@ -336,7 +336,7 @@
 
   tasks:
   - name: Ensure sensu monitoring config for worker nodes exist
-    copy: src=files/sensu/config/nais-worker.json dest=/etc/sensu/conf.d/nais-worker.json
+    copy: src=files/sensu/config/nais_worker_metrics.json dest=/etc/sensu/conf.d/nais_worker_metrics.json
     notify:
       - restart_sensu
 

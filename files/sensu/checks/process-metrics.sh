@@ -5,11 +5,10 @@
 # /bin/pgrep {{ item }} | wc -l
 
 PROCESS=$1
+TIMESTAMP=$(date '+%s')
 
 if [[ $(pgrep ${PROCESS} | wc -l) == 1 ]]; then
-    echo "Process check for ${PROCESS}: PASSED"
-    exit 0
+    echo "nais.process.eventtags.process.${PROCESS} 0 ${TIMESTAMP}"
 else
-    echo "Process check for ${PROCESS}: FAILED"
-    exit 1
+    echo "nais.process.eventtags.process.${PROCESS} 0 ${TIMESTAMP}"
 fi

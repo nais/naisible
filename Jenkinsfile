@@ -4,7 +4,7 @@ node {
 
     try {
         stage("init") {
-                git url: "ssh://git@stash.devillo.no:7999/aura/ansible-nais.git"
+               // git url: "ssh://git@stash.devillo.no:7999/aura/ansible-nais.git"
 			dir("nais-inventory"){
                 git url: "ssh://git@stash.devillo.no:7999/aura/nais-inventory.git"
 			}

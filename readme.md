@@ -1,7 +1,7 @@
 # Naisible &middot;  [nais](http://nais.io) &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 Naisable is a collection of ansible playbooks used to build, test and tear down NAIS kubernetes cluster. 
 
-![alt text](https://github.com/nais/nais.github.io/blob/master/img/nais.png "Nais logo")
+![alt text](https://github.com/nais/nais.github.io/blob/master/img/nais.png "Nais logo" =340x)
 ## Prerequisites
 * [Ansible binaries](http://docs.ansible.com/ansible/intro_installation.html)
 * [An inventory file](example-inventory-file) 
@@ -15,8 +15,50 @@ ansible-playbook -i inventory-file setup-playbook.yaml &&\
 ansible-playbook -i inventory-file test-playbook.yaml
 ```
 
+## Removing NAIS from hosts
+```sh
+ansible-playbook -i inventory-file teardown-playbook.yaml
+```
+
 ## Playbook details
 ### Setup Playbook
+1. All nodes
+   1. Install Webproxy certificate and update truststore
+   1. Add Kubernetes RPM repository
+   1. Add Docker RPM repository 
+1. Master Node
+   1. Fetch existing cluster certificates, if they exist
+1. Ansible master node
+   1. Create cluster certificates, if not fetched from NAIS master
+1. Master Node
+   1. Install and configure ETCD
+   1. Copy cluster certificates
+   1. Add flannel configuration to ETCD
+1. All nodes
+   1. Install and enable Flannel
+   1. Install and enable Docker
+   1. Install and enable kube-proxy
+   1. Configure iptables
+1. Master Node
+   1. Install and enable Kubelet
+   1. Install and enable kubernets controle plane:
+      1. kube-apiserver
+      1. kube-scheduler
+      1. kube-controller-manager
+1. Worker Nodes
+   1. Copy cluster certificates
+   1. Install and enable Kubelet
+   1. Enable monitoring
+1. Master Node
+   1. Install and enable Kubelet
+   1. Install and enable Helm
+   1. Install and enable addons:
+      1. kubernetes-dashboard
+      1. core-dns
+      1. traefik
+      1. heapster
+   1. Enable monitoring   
+
 ### Teardown Playbook
 ### Test Playbook
 

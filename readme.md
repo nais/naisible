@@ -1,4 +1,4 @@
-# Naisible &middot;  [nais](http://nais.io) &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
+# naisible &middot;  [nais](http://nais.io) &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
 Naisable is a collection of ansible playbooks used to build, test and tear down NAIS kubernetes cluster. 
 
 <a href="http://nais.io"><img src="https://github.com/nais/nais.github.io/blob/master/img/nais.png" width="170"></a>

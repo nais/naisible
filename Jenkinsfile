@@ -14,16 +14,16 @@ node {
         }
 
         stage("teardown") {
-			sh('ansible-playbook -i ./nais-inventory/ci teardown-playbook.yaml')
+			sh('ansible-playbook -i ./nais-inventory/nais-ci teardown-playbook.yaml')
         }
 
         stage("setup") {
-			sh('ansible-playbook -i ./nais-inventory/ci setup-playbook.yaml')
+			sh('ansible-playbook -i ./nais-inventory/nais-ci setup-playbook.yaml')
         }
 
         stage("test") {
 			sleep 15 // allow addons to start
-			sh('ansible-playbook -i ./nais-inventory/ci test-playbook.yaml')
+			sh('ansible-playbook -i ./nais-inventory/nais-ci test-playbook.yaml')
         }
 
     } catch(e) {

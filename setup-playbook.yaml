@@ -51,7 +51,6 @@
       - ETCDCTL_API: 2
     when: flannelconfig.rc != 0
 
-
 - hosts: all
   user: deployer
   become: yes
@@ -99,14 +98,35 @@
       chain: FORWARD
       policy: ACCEPT
 
-  - name: Download kube-proxy binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
+  - name: Download kubernetes node binaries
     environment: "{{ proxy_env }}"
-    shell: curl --insecure https://storage.googleapis.com/kubernetes-release/release/v{{ k8s_version }}/bin/linux/amd64/kube-proxy > /usr/bin/kube-proxy
+    shell: curl -L --insecure https://dl.k8s.io/v{{ k8s_version }}/kubernetes-node-linux-amd64.tar.gz | \ 
+           tar xzf - -C /tmp kubernetes/node/bin/kubectl kubernetes/node/bin/kube-proxy kubernetes/node/bin/kubelet && \ 
+           mv /tmp/kubernetes/node/bin/kube-proxy /usr/bin/kube-proxy-{{ k8s_version }} && \
+           mv /tmp/kubernetes/node/bin/kubectl /usr/bin/kubectl-{{ k8s_version }} && \
+           mv /tmp/kubernetes/node/bin/kubelet /usr/bin/kubelet-{{ k8s_version }}
     args:
-      creates: /usr/bin/kube-proxy
+      creates: /usr/bin/kubelet-{{k8s_version}}
+    tags:
+      - dev
 
-  - name: Make kube-proxy executable
-    file: path=/usr/bin/kube-proxy mode=0755
+  - name: Symlink kubernetes node binaries
+    file: src=/usr/bin/{{ item }}-{{ k8s_version }} dest=/usr/bin/{{ item }} state=link
+    with_items: 
+      - kubectl
+      - kube-proxy
+      - kubelet
+    tags: 
+      - dev
+
+  - name: Make kubernetes node binaries executable
+    file: path=/usr/bin/{{ item }}-{{ k8s_version }} mode=0755
+    with_items: 
+      - kubectl
+      - kube-proxy
+      - kubelet
+    tags: 
+      - dev
 
   - name: Copy kube-proxy service file
     template: src=templates/kube-proxy.service.j2 dest=/etc/systemd/system/kube-proxy.service

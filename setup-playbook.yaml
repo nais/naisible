@@ -111,13 +111,11 @@
       - dev
 
   - name: Symlink kubernetes node binaries
-    file: src=/usr/bin/{{ item }}-{{ k8s_version }} dest=/usr/bin/{{ item }} state=link
+    file: src=/usr/bin/{{ item }}-{{ k8s_version }} dest=/usr/bin/{{ item }} state=link force=yes
     with_items: 
       - kubectl
       - kube-proxy
       - kubelet
-    tags: 
-      - dev
 
   - name: Make kubernetes node binaries executable
     file: path=/usr/bin/{{ item }}-{{ k8s_version }} mode=0755
@@ -125,8 +123,6 @@
       - kubectl
       - kube-proxy
       - kubelet
-    tags: 
-      - dev
 
   - name: Copy kube-proxy service file
     template: src=templates/kube-proxy.service.j2 dest=/etc/systemd/system/kube-proxy.service

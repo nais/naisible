@@ -38,7 +38,7 @@
 
 - name: Install required packages
   environment: "{{ proxy_env }}"
-  yum: name={{ item }} state=latest
+  yum: name={{ item }} state=present
   with_items:
     - "docker-ce-{{ docker_version }}"
 

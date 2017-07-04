@@ -59,3 +59,9 @@
     dest: target/pki/
     flat: yes
   when: sa.stat.exists
+
+- fetch:
+    src: /etc/kubernetes/pki/sa.pub
+    dest: target/pki/
+    flat: yes
+  when: sa.stat.exists

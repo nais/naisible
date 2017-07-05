@@ -175,10 +175,6 @@
       state=started
       enabled=yes
 
-  - name: Ensure kubectl is installed
-    environment: "{{ proxy_env }}"
-    yum: name=kubectl state=latest
-
   - name: Generate cluster-admin kubeconfig
     shell: rm -f /etc/kubernetes/kubeconfigs/cluster-admin.conf && 
            /usr/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ master_ip }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&

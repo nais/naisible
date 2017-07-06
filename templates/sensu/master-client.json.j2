@@ -1,7 +1,7 @@
 {
     "client": {
-        "name": "{{ cluster_name }}_{{ ansible_hostname }}",
-        "address": "{{ ansible_hostname }}",
+        "name": "{{ cluster_name }}_{{ inventory_hostname }}",
+        "address": "{{ inventory_hostname }}",
         "subscriptions": [],
         "socket": {
             "bind": "0.0.0.0",
@@ -11,7 +11,7 @@
             "cluster": "{{ cluster_name }}",
             "category": "master",
             "environment": "",
-            "hostname": "{{ ansible_hostname }}"
+            "hostname": "{{ inventory_hostname }}"
         }
     }
 }

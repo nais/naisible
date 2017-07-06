@@ -337,6 +337,9 @@
   become: yes
 
   tasks:
+  - name: Copy sensu client.json with correct config
+    template: src=templates/sensu/master-client.json.j2 dest=/etc/sensu/conf.d/client.json
+
   - name: Ensure sensu monitoring config for master node exists
     copy: src=files/sensu/config/nais_master_metrics.json dest=/etc/sensu/conf.d/nais_master_metrics.json
     notify:
@@ -354,6 +357,9 @@
   become: yes
 
   tasks:
+  - name: Copy sensu client.json with correct config
+    template: src=templates/sensu/master-client.json.j2 dest=/etc/sensu/conf.d/client.json
+
   - name: Ensure sensu monitoring config for worker nodes exist
     copy: src=files/sensu/config/nais_worker_metrics.json dest=/etc/sensu/conf.d/nais_worker_metrics.json
     notify:

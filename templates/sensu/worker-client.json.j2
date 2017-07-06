@@ -1,0 +1,17 @@
+{
+    "client": {
+        "name": "{{ cluster_name }}_{{ ansible_hostname }}",
+        "address": "{{ ansible_hostname }}",
+        "subscriptions": [],
+        "socket": {
+            "bind": "0.0.0.0",
+            "port": 3030
+            },
+        "tags": {
+            "cluster": "{{ cluster_name }}",
+            "category": "worker",
+            "environment": "",
+            "hostname": "{{ ansible_hostname }}"
+        }
+    }
+}

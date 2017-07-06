@@ -301,9 +301,13 @@
   - name: Symlink helm
     file: src=/usr/bin/helm-{{ helm_version }} dest=/usr/bin/helm state=link
 
+  - name: Setup helm service account
+    shell: /usr/bin/kubectl create serviceaccount --namespace kube-system tiller &&
+           /usr/bin/kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+
   - name: Initialize helm
     environment: "{{ proxy_env }}"
-    shell: /usr/bin/helm init
+    shell: /usr/bin/helm init --service-account=tiller
 
 # Configure sensu cluster metrics
 - hosts: all

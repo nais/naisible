@@ -1,56 +1,11 @@
 {
   "checks": {
-    "metric_process_dockerd": {
+    "metric_all_checks": {
       "type": "metric",
       "handlers": [
         "metrics"
       ],
-      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh dockerd",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_process_kubelet": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh kubelet",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_process_flanneld": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh flanneld",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_process_kube_proxy": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh kube-proxy",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_interface_docker": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/interface-metrics.sh docker0",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_interface_flannel.1": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/interface-metrics.sh flannel.1",
+      "command": "/etc/sensu/plugins/metrics/nais/aggregate-metrics.sh worker",
       "interval": 100,
       "standalone": true
     }

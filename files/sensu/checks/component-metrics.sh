@@ -9,6 +9,8 @@ TIMESTAMP=$(date '+%s')
 
 if [[ $(/usr/bin/kubectl get componentstatus ${COMPONENT}) ]]; then
     echo "nais.component.eventtags.component.${COMPONENT} 0 ${TIMESTAMP}"
+    exit 0
 else
     echo "nais.component.eventtags.component.${COMPONENT} 1 ${TIMESTAMP}"
+    exit 1
 fi

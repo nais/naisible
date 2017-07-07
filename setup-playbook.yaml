@@ -304,6 +304,7 @@
   - name: Setup helm service account
     shell: /usr/bin/kubectl create serviceaccount --namespace kube-system tiller &&
            /usr/bin/kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+    ignore_errors: yes
 
   - name: Initialize helm
     environment: "{{ proxy_env }}"

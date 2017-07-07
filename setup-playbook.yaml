@@ -321,6 +321,7 @@
   - name: Ensure sensu monitoring scripts exist
     copy: src=files/sensu/checks/{{ item }} dest=/etc/sensu/plugins/metrics/nais/{{ item }} mode=0775
     with_items:
+      - aggregate-metrics.sh
       - addon-metrics.sh
       - component-metrics.sh
       - interface-metrics.sh

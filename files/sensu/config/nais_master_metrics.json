@@ -1,101 +1,11 @@
 {
   "checks": {
-    "metric_process_dockerd": {
+    "metric_all_checks": {
       "type": "metric",
       "handlers": [
         "metrics"
       ],
-      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh dockerd",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_process_kubelet": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh kubelet",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_process_etcd": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/process-metrics.sh etcd",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_interface_docker0": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/interface-metrics.sh docker0",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_component_controller_manager": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/component-metrics.sh controller-manager",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_component_scheduler": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/component-metrics.sh scheduler",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_component_etcd-0": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/component-metrics.sh etcd-0",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_nodes": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/nodes-metrics.sh",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_addon_coredns": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/addon-metrics.sh coredns",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_addon_kubernetes_dashboard": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/addon-metrics.sh kubernetes-dashboard 2>/dev/null",
-      "interval": 100,
-      "standalone": true
-    },
-    "metric_addon_tiller_deploy": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/addon-metrics.sh tiller-deploy",
+      "command": "/etc/sensu/plugins/metrics/nais/aggregate-metrics.sh master",
       "interval": 100,
       "standalone": true
     }

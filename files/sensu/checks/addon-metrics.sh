@@ -9,6 +9,8 @@ TIMESTAMP=$(date '+%s')
 
 if [[ $(/usr/bin/kubectl -n kube-system get deploy ${ADDON} -o json | grep '\"availableReplicas\": 1' | wc -l) == 1 ]]; then
     echo "nais.addon.eventtags.addon.${ADDON} 0 ${TIMESTAMP}"
+    exit 0
 else
     echo "nais.addon.eventtags.addon.${ADDON} 1 ${TIMESTAMP}"
+    exit 1
 fi

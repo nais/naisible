@@ -8,6 +8,8 @@ TIMESTAMP=$(date '+%s')
 
 if [[ $(/usr/bin/kubectl get nodes | grep -iw 'NotReady' ) ]]; then
     echo "nais.nodes.eventtags.nodes 1 ${TIMESTAMP}"
+    exit 1
 else
     echo "nais.nodes.eventtags.nodes 0 ${TIMESTAMP}"
+    exit 0
 fi

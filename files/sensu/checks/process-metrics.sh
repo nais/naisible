@@ -9,6 +9,8 @@ TIMESTAMP=$(date '+%s')
 
 if [[ $(pgrep ${PROCESS} | wc -l) == 1 ]]; then
     echo "nais.process.eventtags.process.${PROCESS} 0 ${TIMESTAMP}"
+    exit 0
 else
     echo "nais.process.eventtags.process.${PROCESS} 1 ${TIMESTAMP}"
+    exit 1
 fi

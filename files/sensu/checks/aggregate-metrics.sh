@@ -1,5 +1,5 @@
 #!/bin/bash
-# A collection of all the tests run on a cluster node
+# A collection of all the nais specific tests run on a cluster node
 # Returns one line for each metric and a final result with
 # aggregate result of all tests.
 # Inputs are either "master" for checks run on master nodes

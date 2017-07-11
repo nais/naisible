@@ -13,4 +13,4 @@ if [[ $(/usr/bin/kubectl -n kube-system get deploy ${ADDON} -o json | grep '\"av
 else
     echo "nais.addon.eventtags.addon.${ADDON} 1 ${TIMESTAMP}"
     exit 1
-fie
+fi

@@ -328,7 +328,6 @@
       - interface-metrics.sh
       - nodes-metrics.sh
       - process-metrics.sh
-      - memory-metrics.sh
     notify:
       - restart_sensu
 

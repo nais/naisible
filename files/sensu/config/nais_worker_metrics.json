@@ -8,15 +8,6 @@
       "command": "/etc/sensu/plugins/metrics/nais/aggregate-metrics.sh worker",
       "interval": 100,
       "standalone": true
-    },
-    "metric_memory": {
-      "type": "metric",
-      "handlers": [
-        "metrics"
-      ],
-      "command": "/etc/sensu/plugins/metrics/nais/memory-metrics.sh",
-      "interval": 100,
-      "standalone": true
     }
   }
 }

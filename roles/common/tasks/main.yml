@@ -47,3 +47,8 @@
 
 - name: Disable puppet agent
   shell: /bin/puppet agent --disable
+  ignore_errors: yes
+
+- name: Disable puppet agent (preprod)
+  shell: /opt/puppet/bin/puppet agent --disable
+  ignore_errors: yes

@@ -59,6 +59,9 @@ spec:
       labels:
         k8s-app: traefik-ingress-lb
         name: traefik-ingress-lb
+      annotations:
+        prometheus.io/scrape: true
+        prometheus.io/port: 8080
     spec:
       nodeSelector:
         nais.io/type: worker

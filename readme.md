@@ -17,6 +17,7 @@ ansible-playbook -i inventory-file test-playbook.yaml
 ```
 </a>
 ## Removing NAIS from hosts
+
 ```sh
 ansible-playbook -i inventory-file teardown-playbook.yaml
 ```

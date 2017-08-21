@@ -41,6 +41,7 @@
   yum: name={{ item }} state=present
   with_items:
     - "docker-ce-{{ docker_version }}"
+    - "socat"
 
 - name: Docker proxy settings
   template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf

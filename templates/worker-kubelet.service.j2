@@ -3,7 +3,7 @@ Description=kubelet: The Kubernetes Node Agent
 Documentation=http://kubernetes.io/docs/
 
 [Service]
-ExecStart=/usr/bin/kubelet --node-labels=nais.io/type=worker --cluster-dns={{ cluster_dns_ip }} --cluster-domain={{ cluster_domain }} --anonymous-auth=false --client-ca-file=/etc/kubernetes/pki/ca.pem --require-kubeconfig --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf
+ExecStart=/usr/bin/kubelet --node-labels=nais.io/type=worker --cluster-dns={{ cluster_dns_ip }} --cluster-domain={{ cluster_domain }} --image-pull-progress-deadline=5m --anonymous-auth=false --client-ca-file=/etc/kubernetes/pki/ca.pem --require-kubeconfig --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf
 
 Restart=always
 StartLimitInterval=0

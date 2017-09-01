@@ -7,7 +7,7 @@
 COMPONENT=$1
 TIMESTAMP=$(date '+%s')
 
-if [[ $(/usr/bin/kubectl get componentstatus ${COMPONENT}) ]]; then
+if [[ $(/usr/bin/kubectl get componentstatus ${COMPONENT} | grep Healthy)  ]]; then
     echo "nais.component.eventtags.component.${COMPONENT} 0 ${TIMESTAMP}"
     exit 0
 else

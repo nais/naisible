@@ -308,7 +308,7 @@
 
   - name: Initialize helm
     environment: "{{ proxy_env }}"
-    shell: /usr/bin/helm init --service-account=tiller --upgrade
+    shell: /usr/bin/helm init --service-account=tiller --history-max 5 --upgrade
 
 # Configure sensu cluster metrics
 - hosts: all

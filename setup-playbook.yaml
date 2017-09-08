@@ -231,6 +231,12 @@
       - restart_kubelet
       - restart_kubeproxy
 
+  - name: Ensure certs.d directory exists worker nodes
+    file: state=directory path=/etc/docker/certs.d/docker.adeo.no:5000/
+
+  - name: Symlink Internal CA to docker
+    file: src=/etc/pki/tls/certs/NAV_Issuing_Intern_CA.crt dest=/etc/docker/certs.d/docker.adeo.no:5000/ca.crt state=link force=yes
+
   - name: Copy kubelet service manifest
     template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
     notify: 

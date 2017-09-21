@@ -65,7 +65,7 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
 ## NAIS inventory file
 Template for creating a NAIS cluster inventory file.
 
-Each inventory file consist of a hosts section, where the master and worker nodes are defined, and a variables section, where both versions and cluster specific information
+Each inventory file consist of a hosts section, where the master and worker nodes are defined, and a variables section, where both versions and cluster specific information.
 
 Hosts
 ---

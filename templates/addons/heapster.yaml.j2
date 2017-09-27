@@ -114,6 +114,8 @@ spec:
       labels:
         task: monitoring
         k8s-app: heapster
+      annotations:
+        nais.io/logformat: glog
     spec:
       serviceAccountName: heapster
       containers:

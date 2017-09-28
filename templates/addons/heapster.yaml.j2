@@ -11,6 +11,8 @@ spec:
       labels:
         task: monitoring
         k8s-app: influxdb
+      annotations:
+        nais.io/logformat: influxdb
     spec:
       containers:
       - name: influxdb

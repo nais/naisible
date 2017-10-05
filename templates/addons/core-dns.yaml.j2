@@ -79,6 +79,7 @@ spec:
         scheduler.alpha.kubernetes.io/critical-pod: ''
         scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
         nais.io/logformat: accesslog_with_processing_time
+        nais.io/logtransform: dns_loglevel
     spec:
       serviceAccountName: coredns
       containers:

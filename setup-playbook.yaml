@@ -124,6 +124,9 @@
       - kubectl
       - kube-proxy
       - kubelet
+    notify:
+      - restart_kubelet
+      - restart_kubeproxy
 
   - name: Make kubernetes node binaries executable
     file: path=/usr/bin/{{ item }}-{{ k8s_version }} mode=0755
@@ -157,6 +160,12 @@
       systemd:
         daemon_reload=yes
         name=docker
+        state=restarted
+
+    - name: restart_kubelet
+      systemd:
+        name=kubelet
+        daemon_reload=yes
         state=restarted
 
     - name: restart_kubeproxy

@@ -93,6 +93,14 @@
       state=started
       enabled=yes
 
+  - name: Disable swap automount
+    mount:
+      path: swap
+      state: absent
+
+  - name: Disable swap
+    command: swapoff -a
+
   - name: Enable IP forwarding
     iptables:
       chain: FORWARD

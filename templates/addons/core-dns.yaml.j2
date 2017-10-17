@@ -50,9 +50,7 @@ data:
         errors
         log stdout
         health
-        kubernetes {{ cluster_domain }} {
-          cidrs {{ service_cidr }}
-        }
+        kubernetes {{ cluster_domain }} {{ service_cidr }}
         proxy . /etc/resolv.conf
         cache 30
     }

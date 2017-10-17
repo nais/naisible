@@ -84,15 +84,15 @@ Variables
 #### Version specific variables
 |Variable name|Version|Version information location|
 |---|---|---|
-|docker_version|17.03.1.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
-|cni_version|0.5.1|https://github.com/containernetworking/cni/releases|
-|etcd_version|3.1.8|https://github.com/coreos/etcd/releases/|
-|flannel_version|0.7.1|https://github.com/coreos/flannel/releases|
-|k8s_version|1.6.3|https://github.com/kubernetes/kubernetes/releases|
-|dashboard_version|1.6.1|https://github.com/kubernetes/dashboard/releases|
-|coredns_version|latest|https://github.com/coredns/coredns/releases|
-|traefik_version|1.3-alpine|https://hub.docker.com/r/library/traefik/tags/|
-|helm_version|2.4.2|https://github.com/kubernetes/helm/releases|
+|docker_version|17.09.0.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
+|cni_version|0.6.0|https://github.com/containernetworking/cni/releases|
+|etcd_version|3.2.9|https://github.com/coreos/etcd/releases/|
+|flannel_version|0.9.0|https://github.com/coreos/flannel/releases|
+|k8s_version|1.8.1|https://github.com/kubernetes/kubernetes/releases|
+|dashboard_version|1.7.1|https://github.com/kubernetes/dashboard/releases|
+|coredns_version|011|https://github.com/coredns/coredns/releases|
+|traefik_version|1.4-alpine|https://hub.docker.com/r/library/traefik/tags/|
+|helm_version|2.6.2|https://github.com/kubernetes/helm/releases|
 
 #### Cluster specific variables
 |Variable name|Value|Information|
@@ -119,17 +119,17 @@ worker1.domain.com
 worker2.domain.com
 
 [all:vars]
-docker_version=17.03.1.ce
-cni_version=0.5.1
-etcd_version=3.1.8
-flannel_version=0.7.1
-k8s_version=1.6.3
-dashboard_version=1.6.1
-coredns_version=latest
-traefik_version=1.3-alpine
-helm_version=2.4.2
-heapster_version=1.3.0
-heapster_influxdb_version=1.1.1
+docker_version=17.09.0.ce
+cni_version=0.6.0
+etcd_version=3.2.9
+flannel_version=0.9.0
+k8s_version=1.8.1
+dashboard_version=1.7.1
+coredns_version="011"
+traefik_version=1.4-alpine
+helm_version=2.6.2
+heapster_version=1.4.3
+heapster_influxdb_version=1.3.3
 master_ip=10.181.160.89
 cluster_name=nais
 service_cidr=10.254.0.0/16

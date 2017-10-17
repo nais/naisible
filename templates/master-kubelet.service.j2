@@ -3,7 +3,7 @@ Description=kubelet: The Kubernetes Node Agent
 Documentation=http://kubernetes.io/docs/
 
 [Service]
-ExecStart=/usr/bin/kubelet --hostname-override {{ inventory_hostname }} --node-labels=nais.io/type=master --api-servers=127.0.0.1:8080 --allow-privileged=true --image-pull-progress-deadline=5m --pod-manifest-path=/etc/kubernetes/manifests --v=2 --register-with-taints=node.alpha.kubernetes.io/ismaster=:NoSchedule
+ExecStart=/usr/bin/kubelet --hostname-override {{ inventory_hostname }} --node-labels=nais.io/type=master --allow-privileged=true --image-pull-progress-deadline=5m --pod-manifest-path=/etc/kubernetes/manifests --v=2 --register-with-taints=node.alpha.kubernetes.io/ismaster=:NoSchedule --require-kubeconfig --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --runtime-cgroups=/systemd/system.slice --kubelet-cgroups=/systemd/system.slice
 
 Restart=always
 StartLimitInterval=0

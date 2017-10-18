@@ -84,7 +84,7 @@ Variables
 #### Version specific variables
 |Variable name|Version|Version information location|
 |---|---|---|
-|docker_version|17.09.0.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
+|docker_version|17.03.2.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
 |cni_version|0.6.0|https://github.com/containernetworking/cni/releases|
 |etcd_version|3.2.9|https://github.com/coreos/etcd/releases/|
 |flannel_version|0.9.0|https://github.com/coreos/flannel/releases|
@@ -93,6 +93,8 @@ Variables
 |coredns_version|011|https://github.com/coredns/coredns/releases|
 |traefik_version|1.4-alpine|https://hub.docker.com/r/library/traefik/tags/|
 |helm_version|2.6.2|https://github.com/kubernetes/helm/releases|
+|heapster_version|1.4.3|https://github.com/kubernetes/heapster/releases|
+|heapster_influxdb_version|1.3.3|https://gcr.io/google_containers/heapster-influxdb-amd64|
 
 #### Cluster specific variables
 |Variable name|Value|Information|
@@ -119,7 +121,7 @@ worker1.domain.com
 worker2.domain.com
 
 [all:vars]
-docker_version=17.09.0.ce
+docker_version=17.03.2.ce
 cni_version=0.6.0
 etcd_version=3.2.9
 flannel_version=0.9.0

@@ -48,7 +48,7 @@ data:
   Corefile: |
     .:53 {
         errors
-        log stdout
+        log . stdout "{remote} - [{when}] "{type} {class} {name} {proto} {size} {>do} {>bufsize}" {rcode} {rsize} {duration}"
         health
         kubernetes {{ cluster_domain }} {{ service_cidr }}
         proxy . /etc/resolv.conf
@@ -76,6 +76,8 @@ spec:
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
         scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
+        nais.io/logformat: accesslog_with_processing_time
+        nais.io/logtransform: dns_loglevel
     spec:
       serviceAccountName: coredns
       containers:

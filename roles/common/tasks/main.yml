@@ -4,7 +4,7 @@
     - /etc/pki/ca-trust/source/anchors
     - /etc/kubernetes/kubeconfigs
     - /etc/kubernetes/pki
-    - /etc/systemd/system/docker.service.d 
+    - /etc/systemd/system/docker.service.d
 
 - name: Install proxy cert
   copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
@@ -55,11 +55,26 @@
 
 - name: Docker proxy settings
   template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf
+  when: proxy_env.http_proxy|default("") != ""
+
+# Check if sensu-core exist
+- name: Check if sensu core is installed
+  command: rpm -q sensu
+  ignore_errors: yes
+  register: sensu_rpm_check
+
+# Check if puppet-agent exist
+- name: Check if puppet-agent is installed
+  command: rpm -q puppet-agent
+  ignore_errors: yes
+  register: puppet_agent_rpm_check
 
 - name: Disable puppet agent
   shell: /bin/puppet agent --disable
   ignore_errors: yes
+  when: puppet_agent_rpm_check.rc == 0
 
 - name: Disable puppet agent (preprod)
   shell: /opt/puppet/bin/puppet agent --disable
   ignore_errors: yes
+  when: puppet_agent_rpm_check.rc == 0

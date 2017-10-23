@@ -1,7 +1,7 @@
 ---
 # Remove things created by common initialization play (webproxy, certificates, repositories)
 - hosts: all
-  user: deployer
+  user: "{{ remote_user }}"
   become: yes
   tasks:
     - name: Remove kubernetes repository
@@ -42,7 +42,7 @@
       ignore_errors: yes
 
 - hosts: masters
-  user: deployer
+  user: "{{ remote_user }}"
   become: yes
   tasks:
     - name: Remove files
@@ -63,7 +63,7 @@
       ignore_errors: yes
 
 - hosts: workers
-  user: deployer
+  user: "{{ remote_user }}"
   become: yes
   tasks:
     - name: Remove files
@@ -77,7 +77,7 @@
       file: path=target state=absent
 
 - hosts: all
-  user: deployer
+  user: "{{ remote_user }}"
   become: yes
   tasks:
   - name: Stop services

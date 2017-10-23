@@ -108,7 +108,10 @@ Variables
 |domain|devillo.no|Domain name of your k8s nodes, required to issue certificates|
 |cluster_domain|nais.local|Domain name inside your cluster|
 |cluster_lb_suffix|nais.devillo.no|Domain your external services will be exposed|
-
+|nais_http_proxy|http://webproxy.domain.com:8088|Address to proxy for http traffic|
+|nais_https_proxy|http://webproxy.domain.com:8088|Address to proxy for https traffic|
+|nais_no_proxy|"localhost,127.0.0.1,.local,.devillo.no,{{ansible_default_ipv4.address}}"|This variable should contain a comma-separated list of domain extensions proxy should _not_ be used for.|
+|nais_remote_user|deployer|User for remote access to the hosts configured under [masters] and [workers] section. Defaults to deployer|
 
 Example inventory file
 ---

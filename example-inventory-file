@@ -25,3 +25,11 @@ pod_network_cidr=192.168.0.0/16
 domain=devillo.no
 cluster_domain=nais.local
 cluster_lb_suffix=nais.domain.com
+
+# If you need a proxy to access internet, configure the following variables.
+nais_http_proxy=http://webproxy-utvikler.nav.no:8088
+nais_https_proxy=http://webproxy-utvikler.nav.no:8088
+nais_no_proxy="localhost,127.0.0.1,.local,.adeo.no,.nav.no,.aetat.no,.devillo.no,.oera.no,{{ansible_default_ipv4.address}}"
+
+# Remote username. Defaults to deployer if not set
+nais_remote_user=deployer

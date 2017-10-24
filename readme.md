@@ -92,7 +92,7 @@ Variables
 |dashboard_version|1.7.1|https://github.com/kubernetes/dashboard/releases|
 |coredns_version|011|https://github.com/coredns/coredns/releases|
 |traefik_version|1.4-alpine|https://hub.docker.com/r/library/traefik/tags/|
-|helm_version|2.6.2|https://github.com/kubernetes/helm/releases|
+|helm_version|2.7.0|https://github.com/kubernetes/helm/releases|
 |heapster_version|1.4.3|https://github.com/kubernetes/heapster/releases|
 |heapster_influxdb_version|1.3.3|https://gcr.io/google_containers/heapster-influxdb-amd64|
 
@@ -129,7 +129,7 @@ k8s_version=1.8.1
 dashboard_version=1.7.1
 coredns_version="011"
 traefik_version=1.4-alpine
-helm_version=2.6.2
+helm_version=2.7.0
 heapster_version=1.4.3
 heapster_influxdb_version=1.3.3
 master_ip=10.181.160.89

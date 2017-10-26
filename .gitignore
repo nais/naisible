@@ -7,3 +7,6 @@ pki/
 target/
 ansible.cfg
 .ideatemplatetest-playbook.yaml
+testinventory
+templatetest-playbook.yaml
+testtemplate.j2

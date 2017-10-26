@@ -6,4 +6,4 @@ inventory/
 pki/
 target/
 ansible.cfg
-.idea
+.ideatemplatetest-playbook.yaml

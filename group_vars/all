@@ -1,5 +1,7 @@
 ---
 proxy_env:
-      http_proxy: http://webproxy-utvikler.nav.no:8088
-      https_proxy: http://webproxy-utvikler.nav.no:8088
-      no_proxy: localhost,127.0.0.1,.local,.adeo.no,.nav.no,.aetat.no,.devillo.no,.oera.no,{{ansible_default_ipv4.address}}
+    http_proxy: "{{ nais_http_proxy | default(None) }}"
+    https_proxy: "{{ nais_https_proxy | default(None) }}"
+    no_proxy: "{{ nais_no_proxy | default(None) }}"
+
+remote_user: "{{ nais_remote_user | default('deployer') }}"

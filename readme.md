@@ -84,15 +84,17 @@ Variables
 #### Version specific variables
 |Variable name|Version|Version information location|
 |---|---|---|
-|docker_version|17.03.1.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
-|cni_version|0.5.1|https://github.com/containernetworking/cni/releases|
-|etcd_version|3.1.8|https://github.com/coreos/etcd/releases/|
-|flannel_version|0.7.1|https://github.com/coreos/flannel/releases|
-|k8s_version|1.6.3|https://github.com/kubernetes/kubernetes/releases|
-|dashboard_version|1.6.1|https://github.com/kubernetes/dashboard/releases|
-|coredns_version|latest|https://github.com/coredns/coredns/releases|
-|traefik_version|1.3-alpine|https://hub.docker.com/r/library/traefik/tags/|
-|helm_version|2.4.2|https://github.com/kubernetes/helm/releases|
+|docker_version|17.03.2.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
+|cni_version|0.6.0|https://github.com/containernetworking/cni/releases|
+|etcd_version|3.2.9|https://github.com/coreos/etcd/releases/|
+|flannel_version|0.9.0|https://github.com/coreos/flannel/releases|
+|k8s_version|1.8.1|https://github.com/kubernetes/kubernetes/releases|
+|dashboard_version|1.7.1|https://github.com/kubernetes/dashboard/releases|
+|coredns_version|011|https://github.com/coredns/coredns/releases|
+|traefik_version|1.4-alpine|https://hub.docker.com/r/library/traefik/tags/|
+|helm_version|2.7.0|https://github.com/kubernetes/helm/releases|
+|heapster_version|1.4.3|https://github.com/kubernetes/heapster/releases|
+|heapster_influxdb_version|1.3.3|https://gcr.io/google_containers/heapster-influxdb-amd64|
 
 #### Cluster specific variables
 |Variable name|Value|Information|
@@ -106,7 +108,10 @@ Variables
 |domain|devillo.no|Domain name of your k8s nodes, required to issue certificates|
 |cluster_domain|nais.local|Domain name inside your cluster|
 |cluster_lb_suffix|nais.devillo.no|Domain your external services will be exposed|
-
+|nais_http_proxy|http://webproxy.domain.com:8088|Address to proxy for http traffic|
+|nais_https_proxy|http://webproxy.domain.com:8088|Address to proxy for https traffic|
+|nais_no_proxy|"localhost,127.0.0.1,.local,.devillo.no,{{ansible_default_ipv4.address}}"|This variable should contain a comma-separated list of domain extensions proxy should _not_ be used for.|
+|nais_remote_user|deployer|User for remote access to the hosts configured under [masters] and [workers] section. Defaults to deployer|
 
 Example inventory file
 ---
@@ -119,17 +124,17 @@ worker1.domain.com
 worker2.domain.com
 
 [all:vars]
-docker_version=17.03.1.ce
-cni_version=0.5.1
-etcd_version=3.1.8
-flannel_version=0.7.1
-k8s_version=1.6.3
-dashboard_version=1.6.1
-coredns_version=latest
-traefik_version=1.3-alpine
-helm_version=2.4.2
-heapster_version=1.3.0
-heapster_influxdb_version=1.1.1
+docker_version=17.03.2.ce
+cni_version=0.6.0
+etcd_version=3.2.9
+flannel_version=0.9.0
+k8s_version=1.8.1
+dashboard_version=1.7.1
+coredns_version="011"
+traefik_version=1.4-alpine
+helm_version=2.7.0
+heapster_version=1.4.3
+heapster_influxdb_version=1.3.3
 master_ip=10.181.160.89
 cluster_name=nais
 service_cidr=10.254.0.0/16

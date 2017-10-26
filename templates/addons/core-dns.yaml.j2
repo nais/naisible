@@ -48,11 +48,9 @@ data:
   Corefile: |
     .:53 {
         errors
-        log stdout
+        log . stdout "{remote} - [{when}] \"{type} {class} {name} {proto} {size} {>do} {>bufsize}\" {rcode} {rsize} {duration}"
         health
-        kubernetes {{ cluster_domain }} {
-          cidrs {{ service_cidr }}
-        }
+        kubernetes {{ cluster_domain }} {{ service_cidr }}
         proxy . /etc/resolv.conf
         cache 30
     }

@@ -2,7 +2,7 @@
 
 
 - hosts: masters
-  user: deployer
+  user: "{{ remote_user }}"
   become: yes
   vars:
     HOST_COUNT: "{{ groups['all'] | length }}"
@@ -42,7 +42,7 @@
       failed_when: matches_spec.stdout != "1"
 
 - hosts: workers
-  user: deployer
+  user: "{{ remote_user }}"
   become: yes
   tasks:
 

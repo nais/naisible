@@ -81,7 +81,7 @@ Hosts
 
 Variables
 ---
-#### Version specific variables
+#### Version specific variables. Configured in group_vars/all
 |Variable name|Version|Version information location|
 |---|---|---|
 |docker_version|17.03.2.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
@@ -113,8 +113,10 @@ Variables
 |nais_no_proxy|"localhost,127.0.0.1,.local,.devillo.no,{{ansible_default_ipv4.address}}"|This variable should contain a comma-separated list of domain extensions proxy should _not_ be used for.|
 |nais_remote_user|deployer|User for remote access to the hosts configured under [masters] and [workers] section. Defaults to deployer|
 
-Example inventory file
+Example inventory files
 ---
+
+#### 3 node cluster
 ```
 [masters]
 master.domain.com
@@ -124,17 +126,6 @@ worker1.domain.com
 worker2.domain.com
 
 [all:vars]
-docker_version=17.03.2.ce
-cni_version=0.6.0
-etcd_version=3.2.9
-flannel_version=0.9.0
-k8s_version=1.8.1
-dashboard_version=1.7.1
-coredns_version="011"
-traefik_version=1.4-alpine
-helm_version=2.7.0
-heapster_version=1.4.3
-heapster_influxdb_version=1.3.3
 master_ip=10.181.160.89
 cluster_name=nais
 service_cidr=10.254.0.0/16
@@ -145,3 +136,31 @@ domain=domain.com
 cluster_domain=nais.local
 cluster_lb_suffix=nais.domain.com
 ```
+
+#### HTTP proxy
+3 node cluster with a HTTP proxy to internett. Uses a remote user 
+named `deployuser` to access _[master]_ and _[worker]_ hosts. 
+```
+[masters]
+master.domain.com
+
+[workers]
+worker1.domain.com
+worker2.domain.com
+
+[all:vars]
+master_ip=10.181.160.89
+cluster_name=nais
+service_cidr=10.254.0.0/16
+kubernetes_default_ip=10.254.0.1
+cluster_dns_ip=10.254.0.53
+pod_network_cidr=192.168.0.0/16
+domain=domain.com
+cluster_domain=nais.local
+cluster_lb_suffix=nais.domain.com
+nais_http_proxy=http://webproxy.domain.com:8088
+nais_https_proxy=http://webproxy.domain.com:8088
+nais_no_proxy="localhost,127.0.0.1,.local,.domain.com,.devillo.no,{{ansible_default_ipv4.address}}"
+nais_remote_user=deployuser
+```
+

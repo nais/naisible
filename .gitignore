@@ -10,3 +10,4 @@ ansible.cfg
 testinventory
 templatetest-playbook.yaml
 testtemplate.j2
+.idea/

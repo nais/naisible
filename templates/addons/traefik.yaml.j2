@@ -67,22 +67,9 @@ spec:
         nais.io/type: worker
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
-      volumes:
-        - name: config
-          configMap:
-            name: traefik-conf
-        - name: traefik-tls
-          secret:
-            secretName: traefik
-                            
       containers:
       - image: traefik:{{ traefik_version }}
         name: traefik-ingress-lb
-        volumeMounts:
-          - mountPath: /config
-            name: config
-          - mountPath: /var/run/secrets/nais.io
-            name: traefik-tls
         resources:
           limits:
             cpu: 400m
@@ -91,11 +78,10 @@ spec:
             cpu: 200m
             memory: 64Mi
         ports:
-        - containerPort: 443
-          hostPort: 443
+        - containerPort: 80
+          hostPort: 80
         - containerPort: 8080
         args:
-        - --configfile=/config/traefik.toml
         - --web
         - --kubernetes
         - --web.metrics
@@ -128,18 +114,3 @@ spec:
           serviceName: traefik-web-ui
           servicePort: 80
 
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: traefik-conf
-  namespace: kube-system
-data:
-  traefik.toml: |
-    [entryPoints]
-      [entryPoints.https]
-      address = ":443"
-        [entryPoints.https.tls]
-          [[entryPoints.https.tls.certificates]]
-          CertFile = "/var/run/secrets/nais.io/tls.crt"
-          KeyFile = "/var/run/secrets/nais.io/tls.key"

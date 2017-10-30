@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: debug
+  namespace: nais
+  labels:
+    k8s-app: debug
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: debug
+    spec:
+      containers:
+      - name: debug
+        image: oyvindio/debug

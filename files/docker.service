@@ -6,7 +6,7 @@ After=flannel.service
 
 [Service]
 EnvironmentFile=/var/lib/docker/docker_opts.env
-ExecStart=/usr/bin/dockerd $DOCKER_OPTS
+ExecStart=/usr/bin/dockerd $DOCKER_OPTS --default-ulimit nofile=65536:65536
 
 Restart=always
 StartLimitInterval=0

@@ -40,6 +40,15 @@
         - monitoring-influxdb
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
+   
+    - name: Ensure node taints are set
+      shell: "/usr/bin/kubectl describe no {{ item.1 }} | grep  {{ item.0.taint }} | wc -l" 
+      with_subelements:
+      - "{{ taints|default([]) }}"
+      - nodes
+      register: matches_spec
+      failed_when: matches_spec.stdout != "1"
+
 
 - hosts: workers
   user: "{{ remote_user }}"

@@ -57,6 +57,7 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
       1. core-dns
       1. traefik
       1. heapster
+   1. (Optional) Taint nodes
    1. Enable monitoring   
 
 ### Teardown Playbook
@@ -163,4 +164,16 @@ nais_https_proxy=http://webproxy.domain.com:8088
 nais_no_proxy="localhost,127.0.0.1,.local,.domain.com,.devillo.no,{{ansible_default_ipv4.address}}"
 nais_remote_user=deployuser
 ```
+#### Taiting nodes:
+
+inventory_dir/group_vars/masters:
+```
+taints:
+- taint: "key1=value1:NoExecute"
+  nodes:
+  - node1
+  - node2
+```
+
+
 

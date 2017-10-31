@@ -344,6 +344,18 @@
     environment: "{{ proxy_env }}"
     shell: /usr/bin/helm init --service-account=tiller --history-max 5 --upgrade
 
+# Setup taints on nodes
+- hosts: masters
+  user: "{{ remote_user }}"
+  become: yes
+  
+  tasks:
+  - name: Taint nodes
+    shell: /usr/bin/kubectl taint nodes --overwrite=true "{{ item.1 }}" "{{ item.0.taint }}" 
+    with_subelements:
+    - "{{ taints|default([]) }}"
+    - nodes 
+
 # Configure sensu cluster metrics
 - hosts: all
   user: "{{ remote_user }}"

@@ -353,7 +353,7 @@
   - name: Taint nodes
     shell: /usr/bin/kubectl taint nodes --overwrite=true "{{ item.1 }}" "{{ item.0.taint }}" 
     with_subelements:
-    - "{{ taints }}"
+    - "{{ taints|default([]) }}"
     - nodes 
 
 # Configure sensu cluster metrics

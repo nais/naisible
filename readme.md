@@ -30,10 +30,12 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Fetch existing cluster certificates, if they exist
 1. Ansible master node
    1. Create cluster certificates, if not fetched from NAIS master
+1. All etcd Nodes
+   1. Configure cluster
+1. First etcd Node
+   1. Add flannel configuration to etcd
 1. Master Node
-   1. Install and configure ETCD
    1. Copy cluster certificates
-   1. Add flannel configuration to ETCD
 1. All nodes
    1. Install and enable Flannel
    1. Install and enable Docker
@@ -77,6 +79,11 @@ Hosts
 [workers]
 <K8S-worker-hostname-1>
 <K8S-worker-hostname-n>
+```
+```
+[etcd]
+<etcd-node-hostname-1>
+<etcd-node-hostname-n>
 ```
 
 Variables

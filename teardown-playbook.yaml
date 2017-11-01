@@ -67,6 +67,9 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
+    - name: Disable etcd
+      systemd: name=etcd enabled=no state=stopped 
+      ignore_errors: yes
     - name: Remove files
       file: path={{ item }} state=absent 
       with_items:
@@ -76,9 +79,6 @@
         - /usr/bin/etcdctl
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
-    - name: Disable etcd
-      systemd: name=etcd enabled=no state=stopped 
-      ignore_errors: yes
 
 - hosts: workers
   user: "{{ remote_user }}"

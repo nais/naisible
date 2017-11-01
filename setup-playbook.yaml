@@ -3,22 +3,22 @@
   user: "{{ remote_user }}"
   become: yes
   roles:
-    - proxy
+  - { role: proxy, when: nais_http_proxy is defined }
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
   roles:
-    - k8s_common
+  - k8s_common
 
 - hosts: masters
   user: "{{ remote_user }}"
   roles:
-    - fetch_existing_certificates
+  - fetch_existing_certificates
 
 - hosts: localhost
   roles:
-    - create_certificates
+  - create_certificates
 
 - hosts: etcd
   user: "{{ remote_user }}"
@@ -357,7 +357,7 @@
     shell: /usr/bin/helm init --service-account=tiller --history-max 5 --upgrade
 
 # Configure sensu cluster metrics
-- hosts: all
+- hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
 

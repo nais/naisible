@@ -7,7 +7,6 @@ Naisable is a collection of ansible playbooks used to build, test and tear down 
 * [SSH access to the hosts using keys](https://www.ssh.com/ssh/copy-id)
 * A user with passwordless sudo privileges on the hosts
 
-
 ## Building and testing an environment
 ```sh
 ansible-playbook -i inventory-file setup-playbook.yaml &&\

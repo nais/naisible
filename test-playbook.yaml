@@ -8,6 +8,11 @@
     shell: /bin/pgrep etcd | wc -l 
     register: etcd_process_count
     failed_when: etcd_process_count.stdout != "1"
+  - name: Ensure cluster is healthy
+    shell: /usr/bin/etcdctl cluster-health | tail -n1
+    register: etcd_health_status
+    failed_when: etcd_health_status.stdout != "cluster is healthy"
+ 
 
 - hosts: masters
   user: "{{ remote_user }}"

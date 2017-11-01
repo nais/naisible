@@ -1,10 +1,14 @@
+{% set etcd_urls = [] -%}
+{% for host in groups['etcd'] -%}
+  {% set _ = etcd_urls.append("http://%s:2379" % (host)) -%}
+{% endfor -%}
 [Unit]
 Description=flannel
 Documentation=https://coreos.com/flannel
 Before=docker.service
 
 [Service]
-ExecStart=/usr/bin/flanneld -etcd-endpoints=http://{{ master_ip }}:2379 -etcd-prefix=/nais/network
+ExecStart=/usr/bin/flanneld --etcd-endpoints={{ etcd_urls | join(",") }} --etcd-prefix=/nais/network
 
 Restart=always
 StartLimitInterval=0

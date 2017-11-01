@@ -1,2 +1,0 @@
-- name: update_cert_index
-  shell: /usr/bin/update-ca-trust

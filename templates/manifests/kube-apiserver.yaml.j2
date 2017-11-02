@@ -30,7 +30,7 @@ spec:
     - --oidc-issuer-url={{oidc-issuer-url}}
     - --oidc-client-id={{oidc-client-id}}
     - --oidc-username-claim={{oidc-username-claim}}
-    - --oidc-groups-claim={{groups}}
+    - --oidc-groups-claim={{oidc-groups-claim}}
     - --advertise-address={{ansible_default_ipv4.address}}
     - --etcd-servers=http://127.0.0.1:2379
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}

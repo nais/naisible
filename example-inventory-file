@@ -22,3 +22,9 @@ nais_no_proxy="localhost,127.0.0.1,.local,.adeo.no,.nav.no,.aetat.no,.devillo.no
 
 # Remote username. Defaults to deployer if not set
 nais_remote_user=deployer
+
+#OpenId Connect
+oidc-issuer-url=https://sts.windows.net/62366534-1ec3-4962-8869/
+oidc-client-id=spn:a0e7d619-2cf2-4631-a6f0
+oidc-username-claim=upn
+oidc-groups-claim=groups

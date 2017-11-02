@@ -112,10 +112,10 @@ Variables
 |nais_https_proxy|http://webproxy.domain.com:8088|Address to proxy for https traffic|
 |nais_no_proxy|"localhost,127.0.0.1,.local,.devillo.no,{{ansible_default_ipv4.address}}"|This variable should contain a comma-separated list of domain extensions proxy should _not_ be used for.|
 |nais_remote_user|deployer|User for remote access to the hosts configured under [masters] and [workers] section. Defaults to deployer|
-|oidc-issuer-url|https://sts.windows.net/62366534-1ec3-4962-8869/ |URL of the provider which allows the API server to discover public signing keys.https://kubernetes.io/docs/admin/authentication/#openid-connect-tokens|
-|oidc-client-id|spn:a0e7d619-2cf2-4631-a6f0|A client id that all tokens must be issued for.|
-|oidc-username-claim|upn|JWT claim to use as the user name|
-|oidc-groups-claim|groups|JWT claim to use as the user’s group. If the claim is present it must be an array of strings.|
+|oidc_issuer_url|https://sts.windows.net/62366534-1ec3-4962-8869/ |URL of the provider which allows the API server to discover public signing keys. https://kubernetes.io/docs/admin/authentication/#openid-connect-tokens|
+|oidc_client_id|spn:a0e7d619-2cf2-4631-a6f0|A client id that all tokens must be issued for.|
+|oidc_username_claim|upn|JWT claim to use as the user name|
+|oidc_groups_claim|groups|JWT claim to use as the user’s group. If the claim is present it must be an array of strings.|
 
 Example inventory files
 ---

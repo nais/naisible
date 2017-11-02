@@ -27,10 +27,10 @@ spec:
     - --insecure-bind-address=127.0.0.1
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
     - --authorization-mode=RBAC
-    - --oidc-issuer-url=https://sts.windows.net/62366534-1ec3-4962-8869-9b5535279d0b/
-    - --oidc-client-id=spn:a0e7d619-2cf2-4631-a6f0-4f17ed95f153
-    - --oidc-username-claim=upn
-    - --oidc-groups-claim=groups
+    - --oidc-issuer-url={{oidc-issuer-url}}
+    - --oidc-client-id={{oidc-client-id}}
+    - --oidc-username-claim={{oidc-username-claim}}
+    - --oidc-groups-claim={{groups}}
     - --advertise-address={{ansible_default_ipv4.address}}
     - --etcd-servers=http://127.0.0.1:2379
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}

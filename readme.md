@@ -49,6 +49,10 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Copy cluster certificates
    1. Install and enable Kubelet
    1. Enable monitoring
+1. All nodes
+   1. Setup kubeconfig for API server access
+   1. Taint nodes 
+   1. Label nodes
 1. Master Node
    1. Install and enable Kubelet
    1. Install and enable Helm
@@ -116,6 +120,13 @@ Variables
 |oidc_client_id|spn:a0e7d619-2cf2-4631-a6f0|A client id that all tokens must be issued for.|
 |oidc_username_claim|upn|JWT claim to use as the user name|
 |oidc_groups_claim|groups|JWT claim to use as the user’s group. If the claim is present it must be an array of strings.|
+
+#### Host group specific variables
+|Variable name|Value|Information|
+|---|---|---|
+|node_taints| - key=value:NoSchedule| List of taints to set on a a node (Optional)|
+|node_labels| - key=value:| List of labels to set on a node (Optional)|
+
 
 Example inventory files
 ---

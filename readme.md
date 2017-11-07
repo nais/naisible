@@ -124,8 +124,8 @@ Variables
 #### Host group specific variables
 |Variable name|Value|Information|
 |---|---|---|
-|node_taints| - key=value:NoSchedule| List of taints to set on a a node (Optional)|
-|node_labels| - key=value:| List of labels to set on a node (Optional)|
+|node_taints|key=value:NoSchedule| List of taints to set on a a node (Optional)|
+|node_labels|key=value| List of labels to set on a node (Optional)|
 
 
 Example inventory files

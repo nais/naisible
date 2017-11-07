@@ -39,7 +39,9 @@
         - heapster
         - monitoring-influxdb
       register: matches_spec
-      failed_when: matches_spec.stdout != "1"
+      retries: 6
+      delay: 9
+      until: matches_spec.stdout == "1"
 
 - hosts: workers
   user: "{{ remote_user }}"

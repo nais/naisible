@@ -178,3 +178,34 @@ nais_https_proxy=http://webproxy.domain.com:8088
 nais_no_proxy="localhost,127.0.0.1,.local,.domain.com,.devillo.no,{{ansible_default_ipv4.address}}"
 nais_remote_user=deployuser
 ```
+#### Node taints and labels
+
+Example of labeling and tainting two nodes(worker2.domain.com and worker3.domain.com)
+```
+# file: hosts
+
+[masters]
+master.domain.com
+
+[workers]
+worker1.domain.com
+worker2.domain.com
+worker3.domain.com
+
+[storage_nodes]
+worker2.domain.com
+worker3.domain.com
+
+# file: group_vars/storage_nodes
+
+node_taints:
+  - nais.io/storage-node=true:NoSchedule
+
+node_labels:
+  - nais.io/storage-nodei=true
+  - nais.io/role=worker
+
+```
+
+
+ 

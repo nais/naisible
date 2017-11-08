@@ -303,7 +303,7 @@
     with_items: " {{ node_taints | default([]) }} "
 
   - name: Setup node labels
-    shell: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf label nodes {{ inventory_hostname }} {{ item }}
+    shell: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}
     with_items: " {{ node_labels | default([]) }} "
 
 

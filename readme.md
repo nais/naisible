@@ -49,6 +49,10 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Copy cluster certificates
    1. Install and enable Kubelet
    1. Enable monitoring
+1. All nodes
+   1. Setup kubeconfig for API server access
+   1. Taint nodes 
+   1. Label nodes
 1. Master Node
    1. Install and enable Kubelet
    1. Install and enable Helm
@@ -117,6 +121,13 @@ Variables
 |oidc_username_claim|upn|JWT claim to use as the user name|
 |oidc_groups_claim|groups|JWT claim to use as the user’s group. If the claim is present it must be an array of strings.|
 
+#### Host group specific variables
+|Variable name|Value|Information|
+|---|---|---|
+|node_taints|key=value:NoSchedule| List of taints to set on a a node (Optional)|
+|node_labels|key=value| List of labels to set on a node (Optional)|
+
+
 Example inventory files
 ---
 
@@ -167,3 +178,34 @@ nais_https_proxy=http://webproxy.domain.com:8088
 nais_no_proxy="localhost,127.0.0.1,.local,.domain.com,.devillo.no,{{ansible_default_ipv4.address}}"
 nais_remote_user=deployuser
 ```
+#### Node taints and labels
+
+Example of labeling and tainting two nodes(worker2.domain.com and worker3.domain.com)
+```
+# file: hosts
+
+[masters]
+master.domain.com
+
+[workers]
+worker1.domain.com
+worker2.domain.com
+worker3.domain.com
+
+[storage_nodes]
+worker2.domain.com
+worker3.domain.com
+
+# file: group_vars/storage_nodes
+
+node_taints:
+  - nais.io/storage-node=true:NoSchedule
+
+node_labels:
+  - nais.io/storage-nodei=true
+  - nais.io/role=worker
+
+```
+
+
+ 

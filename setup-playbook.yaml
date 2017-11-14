@@ -10,6 +10,11 @@
   become: yes
   roles:
   - k8s_common
+  tasks:
+  - name: Enable IP forwarding
+    iptables:
+      chain: FORWARD
+      policy: ACCEPT
 
 - hosts: masters
   user: "{{ remote_user }}"
@@ -61,8 +66,6 @@
       - sa.key
       - sa.pub
 
-
-
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
@@ -113,10 +116,6 @@
   - name: Disable swap
     command: swapoff -a
 
-  - name: Enable IP forwarding
-    iptables:
-      chain: FORWARD
-      policy: ACCEPT
 
   - name: Download kubernetes node binaries
     environment: "{{ proxy_env }}"

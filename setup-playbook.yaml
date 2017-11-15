@@ -1,42 +1,40 @@
 ---
-# Common initialization play (webproxy, certificates, repositories)
 - hosts: all
   user: "{{ remote_user }}"
   become: yes
   roles:
-    - common
+  - { role: proxy, when: nais_http_proxy is defined }
+
+- hosts: masters:workers
+  user: "{{ remote_user }}"
+  become: yes
+  roles:
+  - k8s_common
+  tasks:
+  - name: Enable IP forwarding
+    iptables:
+      chain: FORWARD
+      policy: ACCEPT
 
 - hosts: masters
   user: "{{ remote_user }}"
   roles:
-    - fetch_existing_certificates
+  - fetch_existing_certificates
 
 - hosts: localhost
   roles:
-    - create_certificates
+  - create_certificates
 
-# Configure kubernetes Master node
-- hosts: masters
+- hosts: etcd
   user: "{{ remote_user }}"
   become: yes
   roles:
     - etcd
 
+- hosts: etcd[0]
+  user: "{{ remote_user }}"
+  become: yes
   tasks:
-
-  - name: Copy certificates
-    copy: src=target/pki/{{ item }} dest=/etc/kubernetes/pki/
-    with_items:
-      - admin.pem
-      - admin-key.pem
-      - ca.pem
-      - ca-key.pem
-      - kube-apiserver-server-key.pem
-      - kube-apiserver-server.pem
-      - sa.key
-      - sa.pub
-
-
   - name: Check if flannel config exists (OK if this fails)
     shell: /usr/bin/etcdctl ls /nais/network/config
     environment:
@@ -50,7 +48,24 @@
       - ETCDCTL_API: 2
     when: flannelconfig.rc != 0
 
-- hosts: all
+# Configure kubernetes Master node
+- hosts: masters
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+  - name: Copy certificates
+    copy: src=target/pki/{{ item }} dest=/etc/kubernetes/pki/
+    with_items:
+      - admin.pem
+      - admin-key.pem
+      - ca.pem
+      - ca-key.pem
+      - kube-apiserver-server-key.pem
+      - kube-apiserver-server.pem
+      - sa.key
+      - sa.pub
+
+- hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
   tasks:
@@ -100,10 +115,6 @@
   - name: Disable swap
     command: swapoff -a
 
-  - name: Enable IP forwarding
-    iptables:
-      chain: FORWARD
-      policy: ACCEPT
 
   - name: Download kubernetes node binaries
     environment: "{{ proxy_env }}"
@@ -359,7 +370,7 @@
     shell: /usr/bin/helm init --service-account=tiller --history-max 5 --upgrade
 
 # Configure sensu cluster metrics
-- hosts: all
+- hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
 

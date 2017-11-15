@@ -1,19 +1,30 @@
 ---
 
+- hosts: etcd
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+  - name: Ensure required processes is running
+    shell: /bin/pgrep etcd | wc -l 
+    register: etcd_process_count
+    failed_when: etcd_process_count.stdout != "1"
+  - name: Ensure cluster is healthy
+    shell: /usr/bin/etcdctl cluster-health | tail -n1
+    register: etcd_health_status
+    failed_when: etcd_health_status.stdout != "cluster is healthy"
+ 
 
 - hosts: masters
   user: "{{ remote_user }}"
   become: yes
   vars:
-    HOST_COUNT: "{{ groups['all'] | length }}"
+    K8S_HOST_COUNT: "{{ (groups['workers'] | length) + (groups['masters'] | length) }}"
   tasks:
-
     - name: Ensure required processes is running
       shell: /bin/pgrep {{ item }} | wc -l 
       with_items:
         - dockerd
         - kubelet
-        - etcd
       register: process_count
       failed_when: process_count.stdout != "1"
 
@@ -28,7 +39,7 @@
     - name: Verify that all nodes are in Ready-state
       shell: /usr/bin/kubectl get nodes | grep -iw 'Ready' | wc -l 
       register: ready_count
-      failed_when: ready_count.stdout != "{{ HOST_COUNT }}"
+      failed_when: ready_count.stdout != "{{ K8S_HOST_COUNT }}"
 
     - name: Ensure addons are deployed and available
       shell: "/usr/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep '\"availableReplicas\": 1' | wc -l"
@@ -47,7 +58,6 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
-
     - name: Ensure required processes is running
       shell: /bin/pgrep {{ item }} | wc -l 
       with_items:
@@ -63,6 +73,7 @@
       with_items:
         - docker0
         - flannel.1 
+
 - hosts: all
   user: "{{ remote_user }}"
   become: yes
@@ -82,5 +93,4 @@
         - "{{ node_labels|default([]) }}"
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
-
 

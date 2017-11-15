@@ -1,9 +1,25 @@
+{% set local_ip = ansible_default_ipv4.address -%}
+{% set all_etcd = [] -%}
+{% for host in groups['etcd'] -%}
+  {% set other_ip = hostvars[host]['ansible_default_ipv4']['address'] -%}
+  {% set shortname = hostvars[host]['ansible_hostname'] -%}
+  {% set _ = all_etcd.append("%s=http://%s:2380" % (shortname, other_ip)) -%}
+{% endfor -%}
+
 [Unit]
 Description=etcd
 Documentation=https://coreos.com/etcd/
 
 [Service]
-ExecStart=/usr/bin/etcd --listen-client-urls=http://0.0.0.0:2379 --advertise-client-urls=http://0.0.0.0:2379 --data-dir=/var/lib/etcd
+ExecStart=/usr/bin/etcd --name {{ ansible_hostname }} --initial-advertise-peer-urls http://{{ local_ip }}:2380 \
+  --listen-peer-urls http://{{ local_ip }}:2380 \
+  --listen-client-urls http://{{ local_ip }}:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls http://{{ local_ip }}:2379 \
+  --initial-cluster-token {{ cluster_name }}-etcd \
+  --initial-cluster {{all_etcd|join(',')}} \
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Type=notify
 Restart=always
 StartLimitInterval=0
 RestartSec=10

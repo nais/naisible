@@ -3,6 +3,9 @@
 [workers]
 <K8S-worker-hostname-1>
 <K8S-worker-hostname-n>
+[etcd]
+<etcd-node-hostname-1>
+<etcd-node-hostname-n>
 
 [all:vars]
 master_ip=10.181.160.99

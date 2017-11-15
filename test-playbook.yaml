@@ -50,7 +50,9 @@
         - heapster
         - monitoring-influxdb
       register: matches_spec
-      failed_when: matches_spec.stdout != "1"
+      retries: 6
+      delay: 9
+      until: matches_spec.stdout == "1"
 
 - hosts: workers
   user: "{{ remote_user }}"
@@ -71,3 +73,24 @@
       with_items:
         - docker0
         - flannel.1 
+
+- hosts: all
+  user: "{{ remote_user }}"
+  become: yes
+
+  tasks: 
+
+    - name: Ensure node taints are set
+      shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l "
+      with_items:
+        - "{{ node_taints|default([]) }}"
+      register: matches_spec
+      failed_when: matches_spec.stdout != "1"
+
+    - name: Ensure node labels are set
+      shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l"       
+      with_items:
+        - "{{ node_labels|default([]) }}"
+      register: matches_spec
+      failed_when: matches_spec.stdout != "1"
+

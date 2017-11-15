@@ -1,9 +1,9 @@
 # naisible &middot;  [nais](http://nais.io) &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
-Naisable is a collection of ansible playbooks used to build, test and tear down NAIS kubernetes cluster. 
+Naisable is a collection of ansible playbooks used to build, test and tear down NAIS kubernetes cluster.
 
 ## Prerequisites
 * [Ansible binaries](http://docs.ansible.com/ansible/intro_installation.html)
-* [An inventory file](example-inventory-file) 
+* [An inventory file](example-inventory-file)
 * [SSH access to the hosts using keys](https://www.ssh.com/ssh/copy-id)
 * A user with passwordless sudo privileges on the hosts
 
@@ -24,7 +24,7 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
 1. All nodes
    1. Install Webproxy certificate and update truststore
    1. Add Kubernetes RPM repository
-   1. Add Docker RPM repository 
+   1. Add Docker RPM repository
 1. Master Node
    1. Fetch existing cluster certificates, if they exist
 1. Ansible master node
@@ -50,6 +50,10 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Copy cluster certificates
    1. Install and enable Kubelet
    1. Enable monitoring
+1. All nodes
+   1. Setup kubeconfig for API server access
+   1. Taint nodes 
+   1. Label nodes
 1. Master Node
    1. Install and enable Kubelet
    1. Install and enable Helm
@@ -118,6 +122,17 @@ Variables
 |nais_https_proxy|http://webproxy.domain.com:8088|Address to proxy for https traffic|
 |nais_no_proxy|"localhost,127.0.0.1,.local,.devillo.no,{{ansible_default_ipv4.address}}"|This variable should contain a comma-separated list of domain extensions proxy should _not_ be used for.|
 |nais_remote_user|deployer|User for remote access to the hosts configured under [masters] and [workers] section. Defaults to deployer|
+|oidc_issuer_url|https://sts.windows.net/62366534-1ec3-4962-8869/ |URL of the provider which allows the API server to discover public signing keys. https://kubernetes.io/docs/admin/authentication/#openid-connect-tokens|
+|oidc_client_id|spn:a0e7d619-2cf2-4631-a6f0|A client id that all tokens must be issued for.|
+|oidc_username_claim|upn|JWT claim to use as the user name|
+|oidc_groups_claim|groups|JWT claim to use as the user’s group. If the claim is present it must be an array of strings.|
+
+#### Host group specific variables
+|Variable name|Value|Information|
+|---|---|---|
+|node_taints|key=value:NoSchedule| List of taints to set on a a node (Optional)|
+|node_labels|key=value| List of labels to set on a node (Optional)|
+
 
 Example inventory files
 ---
@@ -144,8 +159,8 @@ cluster_lb_suffix=nais.domain.com
 ```
 
 #### HTTP proxy
-3 node cluster with a HTTP proxy to internett. Uses a remote user 
-named `deployuser` to access _[master]_ and _[worker]_ hosts. 
+3 node cluster with a HTTP proxy to internet. Uses a remote user
+named `deployuser` to access _[master]_ and _[worker]_ hosts.
 ```
 [masters]
 master.domain.com
@@ -169,4 +184,34 @@ nais_https_proxy=http://webproxy.domain.com:8088
 nais_no_proxy="localhost,127.0.0.1,.local,.domain.com,.devillo.no,{{ansible_default_ipv4.address}}"
 nais_remote_user=deployuser
 ```
+#### Node taints and labels
 
+Example of labeling and tainting two nodes(worker2.domain.com and worker3.domain.com)
+```
+# file: hosts
+
+[masters]
+master.domain.com
+
+[workers]
+worker1.domain.com
+worker2.domain.com
+worker3.domain.com
+
+[storage_nodes]
+worker2.domain.com
+worker3.domain.com
+
+# file: group_vars/storage_nodes
+
+node_taints:
+  - nais.io/storage-node=true:NoSchedule
+
+node_labels:
+  - nais.io/storage-nodei=true
+  - nais.io/role=worker
+
+```
+
+
+ 

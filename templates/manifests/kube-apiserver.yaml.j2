@@ -1,3 +1,7 @@
+{% set etcd_urls = [] -%}
+{% for host in groups['etcd'] -%}
+  {% set _ = etcd_urls.append("http://%s:2379" % (host)) -%}
+{% endfor -%}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -5,6 +9,8 @@ metadata:
   labels:
     component: kube-apiserver
     tier: control-plane
+  annotations:
+    nais.io/logformat: glog
   name: kube-apiserver
   namespace: kube-system
 spec:
@@ -34,7 +40,7 @@ spec:
     - --oidc-groups-claim={{oidc_groups_claim}}
 {% endif %}
     - --advertise-address={{ansible_default_ipv4.address}}
-    - --etcd-servers=http://127.0.0.1:2379
+    - --etcd-servers={{ etcd_urls | join(",") }}
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8
@@ -58,6 +64,13 @@ spec:
     - mountPath: /etc/pki
       name: pki
   hostNetwork: true
+  env:
+  - name: https_proxy
+    value: {{ proxy_env.https_proxy }}
+  - name: http_proxy
+    value: {{ proxy_env.http_proxy }}           
+  - name: no_proxy
+    value: {{ proxy_env.no_proxy }}
   volumes:
   - hostPath:
       path: /etc/kubernetes

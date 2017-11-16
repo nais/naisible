@@ -1,17 +1,9 @@
 - name: Ensure directories exist
   file: state=directory path={{ item }}
   with_items:
-    - /etc/pki/ca-trust/source/anchors
     - /etc/kubernetes/kubeconfigs
     - /etc/kubernetes/pki
     - /etc/systemd/system/docker.service.d
-
-- name: Install proxy cert
-  copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
-  notify: update_cert_index
-
-- name: Update certificate CA truststore
-  meta: flush_handlers
 
 - name: Add kubernetes repository
   yum_repository:
@@ -55,7 +47,7 @@
 
 - name: Docker proxy settings
   template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf
-  when: proxy_env.http_proxy|default("") != ""
+  when: nais_http_proxy is defined
 
 # Check if sensu-core exist
 - name: Check if sensu core is installed

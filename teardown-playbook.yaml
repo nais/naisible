@@ -1,6 +1,16 @@
 ---
-# Remove things created by common initialization play (webproxy, certificates, repositories)
+# proxy role
 - hosts: all
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+  - name: Remove certificate
+    file: path=/etc/pki/ca-trust/source/anchors/webproxy.crt state=absent
+  
+  - name: update_cert_index
+    shell: /usr/bin/update-ca-trust
+
+- hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
   tasks:
@@ -61,16 +71,24 @@
         - /root/.helm/repository/repositories.yaml
         - /usr/bin/helm-{{helm_version}}
         - /usr/bin/helm
+        - /etc/sensu/conf.d/nais_master_metrics.json
+
+- hosts: etcd
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+    - name: Disable etcd
+      systemd: name=etcd enabled=no state=stopped 
+      ignore_errors: yes
+    - name: Remove files
+      file: path={{ item }} state=absent 
+      with_items:
         - /usr/bin/etcd-{{etcd_version}}
         - /usr/bin/etcd
         - /usr/bin/etcdctl-{{etcd_version}}
         - /usr/bin/etcdctl
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
-        - /etc/sensu/conf.d/nais_master_metrics.json
-    - name: Disable etcd
-      systemd: name=etcd enabled=no state=stopped 
-      ignore_errors: yes
 
 - hosts: workers
   user: "{{ remote_user }}"
@@ -86,7 +104,7 @@
     - name: Remove target folder
       file: path=target state=absent
 
-- hosts: all
+- hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
   tasks:

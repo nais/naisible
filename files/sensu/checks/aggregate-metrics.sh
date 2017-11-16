@@ -13,12 +13,13 @@ if [[ ${CATEGORY} == master ]]; then
 
     /etc/sensu/plugins/metrics/nais/process-metrics.sh dockerd || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/process-metrics.sh kubelet || AGGREGATERESULT=1
-    /etc/sensu/plugins/metrics/nais/process-metrics.sh etcd || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/interface-metrics.sh docker0 || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/interface-metrics.sh flannel.1 || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/component-metrics.sh controller-manager || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/component-metrics.sh scheduler || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/component-metrics.sh etcd-0 || AGGREGATERESULT=1
+    /etc/sensu/plugins/metrics/nais/component-metrics.sh etcd-1 || AGGREGATERESULT=1
+    /etc/sensu/plugins/metrics/nais/component-metrics.sh etcd-2 || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/nodes-metrics.sh || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/addon-metrics.sh coredns || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/addon-metrics.sh kubernetes-dashboard 2>/dev/null || AGGREGATERESULT=1

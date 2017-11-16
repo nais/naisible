@@ -5,6 +5,8 @@ metadata:
   labels:
     component: kube-controller-manager
     tier: control-plane
+  annotations:
+    nais.io/logformat: glog
   name: kube-controller-manager
   namespace: kube-system
 spec:

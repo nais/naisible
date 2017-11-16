@@ -7,7 +7,6 @@ Naisable is a collection of ansible playbooks used to build, test and tear down 
 * [SSH access to the hosts using keys](https://www.ssh.com/ssh/copy-id)
 * A user with passwordless sudo privileges on the hosts
 
-
 ## Building and testing an environment
 ```sh
 ansible-playbook -i inventory-file setup-playbook.yaml &&\
@@ -30,10 +29,12 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Fetch existing cluster certificates, if they exist
 1. Ansible master node
    1. Create cluster certificates, if not fetched from NAIS master
+1. All etcd Nodes
+   1. Configure cluster
+1. First etcd Node
+   1. Add flannel configuration to etcd
 1. Master Node
-   1. Install and configure ETCD
    1. Copy cluster certificates
-   1. Add flannel configuration to ETCD
 1. All nodes
    1. Install and enable Flannel
    1. Install and enable Docker
@@ -49,6 +50,10 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Copy cluster certificates
    1. Install and enable Kubelet
    1. Enable monitoring
+1. All nodes
+   1. Setup kubeconfig for API server access
+   1. Taint nodes 
+   1. Label nodes
 1. Master Node
    1. Install and enable Kubelet
    1. Install and enable Helm
@@ -77,6 +82,11 @@ Hosts
 [workers]
 <K8S-worker-hostname-1>
 <K8S-worker-hostname-n>
+```
+```
+[etcd]
+<etcd-node-hostname-1>
+<etcd-node-hostname-n>
 ```
 
 Variables
@@ -116,6 +126,13 @@ Variables
 |oidc_client_id|spn:a0e7d619-2cf2-4631-a6f0|A client id that all tokens must be issued for.|
 |oidc_username_claim|upn|JWT claim to use as the user name|
 |oidc_groups_claim|groups|JWT claim to use as the user’s group. If the claim is present it must be an array of strings.|
+
+#### Host group specific variables
+|Variable name|Value|Information|
+|---|---|---|
+|node_taints|key=value:NoSchedule| List of taints to set on a a node (Optional)|
+|node_labels|key=value| List of labels to set on a node (Optional)|
+
 
 Example inventory files
 ---
@@ -167,3 +184,34 @@ nais_https_proxy=http://webproxy.domain.com:8088
 nais_no_proxy="localhost,127.0.0.1,.local,.domain.com,.devillo.no,{{ansible_default_ipv4.address}}"
 nais_remote_user=deployuser
 ```
+#### Node taints and labels
+
+Example of labeling and tainting two nodes(worker2.domain.com and worker3.domain.com)
+```
+# file: hosts
+
+[masters]
+master.domain.com
+
+[workers]
+worker1.domain.com
+worker2.domain.com
+worker3.domain.com
+
+[storage_nodes]
+worker2.domain.com
+worker3.domain.com
+
+# file: group_vars/storage_nodes
+
+node_taints:
+  - nais.io/storage-node=true:NoSchedule
+
+node_labels:
+  - nais.io/storage-nodei=true
+  - nais.io/role=worker
+
+```
+
+
+ 

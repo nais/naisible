@@ -5,6 +5,8 @@ metadata:
   labels:
     component: kube-scheduler
     tier: control-plane
+  annotations:
+    nais.io/logformat: glog
   name: kube-scheduler
   namespace: kube-system
 spec:

@@ -4,6 +4,7 @@
     - /etc/kubernetes/kubeconfigs
     - /etc/kubernetes/pki
     - /etc/systemd/system/docker.service.d
+    - /etc/docker
 
 - name: Add kubernetes repository
   yum_repository:

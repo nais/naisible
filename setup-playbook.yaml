@@ -85,6 +85,11 @@
     notify:
       - restart_docker
 
+  - name: Setup docker daemon
+    copy: src=files/daemon.json  dest=/etc/docker/daemon.json
+    notify:
+      - restart_docker
+
   - name: Start and enable docker
     systemd:
       daemon_reload=yes

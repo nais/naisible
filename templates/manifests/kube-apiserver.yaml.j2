@@ -9,6 +9,8 @@ metadata:
   labels:
     component: kube-apiserver
     tier: control-plane
+  annotations:
+    nais.io/logformat: glog
   name: kube-apiserver
   namespace: kube-system
 spec:

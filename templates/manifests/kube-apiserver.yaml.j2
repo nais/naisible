@@ -64,13 +64,6 @@ spec:
     - mountPath: /etc/pki
       name: pki
   hostNetwork: true
-  env:
-  - name: https_proxy
-    value: {{ proxy_env.https_proxy }}
-  - name: http_proxy
-    value: {{ proxy_env.http_proxy }}           
-  - name: no_proxy
-    value: {{ proxy_env.no_proxy }}
   volumes:
   - hostPath:
       path: /etc/kubernetes

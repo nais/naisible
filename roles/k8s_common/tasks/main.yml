@@ -57,8 +57,8 @@
   register: sensu_rpm_check
 
 # Check if puppet-agent exist
-- name: Check if puppet-agent is installed
-  command: rpm -q puppet-agent
+- name: Check if puppet is installed
+  command: rpm -q puppet
   ignore_errors: yes
   register: puppet_agent_rpm_check
 

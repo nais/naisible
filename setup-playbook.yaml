@@ -413,6 +413,10 @@
   become: yes
 
   tasks:
+  - name: Add puppet facts
+    template: src=templates/puppet-facts.master.j2 dest=/etc/puppetlabs/facter/facts.d/nais.yaml
+    when: puppet_agent_rpm_check.rc == 0
+
   - name: Copy sensu client.json with correct config
     template: src=templates/sensu/master-client.json.j2 dest=/etc/sensu/conf.d/client.json
     when: sensu_rpm_check.rc == 0
@@ -435,6 +439,10 @@
   become: yes
 
   tasks:
+  - name: Add puppet facts
+    template: src=templates/puppet-facts.worker.j2 dest=/etc/puppetlabs/facter/facts.d/nais.yaml
+    when: puppet_agent_rpm_check.rc == 0
+
   - name: Copy sensu client.json with correct config
     template: src=templates/sensu/worker-client.json.j2 dest=/etc/sensu/conf.d/client.json
     when: sensu_rpm_check.rc == 0

@@ -42,7 +42,7 @@
       failed_when: ready_count.stdout != "{{ K8S_HOST_COUNT }}"
 
     - name: Ensure addons are deployed and available
-      shell: "/usr/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep '\"availableReplicas\": 1' | wc -l"
+      shell: "/usr/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
       with_items:
         - coredns
         - kubernetes-dashboard

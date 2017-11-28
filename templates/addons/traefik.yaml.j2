@@ -43,6 +43,16 @@ metadata:
   name: traefik-ingress-controller
   namespace: kube-system
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik
+  namespace: kube-system
+data:
+  traefik.toml: |
+    [traefikLog]
+    format = "json"
+---
 kind: DaemonSet
 apiVersion: extensions/v1beta1
 metadata:
@@ -70,6 +80,9 @@ spec:
       containers:
       - image: traefik:{{ traefik_version }}
         name: traefik-ingress-lb
+        volumeMounts:
+          - name: config-volume
+            mountPath: /config
         resources:
           limits:
             cpu: 400m
@@ -87,6 +100,11 @@ spec:
         - --web.metrics
         - --web.metrics.prometheus
         - --checknewversion=false
+        - --configfile=/config/traefik.toml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: traefik
 ---
 apiVersion: v1
 kind: Service

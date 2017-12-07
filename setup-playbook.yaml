@@ -16,6 +16,9 @@
       chain: FORWARD
       policy: ACCEPT
 
+  - name: Copy .bashrc
+    copy: src=files/bashrc dest=/root/.bashrc
+
 - hosts: masters
   user: "{{ remote_user }}"
   roles:

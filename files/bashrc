@@ -1,0 +1,15 @@
+# .bashrc
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias k='kubectl'
+alias ks='kubectl -n kube-system'
+alias ks='kubectl -n nais'
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi

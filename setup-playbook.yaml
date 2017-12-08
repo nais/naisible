@@ -4,6 +4,9 @@
   become: yes
   roles:
   - { role: proxy, when: nais_http_proxy is defined }
+  tasks:
+  - name: Set nais puppet facts
+    template: src=templates/nais-facts.txt.j2 dest=/etc/puppetlabs/facter/facts.d/nais-facts.txt
 
 - hosts: masters:workers
   user: "{{ remote_user }}"

@@ -48,7 +48,10 @@
         - /etc/docker
     
     - name: Unmount docker resources
-      shell: /bin/umount /run/docker/netns/*
+      shell: /bin/umount {{ item }}
+      with_items:
+        - /run/docker/netns/*
+        - /var/lib/docker/overlay
       ignore_errors: yes
 
     - name: Get mounted kubelet resources
@@ -117,9 +120,6 @@
       - kube-proxy
       - flannel
     ignore_errors: yes
-
-  - name: unmount overlay
-    shell: umount /var/lib/docker/overlay    
 
   - name: Remove files
     file: path={{ item }} state=absent

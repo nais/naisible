@@ -318,7 +318,7 @@
            /usr/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf
 
   - name: Wait for API server to become available
-    wait_for: port=6443 host={{ groups['masters'][0] }} delay=5
+    wait_for: port=6443 host={{ groups['masters'][0] }} delay=15 timeout=120
  
  
   - name: Setup node taints

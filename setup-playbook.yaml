@@ -366,8 +366,9 @@
   - name: Generate nais-admin kubeconfig
     shell: rm -f /etc/kubernetes/kubeconfigs/nais-admin.conf &&
            /usr/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf &&
-           /usr/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/nais-admin.pem --client-key=/etc/kubernetes/pki/nais-admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf &&
-           /usr/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf
+           /usr/bin/kubectl config set-credentials nais-admin --client-certificate=/etc/kubernetes/pki/nais-admin.pem --client-key=/etc/kubernetes/pki/nais-admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf &&
+           /usr/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user=nais-admin --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf  &&
+/usr/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf
 
   - name: Wait for API server to become available
     wait_for: port=8080 host=127.0.0.1 delay=5

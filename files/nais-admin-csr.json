@@ -1,7 +1,7 @@
 {
   "CN": "nais-admin",
   "names": [{
-    "O": "system:almostmasters"
+    "O": "system:nais-admin"
   }],
   "key": {
     "algo": "rsa",

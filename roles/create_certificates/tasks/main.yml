@@ -26,7 +26,7 @@
   args:
     creates: target/pki/admin.pem
 
-- name: Creating semi-admin certificate
+- name: Creating nais-admin certificate
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client files/nais-admin-csr.json | bin/cfssljson -bare target/pki/nais-admin
   args:
     creates: target/pki/nais-admin.pem

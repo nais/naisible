@@ -2,6 +2,15 @@
 {% for host in groups['etcd'] -%}
   {% set _ = etcd_urls.append("http://%s:2379" % (host)) -%}
 {% endfor -%}
+
+{% set worker_ips = [] -%}
+{% for host in groups['workers'] -%}
+  {% set ip_address = hostvars[host]['ansible_default_ipv4']['address'] -%}
+  {% set _ = worker_ips.append(ip_address) -%}
+{% endfor -%}
+
+
+
 apiVersion: v1
 kind: Pod
 metadata:
@@ -64,6 +73,15 @@ spec:
     - mountPath: /etc/pki
       name: pki
     env:
+    - name: https_proxy
+      value: {{ proxy_env.https_proxy }}
+    - name: http_proxy
+      value: {{ proxy_env.http_proxy }}
+{% if nais_no_proxy is defined %}
+    - name: no_proxy
+      value: {{ proxy_env.no_proxy }},{{ worker_ips | join(",") }} 
+{% endif %}
+
   hostNetwork: true
   volumes:
   - hostPath:
@@ -75,4 +93,5 @@ spec:
   - hostPath:
       path: /etc/pki
     name: pki
+
 status: {}

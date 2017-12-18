@@ -20,7 +20,7 @@
 - name: Check master for nais-admin cert
   stat:
     path: /etc/kubernetes/pki/nais-admin.pem
-  register: nais-admin
+  register: naisadmin
 - fetch:
     src: /etc/kubernetes/pki/ca.pem
     dest: target/pki/
@@ -49,13 +49,13 @@
     src: /etc/kubernetes/pki/nais-admin.pem
     dest: target/pki/
     flat: yes
-  when: nais-admin.stat.exists
+  when: naisadmin.stat.exists
 
 - fetch:
     src: /etc/kubernetes/pki/nais-admin-key.pem
     dest: target/pki/
     flat: yes
-  when: nais-admin.stat.exists
+  when: naisadmin.stat.exists
 
 
 - fetch:

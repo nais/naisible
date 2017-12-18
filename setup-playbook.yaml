@@ -357,7 +357,7 @@
       - nais.yaml
       - debug.yaml
 
-  - name: Copy kubernetes templates
+  - name: Copy kubernetes roles and rolebindings templates
     template: src=templates/roles/{{ item }}.j2 dest=/etc/kubernetes/roles/{{ item }}
     with_items:
       - roles.yaml

@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    rbac.authorization.kubernetes.io/autoupdate: "true"
+  name: nais-admin
+rules:
+- apiGroups:
+  - '*'
+  resources:
+  - resources: ["certificatesigningrequests", "clusterrolebindings", "clusterroles", "clusters", "componentstatuses", "configmaps", "controllerrevisions", "cronjobs", "customresourcedefinition", "daemonsets", "deployments", "endpoints", "events", "horizontalpodautoscalers", "ingresses", "jobs", "limitranges", "namespaces", "networkpolicies", "nodes", "persistentvolumeclaims", "persistentvolumes", "poddisruptionbudgets", "podpreset", "pods", "podsecuritypolicies", "podtemplates", "replicasets", "replicationcontrollers", "resourcequotas", "rolebindings", "roles", "serviceaccounts", "services", "statefulsets", "storageclasses"]
+  verbs:
+  - '*'
+- nonResourceURLs:
+  - '*'
+  verbs:
+  - '*'

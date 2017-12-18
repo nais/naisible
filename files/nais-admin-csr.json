@@ -1,0 +1,10 @@
+{
+  "CN": "nais-admin",
+  "names": [{
+    "O": "system:almostmasters"
+  }],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  }
+}

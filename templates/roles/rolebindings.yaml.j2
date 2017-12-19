@@ -1,3 +1,4 @@
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -14,3 +15,18 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
   name: nais-admin
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: everyone
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nais-admin
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: 55465c5b-55a7-4e99-86b1-4c94818c1573

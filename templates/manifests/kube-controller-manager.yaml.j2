@@ -23,6 +23,7 @@ spec:
     - --cluster-signing-key-file=/etc/kubernetes/pki/ca-key.pem
     - --leader-elect=true
     - --use-service-account-credentials=true
+    - --v={{log_level | default(0) }}
     image: gcr.io/google_containers/kube-controller-manager-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8

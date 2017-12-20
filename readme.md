@@ -126,6 +126,7 @@ Variables
 |oidc_client_id|spn:a0e7d619-2cf2-4631-a6f0|A client id that all tokens must be issued for.|
 |oidc_username_claim|upn|JWT claim to use as the user name|
 |oidc_groups_claim|groups|JWT claim to use as the user’s group. If the claim is present it must be an array of strings.|
+|log_leve|0|Log level for controll plane compents|
 
 #### Host group specific variables
 |Variable name|Value|Information|

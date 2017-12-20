@@ -357,6 +357,7 @@
       - nais.yaml
       - debug.yaml
 
+
   - name: Copy kubernetes roles and rolebindings templates
     template: src=templates/roles/{{ item }}.j2 dest=/etc/kubernetes/roles/{{ item }}
     with_items:
@@ -373,6 +374,9 @@
   - name: Wait for API server to become available
     wait_for: port=8080 host=127.0.0.1 delay=5
 
+  - name: Delete nais-admin role if this exists (TODO: remove after all clusters have been updated)
+    shell: /usr/bin/kubectl delete clusterrolebinding nais-admin
+    ignore_errors: yes
 
   - name: Create role and rolebindings
     shell: /usr/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}

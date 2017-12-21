@@ -120,6 +120,8 @@ spec:
         nais.io/logformat: glog
     spec:
       serviceAccountName: heapster
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
       containers:
       - name: heapster
         image: gcr.io/google_containers/heapster-amd64:v{{ heapster_version }}
@@ -128,6 +130,7 @@ spec:
         - /heapster
         - --source=kubernetes:https://kubernetes.default
         - --sink=influxdb:http://monitoring-influxdb.kube-system.svc:8086
+      
 ---
 apiVersion: v1
 kind: Service

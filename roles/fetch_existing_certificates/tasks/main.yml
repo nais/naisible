@@ -17,10 +17,7 @@
   stat:
     path: /etc/kubernetes/pki/admin.pem
   register: admin
-- name: Check master for nais-admin cert
-  stat:
-    path: /etc/kubernetes/pki/nais-admin.pem
-  register: naisadmin
+
 - fetch:
     src: /etc/kubernetes/pki/ca.pem
     dest: target/pki/
@@ -44,19 +41,6 @@
     dest: target/pki/
     flat: yes
   when: admin.stat.exists
-
-- fetch:
-    src: /etc/kubernetes/pki/nais-admin.pem
-    dest: target/pki/
-    flat: yes
-  when: naisadmin.stat.exists
-
-- fetch:
-    src: /etc/kubernetes/pki/nais-admin-key.pem
-    dest: target/pki/
-    flat: yes
-  when: naisadmin.stat.exists
-
 
 - fetch:
     src: /etc/kubernetes/pki/kube-apiserver-server.pem

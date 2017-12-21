@@ -64,8 +64,6 @@
     with_items:
       - admin.pem
       - admin-key.pem
-      - nais-admin.pem
-      - nais-admin-key.pem
       - ca.pem
       - ca-key.pem
       - kube-apiserver-server-key.pem
@@ -364,19 +362,8 @@
       - roles.yaml
       - rolebindings.yaml
 
-  - name: Generate nais-admin kubeconfig
-    shell: rm -f /etc/kubernetes/kubeconfigs/nais-admin.conf &&
-           /usr/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf &&
-           /usr/bin/kubectl config set-credentials nais-admin --client-certificate=/etc/kubernetes/pki/nais-admin.pem --client-key=/etc/kubernetes/pki/nais-admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf &&
-           /usr/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user=nais-admin --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf  &&
-           /usr/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/nais-admin.conf
-
   - name: Wait for API server to become available
     wait_for: port=8080 host=127.0.0.1 delay=5
-
-  - name: Delete nais-admin role if this exists (TODO remove after all clusters have been updated)
-    shell: /usr/bin/kubectl delete clusterrolebinding nais-admin
-    ignore_errors: yes
 
   - name: Create role and rolebindings
     shell: /usr/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}

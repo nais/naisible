@@ -48,7 +48,7 @@ data:
   Corefile: |
     .:53 {
         errors
-        log . stdout "{remote} - [{when}] \"{type} {class} {name} {proto} {size} {>do} {>bufsize}\" {rcode} {rsize} {duration}"
+        log "{remote} - [{when}] \"{type} {class} {name} {proto} {size} {>do} {>bufsize}\" {rcode} {rsize} {duration}"
         health
         kubernetes {{ cluster_domain }} {{ service_cidr }}
         proxy . /etc/resolv.conf

@@ -33,7 +33,7 @@ spec:
     - --tls-cert-file=/etc/kubernetes/pki/kube-apiserver-server.pem
     - --tls-private-key-file=/etc/kubernetes/pki/kube-apiserver-server-key.pem
     - --secure-port=6443
-    - --experimental-bootstrap-token-auth=true
+    - --enable-bootstrap-token-auth 
     - --storage-backend=etcd3
     - --service-cluster-ip-range={{ service_cidr }}
     - --service-account-key-file=/etc/kubernetes/pki/sa.pub

@@ -25,10 +25,14 @@
         state: absent
     
     - name: Stop services
-      systemd:
-        name={{ item }}
-        state=stopped
-        enabled=no
+      shell: timeout 15 /bin/systemctl stop {{ item }}
+      with_items:
+        - kubelet
+        - docker
+      ignore_errors: yes
+
+    - name: Disable services
+      shell: timeout 15 /bin/systemctl disable {{ item }}
       with_items:
         - kubelet
         - docker

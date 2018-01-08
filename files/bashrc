@@ -7,7 +7,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias k='kubectl'
 alias ks='kubectl -n kube-system'
-alias ks='kubectl -n nais'
+alias kn='kubectl -n nais'
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then

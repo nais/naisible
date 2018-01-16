@@ -52,6 +52,9 @@ data:
   traefik.toml: |
     [traefikLog]
     format = "json"
+    [entryPoints]
+      [entryPoints.http]
+      trustForwardHeader = true
 ---
 kind: DaemonSet
 apiVersion: extensions/v1beta1

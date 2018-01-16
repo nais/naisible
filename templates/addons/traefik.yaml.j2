@@ -50,6 +50,7 @@ metadata:
   namespace: kube-system
 data:
   traefik.toml: |
+    defaultEntryPoints = ["http"]
     [traefikLog]
     format = "json"
     [entryPoints]

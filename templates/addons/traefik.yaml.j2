@@ -50,13 +50,8 @@ metadata:
   namespace: kube-system
 data:
   traefik.toml: |
-    defaultEntryPoints = ["http"]
     [traefikLog]
     format = "json"
-    [entryPoints]
-      [entryPoints.http]
-      address = ":80"
-      trustForwardHeader = true
 ---
 kind: DaemonSet
 apiVersion: extensions/v1beta1

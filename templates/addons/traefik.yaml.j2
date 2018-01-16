@@ -56,7 +56,8 @@ data:
     [entryPoints]
       [entryPoints.http]
       address = ":80"
-      trustForwardHeader = true
+      [entryPoints.http.forwardedHeaders]
+      trustedIPs = []
 ---
 kind: DaemonSet
 apiVersion: extensions/v1beta1

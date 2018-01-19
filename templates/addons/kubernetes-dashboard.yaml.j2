@@ -58,6 +58,22 @@ subjects:
   namespace: kube-system
 
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-nais-developer
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nais-developer
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kube-system
+
+---
+
 # ------------------- Dashboard Deployment ------------------- #
 
 kind: Deployment

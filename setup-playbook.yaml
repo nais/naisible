@@ -356,20 +356,20 @@
       - debug.yaml
 
 
-  - name: Copy kubernetes roles and rolebindings templates
+  - name: Copy kubernetes clusterroles and clusterrolebindings templates
     template: src=templates/roles/{{ item }}.j2 dest=/etc/kubernetes/roles/{{ item }}
     with_items:
-      - roles.yaml
-      - rolebindings.yaml
+      - clusterroles.yaml
+      - clusterrolebindings.yaml
 
   - name: Wait for API server to become available
     wait_for: port=8080 host=127.0.0.1 delay=5
 
-  - name: Create role and rolebindings
+  - name: Create clusterrole and clusterrolebindings
     shell: /usr/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}
     with_items:
-    - roles.yaml
-    - rolebindings.yaml
+    - clusterroles.yaml
+    - clusterrolebindings.yaml
 
   - name: Create addons
     shell: /usr/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}

@@ -98,8 +98,14 @@
       state=started
       enabled=yes
 
+  - name: Ensure /var/lib/docker exists
+    file: path=/var/lib/docker state=directory
+
+  - name: Force delete docker_opts.env
+    file: path=/var/lib/docker/docker_opts.env state=absent
+
   - name: Make flannel configuration for docker
-    shell: mkdir -p /var/lib/docker && rm -f /var/lib/docker/docker_opts.env && /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env
+    shell: /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env
 
   - name: Copy docker service file
     copy: src=files/docker.service dest=/etc/systemd/system/docker.service
@@ -312,10 +318,11 @@
   become: yes
 
   tasks:
+  - name: Delete cluster-admin.conf
+    file: path=/etc/kubernetes/kubeconfigs/cluster-admin.conf state=absent
 
   - name: Generate cluster-admin kubeconfig
-    shell: rm -f /etc/kubernetes/kubeconfigs/cluster-admin.conf &&
-           /usr/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+    shell: /usr/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            /usr/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            /usr/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            /usr/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf

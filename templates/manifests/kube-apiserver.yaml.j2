@@ -9,8 +9,6 @@
   {% set _ = worker_ips.append(ip_address) -%}
 {% endfor -%}
 
-
-
 apiVersion: v1
 kind: Pod
 metadata:
@@ -30,6 +28,7 @@ spec:
     - --kubelet-client-certificate=/etc/kubernetes/pki/admin.pem
     - --kubelet-client-key=/etc/kubernetes/pki/admin-key.pem
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    - --tls-ca-file=/etc/kubernetes/pki/ca.pem
     - --tls-cert-file=/etc/kubernetes/pki/kube-apiserver-server.pem
     - --tls-private-key-file=/etc/kubernetes/pki/kube-apiserver-server-key.pem
     - --secure-port=6443
@@ -40,7 +39,7 @@ spec:
     - --client-ca-file=/etc/kubernetes/pki/ca.pem
     - --insecure-port=8080
     - --insecure-bind-address=127.0.0.1
-    - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds
+    - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
     - --authorization-mode=RBAC
 {% if oidc_issuer_url is defined %}
     - --oidc-issuer-url={{oidc_issuer_url}}
@@ -80,7 +79,7 @@ spec:
       value: {{ proxy_env.http_proxy }}
 {% if nais_no_proxy is defined %}
     - name: no_proxy
-      value: {{ proxy_env.no_proxy }},{{ worker_ips | join(",") }} 
+      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }} 
 {% endif %}
 
   hostNetwork: true

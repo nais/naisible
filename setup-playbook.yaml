@@ -327,13 +327,11 @@
            /usr/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            /usr/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf
 
-
   - name: Wait for API server to become available
     wait_for: port=6443 host={{ groups['masters'][0] }} delay=15 timeout=120
- 
- 
+
   - name: Setup node taints
-    shell: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}  
+    shell: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}
     with_items: " {{ node_taints | default([]) }} "
 
   - name: Setup node labels

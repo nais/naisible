@@ -42,7 +42,7 @@
   become: yes
   tasks:
   - name: Check if flannel config exists (OK if this fails)
-    shell: /usr/bin/etcdctl ls /nais/network/config
+    command: /usr/bin/etcdctl ls /nais/network/config
     environment:
       - ETCDCTL_API: 2
     register: flannelconfig
@@ -107,7 +107,7 @@
     file: path=/var/lib/docker/docker_opts.env state=absent
 
   - name: Make flannel configuration for docker
-    shell: /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env
+    command: /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env
 
   - name: Copy docker service file
     copy: src=files/docker.service dest=/etc/systemd/system/docker.service
@@ -135,7 +135,7 @@
     command: swapoff -a
 
 
-  - name: Download kubernetes node binaries
+  - name: Download kubernetes node binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://dl.k8s.io/v{{ k8s_version }}/kubernetes-node-linux-amd64.tar.gz | \
            tar xzf - -C /tmp kubernetes/node/bin/kubectl kubernetes/node/bin/kube-proxy kubernetes/node/bin/kubelet && \
@@ -336,11 +336,11 @@
     wait_for: port=6443 host={{ groups['masters'][0] }} delay=15 timeout=120
 
   - name: Setup node taints
-    shell: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}
+    command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}
     with_items: " {{ node_taints | default([]) }} "
 
   - name: Setup node labels
-    shell: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}
+    command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}
     with_items: " {{ node_labels | default([]) }} "
 
 
@@ -376,13 +376,13 @@
     wait_for: port=8080 host=127.0.0.1 delay=5
 
   - name: Create clusterrole and clusterrolebindings
-    shell: /usr/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}
+    command: /usr/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}
     with_items:
     - clusterroles.yaml
     - clusterrolebindings.yaml
 
   - name: Create addons
-    shell: /usr/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}
+    command: /usr/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}
     with_items:
       - kubernetes-dashboard.yaml
       - core-dns.yaml
@@ -391,13 +391,15 @@
       - nais.yaml
       - debug.yaml
 
-  - name: Download helm binaries
+  - name: Download helm binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://storage.googleapis.com/kubernetes-helm/helm-v{{ helm_version }}-linux-amd64.tar.gz | \
            tar xzf - -C /tmp linux-amd64/helm && \
            mv /tmp/linux-amd64/helm /usr/bin/helm-{{ helm_version }}
     args:
       creates: /usr/bin/helm-{{ helm_version }}
+    tags:
+      - skip_ansible_lint
 
   - name: Symlink helm
     file: src=/usr/bin/helm-{{ helm_version }} dest=/usr/bin/helm state=link
@@ -409,7 +411,7 @@
 
   - name: Initialize helm
     environment: "{{ proxy_env }}"
-    shell: /usr/bin/helm init --service-account=tiller --history-max 5 --upgrade
+    command: /usr/bin/helm init --service-account=tiller --history-max 5 --upgrade
 
 # Configure sensu cluster metrics
 - hosts: masters:workers

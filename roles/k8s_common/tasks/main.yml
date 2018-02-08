@@ -65,11 +65,11 @@
   register: puppet_agent_rpm_check
 
 - name: Disable puppet agent
-  shell: /bin/puppet agent --disable
+  command: /bin/puppet agent --disable
   ignore_errors: yes
   when: puppet_agent_rpm_check.rc == 0
 
 - name: Disable puppet agent (preprod)
-  shell: /opt/puppet/bin/puppet agent --disable
+  command: /opt/puppet/bin/puppet agent --disable
   ignore_errors: yes
   when: puppet_agent_rpm_check.rc == 0

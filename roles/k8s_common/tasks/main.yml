@@ -65,6 +65,8 @@
   command: rpm -q puppet
   ignore_errors: yes
   register: puppet_agent_rpm_check
+  tags:
+    - skip_ansible_lint
 
 - name: Disable puppet agent
   command: /bin/puppet agent --disable

@@ -35,9 +35,11 @@
     name: container-selinux
     state: absent
 
-- name: Install docker selinux package
+- name: Install docker selinux package # need to avoid installing obsolete packages
   environment: "{{ proxy_env }}"
   shell: "yum -y --setopt=obsoletes=0 install docker-ce-selinux-{{ docker_version }}"
+  tags:
+    - skip_ansible_lint
 
 - name: Install required packages
   environment: "{{ proxy_env }}"

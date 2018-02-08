@@ -35,9 +35,11 @@
     name: container-selinux
     state: absent
 
-- name: Install docker selinux package
+- name: Install docker selinux package # need to avoid installing obsolete packages
   environment: "{{ proxy_env }}"
   shell: "yum -y --setopt=obsoletes=0 install docker-ce-selinux-{{ docker_version }}"
+  tags:
+    - skip_ansible_lint
 
 - name: Install required packages
   environment: "{{ proxy_env }}"
@@ -55,19 +57,23 @@
   command: rpm -q sensu
   ignore_errors: yes
   register: sensu_rpm_check
+  tags:
+    - skip_ansible_lint
 
 # Check if puppet-agent exist
 - name: Check if puppet is installed
   command: rpm -q puppet
   ignore_errors: yes
   register: puppet_agent_rpm_check
+  tags:
+    - skip_ansible_lint
 
 - name: Disable puppet agent
-  shell: /bin/puppet agent --disable
+  command: /bin/puppet agent --disable
   ignore_errors: yes
   when: puppet_agent_rpm_check.rc == 0
 
 - name: Disable puppet agent (preprod)
-  shell: /opt/puppet/bin/puppet agent --disable
+  command: /opt/puppet/bin/puppet agent --disable
   ignore_errors: yes
   when: puppet_agent_rpm_check.rc == 0

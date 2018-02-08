@@ -1,4 +1,4 @@
-- name: Download and copy etcd binaries
+- name: Download and copy etcd binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
   environment: "{{ proxy_env }}"
   shell: curl --insecure https://storage.googleapis.com/etcd/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz | \
          tar xzf - -C /tmp && \
@@ -6,6 +6,8 @@
          mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" /usr/bin/etcdctl-{{ etcd_version }}
   args:
     creates: /usr/bin/etcd-{{ etcd_version }}
+  tags:
+    - skip_ansible_lint
 
 - name: Symlink etcd
   file: src=/usr/bin/etcd-{{etcd_version}} dest=/usr/bin/etcd state=link
@@ -16,7 +18,7 @@
 - name: Ensure etcd directory exists
   file: state=directory path=/var/lib/etcd
 
-- name:
+- name: Creating etcd.service for systemd
   template: src=templates/etcd.service.j2 dest=/etc/systemd/system/etcd.service
 
 - name: Enable etcd

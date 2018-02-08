@@ -18,49 +18,57 @@
     path: /etc/kubernetes/pki/admin.pem
   register: admin
 
-- fetch:
+- name: Fetch ca.pem
+  fetch:
     src: /etc/kubernetes/pki/ca.pem
     dest: target/pki/
     flat: yes
   when: ca.stat.exists
 
-- fetch:
+- name: Fetch ca-key.pem
+  fetch:
     src: /etc/kubernetes/pki/ca-key.pem
     dest: target/pki/
     flat: yes
   when: ca.stat.exists
 
-- fetch:
+- name: Fetch admin.pem
+  fetch:
     src: /etc/kubernetes/pki/admin.pem
     dest: target/pki/
     flat: yes
   when: admin.stat.exists
 
-- fetch:
+- name: Fetch admin-key.pem
+  fetch:
     src: /etc/kubernetes/pki/admin-key.pem
     dest: target/pki/
     flat: yes
   when: admin.stat.exists
 
-- fetch:
+- name: Fetch kube-apiserver-server.pem
+  fetch:
     src: /etc/kubernetes/pki/kube-apiserver-server.pem
     dest: target/pki/
     flat: yes
   when: apiserver.stat.exists
 
-- fetch:
+- name: Fetch kube-apiserver-server-key.pem
+  fetch:
     src: /etc/kubernetes/pki/kube-apiserver-server-key.pem
     dest: target/pki/
     flat: yes
   when: apiserver.stat.exists
 
-- fetch:
+- name: Fetch sa.key
+  fetch:
     src: /etc/kubernetes/pki/sa.key
     dest: target/pki/
     flat: yes
   when: sa.stat.exists
 
-- fetch:
+- name: Fetch sa.pub
+  fetch:
     src: /etc/kubernetes/pki/sa.pub
     dest: target/pki/
     flat: yes

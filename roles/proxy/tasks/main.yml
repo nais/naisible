@@ -5,4 +5,5 @@
   copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
 
 - name: update_cert_index
-  shell: /usr/bin/update-ca-trust
+  command: /usr/bin/update-ca-trust
+  changed_when: false

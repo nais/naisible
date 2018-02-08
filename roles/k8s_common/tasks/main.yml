@@ -57,6 +57,8 @@
   command: rpm -q sensu
   ignore_errors: yes
   register: sensu_rpm_check
+  tags:
+    - skip_ansible_lint
 
 # Check if puppet-agent exist
 - name: Check if puppet is installed

@@ -6,3 +6,4 @@
 
 - name: update_cert_index
   command: /usr/bin/update-ca-trust
+  changed_when: false

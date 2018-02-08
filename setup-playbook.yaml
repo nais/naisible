@@ -47,6 +47,7 @@
       - ETCDCTL_API: 2
     register: flannelconfig
     ignore_errors: yes
+    changed_when: false
 
   - name: Set flannel configuration in etcd
     shell: '/usr/bin/etcdctl set /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
@@ -108,6 +109,7 @@
 
   - name: Make flannel configuration for docker
     command: /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env
+    changed_when: false
 
   - name: Copy docker service file
     copy: src=files/docker.service dest=/etc/systemd/system/docker.service
@@ -133,6 +135,7 @@
 
   - name: Disable swap
     command: swapoff -a
+    changed_when: false
 
 
   - name: Download kubernetes node binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
@@ -325,23 +328,28 @@
   tasks:
   - name: Delete cluster-admin.conf
     file: path=/etc/kubernetes/kubeconfigs/cluster-admin.conf state=absent
+    changed_when: false
 
   - name: Generate cluster-admin kubeconfig
     shell: /usr/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            /usr/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            /usr/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            /usr/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf
+    changed_when: false
 
   - name: Wait for API server to become available
     wait_for: port=6443 host={{ groups['masters'][0] }} delay=15 timeout=120
+    changed_when: false
 
   - name: Setup node taints
     command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}
     with_items: "{{ node_taints | default([]) }}"
+    changed_when: false
 
   - name: Setup node labels
     command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}
     with_items: "{{ node_labels | default([]) }}"
+    changed_when: false
 
 
 - hosts: masters
@@ -374,12 +382,14 @@
 
   - name: Wait for API server to become available
     wait_for: port=8080 host=127.0.0.1 delay=5
+    changed_when: false
 
   - name: Create clusterrole and clusterrolebindings
     command: /usr/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}
     with_items:
     - clusterroles.yaml
     - clusterrolebindings.yaml
+    changed_when: false
 
   - name: Create addons
     command: /usr/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}
@@ -390,6 +400,7 @@
       - heapster.yaml
       - nais.yaml
       - debug.yaml
+    changed_when: false
 
   - name: Download helm binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
@@ -408,10 +419,12 @@
     shell: /usr/bin/kubectl create serviceaccount --namespace kube-system tiller &&
            /usr/bin/kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
     ignore_errors: yes
+    changed_when: false
 
   - name: Initialize helm
-    environment: "{{ proxy_env }}"
     command: /usr/bin/helm init --service-account=tiller --history-max 5 --upgrade
+    environment: "{{ proxy_env }}"
+    changed_when: false
 
 # Configure sensu cluster metrics
 - hosts: masters:workers

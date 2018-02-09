@@ -9,6 +9,7 @@
 
   - name: update_cert_index
     shell: /usr/bin/update-ca-trust
+    changed_when: false
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -30,6 +31,7 @@
         - kubelet
         - docker
       ignore_errors: yes
+      changed_when: false
 
     - name: Disable services
       shell: timeout 15 /bin/systemctl disable {{ item }}
@@ -37,6 +39,7 @@
         - kubelet
         - docker
       ignore_errors: yes
+      changed_when: false
 
     - name: Remove required packages
       yum: name={{ item }} state=absent
@@ -57,11 +60,13 @@
         - /run/docker/netns/*
         - /var/lib/docker/overlay
       ignore_errors: yes
+      changed_when: false
 
     - name: Get mounted kubelet resources
       shell: " mount |grep /var/lib/kubelet/pods | cut -d ' ' -f 3 "
       register: kubelet_resources
       ignore_errors: yes
+      changed_when: false
 
     - name:  umount kubelet resources
       shell: " umount {{ item }} "
@@ -154,10 +159,12 @@
   - name: Remove docker interface
     shell: ip link delete docker0
     ignore_errors: yes
+    changed_when: false
 
   - name: Remove flannel interface
     shell: ip link delete flannel.1
     ignore_errors: yes
+    changed_when: false
 
   - name: Remove nais sensu check directory
     file: path=/etc/sensu/plugins/metrics/nais state=absent

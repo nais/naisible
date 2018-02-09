@@ -5,7 +5,7 @@ install:
   - pip install ansible-lint
 script:
   - ansible-lint setup-playbook.yaml
-#  - ansible-lint test-playbook.yaml
+  - ansible-lint test-playbook.yaml
 #  - ansible-lint teardown-playbook.yaml
 branches:
   only:

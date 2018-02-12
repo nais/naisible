@@ -65,3 +65,15 @@
 
   - name: Install istio-sidecar-injector
     shell: "{{ kubectl }} apply -f target/istio/istio-sidecar-injector-with-ca-bundle.yaml"
+ 
+  - name: Ensure egress directory exists
+    file: state=directory path=target/istio/egress
+
+  - name: Create egress yaml files
+    shell: "cat templates/istio/egress-domains.yaml.j2 | sed -e 's|\\${domain}|{{ item }}|g' > target/istio/egress/{{ item }}-egress.yaml"
+    with_items:
+    - adeo.no
+    - preprod.local
+
+  - name: Whitelist domains via Egress
+    shell: "{{ kubectl }} apply -f target/istio/egress/ -R"

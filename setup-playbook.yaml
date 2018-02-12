@@ -1,11 +1,4 @@
----
-- hosts: localhost
-  user: "{{ remote_user }}"
-  become: yes
-  roles:
-  - istio-certificates
-  tags: 
-  - dev
+- import_playbook: istio.yaml
 #
 #- hosts: all
 #  user: "{{ remote_user }}"

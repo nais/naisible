@@ -80,7 +80,7 @@ webhooks:
         name: istio-sidecar-injector
         namespace: istio-system
         path: "/inject"
-      caBundle: ${CA_BUNDLE}
+      caBundle: {{ ca_bundle.stdout }}
     rules:
       - operations: [ "CREATE" ]
         apiGroups: [""]

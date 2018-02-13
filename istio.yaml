@@ -71,9 +71,7 @@
 
   - name: Create egress yaml files
     shell: "cat templates/istio/egress-domains.yaml.j2 | sed -e 's|\\${domain}|{{ item }}|g' > target/istio/egress/{{ item }}-egress.yaml"
-    with_items:
-    - adeo.no
-    - preprod.local
+    with_items: "{{ egress_domains.split(',') }}"
 
   - name: Whitelist domains via Egress
     shell: "{{ kubectl }} apply -f target/istio/egress/ -R"

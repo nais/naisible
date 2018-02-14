@@ -6,9 +6,10 @@
   tasks:
   - name: Remove certificate
     file: path=/etc/pki/ca-trust/source/anchors/webproxy.crt state=absent
-  
+
   - name: update_cert_index
-    shell: /usr/bin/update-ca-trust
+    command: /usr/bin/update-ca-trust
+    changed_when: false
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -18,31 +19,33 @@
       yum_repository:
         name: Kubernetes
         state: absent
-    
+
     - name: Remove docker repository
       yum_repository:
         name: Docker
         state: absent
-    
+
     - name: Stop services
-      shell: timeout 15 /bin/systemctl stop {{ item }}
+      command: timeout 15 /bin/systemctl stop {{ item }}
       with_items:
         - kubelet
         - docker
       ignore_errors: yes
+      changed_when: false
 
     - name: Disable services
-      shell: timeout 15 /bin/systemctl disable {{ item }}
+      command: timeout 15 /bin/systemctl disable {{ item }}
       with_items:
         - kubelet
         - docker
       ignore_errors: yes
+      changed_when: false
 
     - name: Remove required packages
       yum: name={{ item }} state=absent
       with_items:
         - "docker-ce"
-    
+
     - name: Remove files
       file: path={{ item }} state=absent
       with_items:
@@ -50,30 +53,34 @@
         - /etc/systemd/system/kubelet.service
         - /etc/kubernetes
         - /etc/docker
-    
+
     - name: Unmount docker resources
-      shell: /bin/umount {{ item }}
+      command: /bin/umount {{ item }}
       with_items:
         - /run/docker/netns/*
         - /var/lib/docker/overlay
       ignore_errors: yes
+      changed_when: false
 
     - name: Get mounted kubelet resources
-      shell: " mount |grep /var/lib/kubelet/pods | cut -d ' ' -f 3 " 
+      shell: "mount | grep /var/lib/kubelet/pods | cut -d ' ' -f 3"
       register: kubelet_resources
       ignore_errors: yes
+      changed_when: false
+      tags:
+        - skip_ansible_lint
 
     - name:  umount kubelet resources
-      shell: " umount {{ item }} "
+      command: "umount {{ item }}"
       when: kubelet_resources.stdout_lines|length > 0
-      with_items: " {{kubelet_resources.stdout_lines }} "
+      with_items: "{{ kubelet_resources.stdout_lines }}"
 
 - hosts: masters
   user: "{{ remote_user }}"
   become: yes
   tasks:
     - name: Remove files
-      file: path={{ item }} state=absent 
+      file: path={{ item }} state=absent
       with_items:
         - /root/.helm/repository/repositories.yaml
         - /usr/bin/helm-{{helm_version}}
@@ -85,10 +92,10 @@
   become: yes
   tasks:
     - name: Disable etcd
-      systemd: name=etcd enabled=no state=stopped 
+      systemd: name=etcd enabled=no state=stopped
       ignore_errors: yes
     - name: Remove files
-      file: path={{ item }} state=absent 
+      file: path={{ item }} state=absent
       with_items:
         - /usr/bin/etcd-{{etcd_version}}
         - /usr/bin/etcd
@@ -152,12 +159,14 @@
       - /run/kubernetes
 
   - name: Remove docker interface
-    shell: ip link delete docker0 
+    command: ip link delete docker0
     ignore_errors: yes
- 
+    changed_when: false
+
   - name: Remove flannel interface
-    shell: ip link delete flannel.1 
+    command: ip link delete flannel.1
     ignore_errors: yes
+    changed_when: false
 
   - name: Remove nais sensu check directory
     file: path=/etc/sensu/plugins/metrics/nais state=absent

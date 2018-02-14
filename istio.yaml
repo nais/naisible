@@ -7,9 +7,6 @@
   - name: Ensure PKI directory exists
     file: state=directory path=target/istio/bin/
   
-  - name: Ensure kubeconfig directory exists
-    file: state=directory path=kube
-
   - name: Generate istio-ingress-csr.json
     template: src=templates/istio/istio-ingress-csr.json.j2 dest=target/istio/pki/istio-ingress-csr.json
   
@@ -50,11 +47,17 @@
   - name: Install istio
     shell: "{{ kubectl }} apply -f files/istio/istio.yaml"
 
+  - name: Set up istio-ingress-controller daemonset
+    shell: "{{ kubectl }} apply -f files/istio/istio-ingress-controller.yaml"
+
   - name: Install istio-sidecar-configmap
     shell: "{{ kubectl }} apply -f files/istio/istio-sidecar-injector-configmap-release.yaml"
 
   - name: Adding istio-sidecar-injector certificate secret
     shell: "{{ kubectl }} create secret generic sidecar-injector-certs --from-file=key.pem=target/istio/pki/istio-sidecar-injector-key.pem --from-file=cert.pem=target/istio/pki/istio-sidecar-injector.pem --dry-run -o yaml | {{ kubectl }} -n istio-system apply -f -"
+
+  - name: Adding istio-ingress certificate secret
+    shell: "{{ kubectl }} create -n istio-system secret tls istio-ingress-certs --key target/istio/pki/istio-ingress-key.pem --cert target/istio/pki/istio-ingress.pem"
 
   - name: Reading and encoding CA certificate bundle from file
     shell: cat target/pki/ca.pem | base64 | tr -d '\n'
@@ -74,4 +77,10 @@
     with_items: "{{ egress_domains.split(',') }}"
 
   - name: Whitelist domains via Egress
-    shell: "{{ kubectl }} apply -f target/istio/egress/ -R"
+    shell: "{{ kubectl }} apply -f target/istio/egress/"
+
+  - name: Install Zipkin
+    shell: "{{ kubectl }} apply -f files/istio/addons/zipkin.yaml"
+
+  - name: Install Servicegraph
+    shell: "{{ kubectl }} apply -f files/istio/addons/servicegraph.yaml"

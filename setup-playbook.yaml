@@ -1,4 +1,4 @@
----
+
 - hosts: all
   user: "{{ remote_user }}"
   become: yes
@@ -246,6 +246,8 @@
 
   - name: Copy manifests and kubeconfigs
     template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/{{ item }}
+    tags: 
+    - devel
     with_items:
       - manifests/kube-apiserver.yaml
       - manifests/kube-scheduler.yaml
@@ -507,3 +509,6 @@
       daemon_reload=yes
       name=sensu-client
       state=restarted
+
+
+- import_playbook: istio.yaml

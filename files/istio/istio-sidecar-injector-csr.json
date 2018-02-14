@@ -1,0 +1,12 @@
+{
+  "CN": "istio-sidecar-injector.istio-system.svc",
+  "hosts": [
+    "istio-sidecar-injector.istio-system.svc",
+    "istio-sidecar-injector.istio-system",
+    "istio-sidecar-injector"
+  ],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  }
+}

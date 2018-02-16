@@ -5,7 +5,7 @@ metadata:
     kubernetes.io/ingress.class: istio
   labels:
     app: @APP_NAME@
-    istio-enabled: true
+    istio-enabled: "true"
   name: @APP_NAME@
   namespace: @NAMESPACE@
 spec:

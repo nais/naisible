@@ -5,14 +5,17 @@
   become: yes
   tasks:
   - name: Ensure required processes is running
-    shell: /bin/pgrep etcd | wc -l 
+    shell: /bin/pgrep etcd | wc -l
     register: etcd_process_count
     failed_when: etcd_process_count.stdout != "1"
+    changed_when: false
+
   - name: Ensure cluster is healthy
     shell: /usr/bin/etcdctl cluster-health | tail -n1
     register: etcd_health_status
     failed_when: etcd_health_status.stdout != "cluster is healthy"
- 
+    changed_when: false
+
 
 - hosts: masters
   user: "{{ remote_user }}"
@@ -21,45 +24,50 @@
     K8S_HOST_COUNT: "{{ (groups['workers'] | length) + (groups['masters'] | length) }}"
   tasks:
     - name: Ensure required processes is running
-      shell: /bin/pgrep {{ item }} | wc -l 
+      shell: /bin/pgrep {{ item }} | wc -l
       with_items:
         - dockerd
         - kubelet
       register: process_count
       failed_when: process_count.stdout != "1"
+      changed_when: false
 
     - name: Ensure docker interfaces is present
-      shell: ip link show docker0
-    
+      command: ip link show docker0
+      changed_when: false
+
     - name: Ensure all kubernetes components are healthy
-      shell: /usr/bin/kubectl get componentstatuses 
+      command: /usr/bin/kubectl get componentstatuses
       register: componentstatuses
       failed_when: "'Unhealthy' in componentstatuses.stdout"
+      changed_when: false
 
     - name: Verify that all nodes are in Ready-state
-      shell: /usr/bin/kubectl get nodes | grep -iw 'Ready' | wc -l 
+      shell: /usr/bin/kubectl get nodes | grep -iw 'Ready' | wc -l
       register: ready_count
       failed_when: ready_count.stdout != "{{ K8S_HOST_COUNT }}"
+      changed_when: false
 
     - name: Ensure addons are deployed and available
       shell: "/usr/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
       with_items:
         - coredns
         - kubernetes-dashboard
-        - tiller-deploy    
+        - tiller-deploy
         - heapster
         - monitoring-influxdb
       register: matches_spec
       retries: 6
       delay: 9
       until: matches_spec.stdout == "1"
+      changed_when: false
 
 - hosts: workers
   user: "{{ remote_user }}"
   become: yes
   tasks:
     - name: Ensure required processes is running
-      shell: /bin/pgrep {{ item }} | wc -l 
+      shell: /bin/pgrep {{ item }} | wc -l
       with_items:
         - dockerd
         - kubelet
@@ -67,18 +75,20 @@
         - kube-proxy
       register: process_count
       failed_when: process_count.stdout != "1"
+      changed_when: false
 
     - name: Ensure required interfaces is present
-      shell: ip link show {{ item }} 
+      command: ip link show {{ item }}
       with_items:
         - docker0
-        - flannel.1 
+        - flannel.1
+      changed_when: false
 
 - hosts: all
   user: "{{ remote_user }}"
   become: yes
 
-  tasks: 
+  tasks:
 
     - name: Ensure node taints are set
       shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l "
@@ -86,11 +96,12 @@
         - "{{ node_taints|default([]) }}"
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
+      changed_when: false
 
     - name: Ensure node labels are set
-      shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l"       
+      shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l"
       with_items:
         - "{{ node_labels|default([]) }}"
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
-
+      changed_when: false

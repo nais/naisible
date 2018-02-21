@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: istio
+  labels:
+    app: @APP_NAME@
+    istio-enabled: "true"
+  name: @APP_NAME@
+  namespace: @NAMESPACE@
+spec:
+  rules:
+  - host: @APP_NAME@.@CLUSTER_DOMAIN@
+    http:
+      paths:
+      - backend:
+          serviceName: @APP_NAME@
+          servicePort: 80
+        path: /.*
+  tls:
+  - secretName: istio-ingress-certs
+

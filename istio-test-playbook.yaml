@@ -1,0 +1,34 @@
+---
+
+- hosts: masters
+  user: "{{ remote_user }}"
+  become: yes
+  vars:
+    K8S_HOST_COUNT: "{{ (groups['workers'] | length) + (groups['masters'] | length) }}"
+  tasks:
+    - name: Ensure istio with addons are deployed and available
+      shell: "/usr/bin/kubectl -n istio-system get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
+      with_items:
+        - istio-ca
+        - istio-mixer
+        - istio-pilot
+        - istio-sidecar-injector
+        - servicegraph
+        - zipkin
+      register: matches_spec
+      retries: 6
+      delay: 9
+      until: matches_spec.stdout == "1"
+      changed_when: false
+
+# temporarily disabled until naisd adds annotations
+#    - name: Delete existing nais-testapp pod
+#      command: "/usr/bin/kubectl delete pod -l 'app=nais-testapp'"
+#
+#    - name: Ensure istio-sidecar-injector webhook has injected istio-config 
+#      shell: "/usr/bin/kubectl get pod -l 'app=nais-testapp' | grep Running | grep '3/3'"
+#      register: matches_spec
+#      retries: 10
+#      delay: 10
+#      until: matches_spec.stdout >= "1"
+#      changed_when: false

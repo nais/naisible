@@ -53,6 +53,7 @@ data:
         kubernetes {{ cluster_domain }} {{ service_cidr }}
         proxy . /etc/resolv.conf
         cache 30
+        prometheus 0.0.0.0:9153
     }
 ---
 apiVersion: extensions/v1beta1
@@ -78,6 +79,8 @@ spec:
         scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
         nais.io/logformat: accesslog_with_processing_time
         nais.io/logtransform: dns_loglevel
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9153"
     spec:
       serviceAccountName: coredns
       containers:

@@ -157,6 +157,7 @@
       - /run/docker
       - /run/flannel
       - /run/kubernetes
+      - /root/.docker
 
   - name: Remove docker interface
     command: ip link delete docker0

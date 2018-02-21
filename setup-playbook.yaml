@@ -128,6 +128,15 @@
       state=started
       enabled=yes
 
+  - name: Ensure /root/.docker exists
+    file: path=/root/.docker state=directory
+
+  - name: Add docker credentials if defined
+    template:
+      src: templates/docker-config.json.j2
+      dest: /root/.docker/config.json
+    when: docker_repo_url is defined
+
   - name: Disable swap automount
     mount:
       path: swap

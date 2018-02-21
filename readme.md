@@ -127,6 +127,9 @@ Variables
 |oidc_username_claim|upn|JWT claim to use as the user name|
 |oidc_groups_claim|groups|JWT claim to use as the user’s group. If the claim is present it must be an array of strings.|
 |log_leve|0|Log level for controll plane compents|
+|docker_repo_url|""|If defined will be used to create a docker config.json credential files used by the kubelet. Typically used to access a private Docker registry.
+|docker_repo_auth|""|Auth string used to create docker config.json credential file. Used together with docker_repo_url to accesis a private Docker registry.
+
 
 #### Host group specific variables
 |Variable name|Value|Information|

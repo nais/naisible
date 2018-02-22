@@ -1,22 +1,50 @@
+- name: Create target directories
+  hosts: localhost
+  tasks:
+  - name: Remove any previously generated certificates
+    file: state=absent path=target/istio/pki/
+  - name: Ensure PKI directory exists
+    file: state=directory path=target/istio/pki/
+  - name: Ensure PKI directory exists
+    file: state=directory path=target/istio/bin/
+
+- name: Check and receive CA from master node
+  hosts: masters
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+  - name: Check master for CA cert
+    stat:
+      path: /etc/kubernetes/pki/ca.pem
+    register: ca
+
+  - name: Fetch ca.pem
+    fetch:
+      src: /etc/kubernetes/pki/ca.pem
+      dest: target/istio/pki/
+      flat: yes
+    when: ca.stat.exists
+  
+  - name: Fetch ca-key.pem
+    fetch:
+      src: /etc/kubernetes/pki/ca-key.pem
+      dest: target/istio/pki/
+      flat: yes
+    when: ca.stat.exists
+
 - name: Generate certificates
   hosts: localhost
   tasks:
-  - name: Ensure PKI directory exists
-    file: state=directory path=target/istio/pki/
-  
-  - name: Ensure PKI directory exists
-    file: state=directory path=target/istio/bin/
-  
   - name: Generate istio-ingress-csr.json
     template: src=templates/istio/istio-ingress-csr.json.j2 dest=target/istio/pki/istio-ingress-csr.json
   
   - name: Creating istio-ingress certificate
-    shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/istio/pki/istio-ingress-csr.json | bin/cfssljson -bare target/istio/pki/istio-ingress
+    shell: bin/cfssl gencert -ca=target/istio/pki/ca.pem -ca-key=target/istio/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/istio/pki/istio-ingress-csr.json | bin/cfssljson -bare target/istio/pki/istio-ingress
     args:
       creates: target/istio/pki/istio-ingress.pem
    
   - name: Creating istio-sidecar-injector certificate
-    shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server files/istio/istio-sidecar-injector-csr.json | bin/cfssljson -bare target/istio/pki/istio-sidecar-injector
+    shell: bin/cfssl gencert -ca=target/istio/pki/ca.pem -ca-key=target/istio/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server files/istio/istio-sidecar-injector-csr.json | bin/cfssljson -bare target/istio/pki/istio-sidecar-injector
     args:
       creates: target/istio/pki/istio-sidecar-injector.pem
 

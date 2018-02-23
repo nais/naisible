@@ -255,7 +255,7 @@
 
   - name: Copy manifests and kubeconfigs
     template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/{{ item }}
-    tags: 
+    tags:
     - devel
     with_items:
       - manifests/kube-apiserver.yaml

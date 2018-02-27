@@ -15,9 +15,7 @@
   - k8s_common
   tasks:
   - name: Enable IP forwarding
-    iptables:
-      chain: FORWARD
-      policy: ACCEPT
+    command: /sbin/iptables -t filter -L FORWARD -w
 
   - name: Copy .bashrc
     copy: src=files/bashrc dest=/root/.bashrc

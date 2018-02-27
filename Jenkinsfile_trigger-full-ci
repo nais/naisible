@@ -1,6 +1,0 @@
-node {
-        stage("trigger nais-ci-pipeline") {
-		    build job: "nais_ci_pipeline"
-        }
-}
-

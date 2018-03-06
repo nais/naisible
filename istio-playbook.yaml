@@ -95,7 +95,7 @@
     ignore_errors: true
 
   - name: Reading and encoding CA certificate bundle from file
-    shell: cat target/pki/ca.pem | base64 | tr -d '\n'
+    shell: cat target/istio/pki/ca.pem | base64 | tr -d '\n'
     register: ca_bundle
 
   - name: Patch istio-sidecar-injector deployment

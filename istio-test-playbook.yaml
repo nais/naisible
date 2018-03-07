@@ -16,8 +16,8 @@
         - servicegraph
         - zipkin
       register: matches_spec
-      retries: 6
-      delay: 9
+      retries: 10
+      delay: 10
       until: matches_spec.stdout == "1"
       changed_when: false
 

@@ -14,9 +14,6 @@
   roles:
   - k8s_common
   tasks:
-  - name: Enable IP forwarding
-    command: /sbin/iptables -t filter -L FORWARD -w
-
   - name: Copy .bashrc
     copy: src=files/bashrc dest=/root/.bashrc
 

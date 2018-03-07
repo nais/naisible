@@ -243,7 +243,7 @@ spec:
       serviceAccountName: istio-mixer-service-account
       containers:
       - name: statsd-to-prometheus
-        image: prom/statsd-exporter:v0.5.0
+        image: prom/statsd-exporter:v{{ istio_version }}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9102
@@ -255,7 +255,7 @@ spec:
         - name: config-volume
           mountPath: /etc/statsd
       - name: mixer
-        image: docker.io/istio/mixer:0.5.0
+        image: docker.io/istio/mixer:{{ istio_version }}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9091
@@ -270,7 +270,7 @@ spec:
           - -v
           - "2"
       - name: istio-proxy
-        image: docker.io/istio/proxy:0.5.0
+        image: docker.io/istio/proxy:{{ istio_version }}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 15004
@@ -1366,7 +1366,7 @@ spec:
       serviceAccountName: istio-pilot-service-account
       containers:
       - name: discovery
-        image: docker.io/istio/pilot:0.5.0
+        image: docker.io/istio/pilot:{{ istio_version }}
         imagePullPolicy: IfNotPresent
         args: ["discovery", "-v", "2", "--admission-service", "istio-pilot"]
         ports:
@@ -1387,7 +1387,7 @@ spec:
         - name: config-volume
           mountPath: /etc/istio/config
       - name: istio-proxy
-        image: docker.io/istio/proxy:0.5.0
+        image: docker.io/istio/proxy:{{ istio_version }}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 15003
@@ -1471,7 +1471,7 @@ spec:
       serviceAccountName: istio-ca-service-account
       containers:
       - name: istio-ca
-        image: docker.io/istio/istio-ca:0.5.0
+        image: docker.io/istio/istio-ca:{{ istio_version }}
         imagePullPolicy: IfNotPresent
         command: ["/usr/local/bin/istio_ca"]
         args:

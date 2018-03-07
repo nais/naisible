@@ -72,8 +72,11 @@
   - name: Symlink kubernetes node binaries
     file: src=kubectl-{{ k8s_version }} dest=target/istio/bin/kubectl state=link force=yes
 
+  - name: Patch istio.yaml
+    template: src=templates/istio/istio.yaml.j2 dest=target/istio/istio.yaml
+
   - name: Install istio
-    shell: "{{ kubectl }} apply -f files/istio/istio.yaml"
+    shell: "{{ kubectl }} apply -f target/istio/istio.yaml"
     register: matches_spec
     retries: 2
     delay: 10

@@ -50,8 +50,22 @@ metadata:
   namespace: kube-system
 data:
   traefik.toml: |
+    defaultEntryPoints = ["http","https"]
+
     [traefikLog]
     format = "json"
+
+    [entryPoints]
+      [entryPoints.http]
+      address = ":80"
+      #  [entryPoints.http.redirect]
+      #    entryPoint = "https"
+      [entryPoints.https]
+      address = ":443"
+        [entryPoints.https.tls]
+          [[entryPoints.https.tls.certificates]]
+          CertFile = "/tls/tls.crt"
+          KeyFile = "/tls/tls.key"
 ---
 kind: DaemonSet
 apiVersion: extensions/v1beta1
@@ -83,6 +97,8 @@ spec:
         volumeMounts:
           - name: config-volume
             mountPath: /config
+          - name: certificates
+            mountPath: /tls
         resources:
           limits:
             cpu: 400m
@@ -93,6 +109,8 @@ spec:
         ports:
         - containerPort: 80
           hostPort: 80
+        - containerPort: 443
+          hostPort: 443
         - containerPort: 8080
         args:
         - --web
@@ -105,6 +123,9 @@ spec:
         - name: config-volume
           configMap:
             name: traefik
+        - name: certificates
+          secret:
+            secretName: traefik-cert
 ---
 apiVersion: v1
 kind: Service

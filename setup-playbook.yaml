@@ -66,6 +66,8 @@
       - kube-apiserver-server.pem
       - sa.key
       - sa.pub
+      - traefik.pem
+      - traefik-key.pem
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -395,6 +397,11 @@
     with_items:
     - clusterroles.yaml
     - clusterrolebindings.yaml
+    changed_when: false
+
+  - name: Create traefik tls secret
+    command: /usr/bin/kubectl -n kube-system create secret tls traefik-cert --key=/etc/kubernetes/pki/traefik-key.pem --cert=/etc/kubernetes/pki/traefik.pem
+    ignore_errors: yes
     changed_when: false
 
   - name: Create addons

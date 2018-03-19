@@ -79,7 +79,7 @@ spec:
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
         scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
-        nais.io/logformat: accesslog_with_processing_time
+        nais.io/logformat: accesslog_with_processing_time,glog
         nais.io/logtransform: dns_loglevel
         prometheus.io/scrape: "true"
         prometheus.io/port: "9153"

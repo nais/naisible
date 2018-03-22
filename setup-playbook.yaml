@@ -1,13 +1,4 @@
 
-- hosts: all
-  user: "{{ remote_user }}"
-  become: yes
-  roles:
-  - { role: proxy, when: nais_http_proxy is defined }
-  tasks:
-  - name: Set nais puppet facts
-    template: src=templates/nais-facts.txt.j2 dest=/etc/puppetlabs/facter/facts.d/nais-facts.txt
-
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
@@ -192,7 +183,7 @@
       enabled=yes
 
   - name: Clean up /etc/hosts after puppet
-    shell: /bin/sed -i "s/$(/sbin/ifconfig docker0 | grep inet | awk '{print $2}')/$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}')/g" /etc/hosts
+    shell: /bin/echo "$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}') $(hostname -f)" >> /etc/hosts
     when: puppet_agent_rpm_check.rc == 0
     tags:
       - skip_ansible_lint

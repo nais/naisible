@@ -1,3 +1,7 @@
+- hosts: coreos
+  gather_facts: False
+  roles: 
+    - defunctzombie.coreos-bootstrap
 
 - hosts: masters:workers
   user: "{{ remote_user }}"

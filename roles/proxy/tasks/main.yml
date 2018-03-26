@@ -2,7 +2,7 @@
   file: state=directory path=/etc/ssl/certs
 
 - name: Install proxy cert
-  copy: src=files/webproxy.crt dest=/etc/ssl/certs/webproxy.crt
+  copy: src=files/webproxy.crt dest=/etc/ssl/certs/webproxy.pem
 
 - name: update_cert_index
   command: /sbin/update-ca-certificates

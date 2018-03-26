@@ -4,7 +4,7 @@ Documentation=http://kubernetes.io/docs/
 
 [Service]
 Environment=HOME=/root
-ExecStart=/usr/bin/kubelet --hostname-override {{ inventory_hostname }} --node-labels=nais.io/type=worker --cluster-dns={{ cluster_dns_ip }} --cluster-domain={{ cluster_domain }} --image-pull-progress-deadline=10m --anonymous-auth=false --client-ca-file=/etc/kubernetes/pki/ca.pem --require-kubeconfig --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --cadvisor-port 0 --runtime-cgroups=/systemd/system.slice --kubelet-cgroups=/systemd/system.slice --allow-privileged=true --v={{ log_level | default(0) }} --image-gc-high-threshold 80 --image-gc-low-threshold 40 
+ExecStart=/opt/bin/kubelet --hostname-override {{ inventory_hostname }} --node-labels=nais.io/type=worker --cluster-dns={{ cluster_dns_ip }} --cluster-domain={{ cluster_domain }} --image-pull-progress-deadline=10m --anonymous-auth=false --client-ca-file=/etc/kubernetes/pki/ca.pem --require-kubeconfig --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --cadvisor-port 0 --runtime-cgroups=/systemd/system.slice --kubelet-cgroups=/systemd/system.slice --allow-privileged=true --v={{ log_level | default(0) }} --image-gc-high-threshold 80 --image-gc-low-threshold 40 
 Restart=always
 StartLimitInterval=0
 RestartSec=10

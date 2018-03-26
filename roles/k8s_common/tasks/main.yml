@@ -3,11 +3,12 @@
   with_items:
     - /etc/kubernetes/kubeconfigs
     - /etc/kubernetes/pki
-    - /run/systemd/system/docker.service.d
+    - /etc/systemd/system/docker.service.d
     - /etc/docker
+    - /opt/bin
 
 - name: Docker proxy settings
-  template: src=templates/docker-proxy.conf.j2 dest=/run/systemd/system/docker.service.d/proxy.conf
+  template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf
   when: nais_http_proxy is defined
 
 # Check if sensu-core exist

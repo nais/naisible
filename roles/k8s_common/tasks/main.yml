@@ -5,7 +5,7 @@
     - /etc/kubernetes/pki
     - /etc/systemd/system/docker.service.d
     - /etc/docker
-    - /opt/bin
+    - "{{ install_dir }}/bin"
 
 - name: Docker proxy settings
   template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf

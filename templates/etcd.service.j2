@@ -11,7 +11,7 @@ Description=etcd
 Documentation=https://coreos.com/etcd/
 
 [Service]
-ExecStart=/opt/bin/etcd --name {{ ansible_hostname }} --initial-advertise-peer-urls http://{{ local_ip }}:2380 \
+ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} --initial-advertise-peer-urls http://{{ local_ip }}:2380 \
   --listen-peer-urls http://{{ local_ip }}:2380 \
   --listen-client-urls http://{{ local_ip }}:2379,http://127.0.0.1:2379 \
   --advertise-client-urls http://{{ local_ip }}:2379 \

@@ -1,9 +1,9 @@
 - name: Ensure directories exist
-  file: state=directory path=/etc/ssl/certs
+  file: state=directory path={{ cert_dir }}
 
 - name: Install proxy cert
-  copy: src=files/webproxy.crt dest=/etc/ssl/certs/webproxy.pem
+  copy: src=files/webproxy.crt dest={{ cert_dir }}/webproxy.crt
 
 - name: update_cert_index
-  command: /sbin/update-ca-certificates
+  command: "{{ cert_bin }}"
   changed_when: false

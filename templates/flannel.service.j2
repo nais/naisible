@@ -8,7 +8,7 @@ Documentation=https://coreos.com/flannel
 Before=docker.service
 
 [Service]
-ExecStart=/opt/bin/flanneld --etcd-endpoints={{ etcd_urls | join(",") }} --etcd-prefix=/nais/network
+ExecStart={{ install_dir }}/bin/flanneld --etcd-endpoints={{ etcd_urls | join(",") }} --etcd-prefix=/nais/network
 
 Restart=always
 StartLimitInterval=0

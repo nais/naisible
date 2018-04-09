@@ -5,16 +5,28 @@
   become: yes
   tasks:
   - name: Remove certificate
-    file: path=/etc/ssl/certs/webproxy.pem state=absent
+    file: path={{ cert_dir }}/webproxy.crt state=absent
 
   - name: update_cert_index
-    command: /sbin/update-ca-certificates
+    command: "{{ cert_bin }}"
     changed_when: false
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
   tasks:
+    - name: Remove kubernetes repository
+      yum_repository:
+        name: Kubernetes
+        state: absent
+      ignore_errors: yes 
+
+    - name: Remove docker repository
+      yum_repository:
+        name: Docker
+        state: absent
+      ignore_errors: yes
+
     - name: Stop services
       command: timeout 15 /bin/systemctl stop {{ item }}
       with_items:
@@ -37,6 +49,30 @@
         - /etc/systemd/system/docker.service.d
         - /etc/systemd/system/kubelet.service
         - /etc/kubernetes
+
+    - name: Unmount docker net resources
+      command: /bin/umount /run/docker/netns/*
+      ignore_errors: yes
+
+    - name: Unmount docker resources
+      command: /bin/umount /var/lib/docker/overlay
+      ignore_errors: yes
+      register: unmount_result
+      changed_when: false
+
+    - name: Find overlay pids to kill
+      shell: "lsof | grep '/var/lib/docker/overlay' | awk '{print $2}'"
+      register: overlay_pids
+      #when: unmount_result != 0 and 'busy' in unmount_result.stderr
+      when: true
+
+    - name: Print pids
+      shell: "echo {{ overlay_pids }}"
+
+    - name: Kill running overlay pids
+      shell: "kill -9 {{ item }}"
+      with_items: "{{ overlay_pids.stdout_lines }}"
+      when: overlay_pids is defined and overlay_pids | length > 0
 
     - name: Get mounted kubelet resources
       shell: "mount | grep /var/lib/kubelet/pods | cut -d ' ' -f 3"
@@ -116,7 +152,7 @@
       - "{{ install_dir }}/bin/kubelet*"
       - "{{ install_dir }}/bin/kubectl*"
       - /etc/systemd/system/kube-proxy.service
-      - "{{ install_dir }}/mk-docker-opts.sh"
+      - "{{ install_dir }}/libexec/mk-docker-opts.sh"
       - "{{ install_dir }}/bin/flanneld"
       - /etc/systemd/system/flannel.service
       - /etc/systemd/system/docker.service
@@ -140,6 +176,13 @@
 
   - name: Remove nais sensu check directory
     file: path=/etc/sensu/plugins/metrics/nais state=absent
+
+- hosts: masters:workers:!coreos
+  tasks:
+  - name: Remove docker interface
+    command: ip link delete docker0
+    ignore_errors: yes
+    changed_when: false
 
 - hosts: coreos
   user: "{{ remote_user }}"

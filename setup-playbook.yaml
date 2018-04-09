@@ -2,7 +2,7 @@
   gather_facts: False
   pre_tasks:
   - name: Copy python interpreter to server
-    local_action: command scp files/pypy-5.1.0-linux64.tar.bz2 {{ remote_user }}@{{ inventory_hostname }}:/home/containerlinux/
+    local_action: command scp files/pypy-5.1.0-linux64.tar.bz2 {{ remote_user }}@{{ inventory_hostname }}:/home/{{ ansible_ssh_user }}/
   roles: 
     - coreos_bootstrap
 
@@ -11,7 +11,7 @@
   become: yes
   roles:
   -  { role: proxy, when: nais_http_proxy is defined }
-
+    
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
@@ -20,6 +20,9 @@
   tasks:
   - name: Copy .bashrc
     copy: src=files/bashrc dest=/root/.bashrc
+  - name: Set nais puppet facts
+    template: src=templates/nais-facts.txt.j2 dest=/etc/puppetlabs/facter/facts.d/nais-facts.txt
+    when: puppet_agent_rpm_check.rc == 0
 
 - hosts: masters
   user: "{{ remote_user }}"
@@ -80,10 +83,9 @@
 
   - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
-    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | \
-           tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
+    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
            mv /tmp/flanneld {{ install_dir }}/bin/flanneld-{{flannel_version}} && \
-           mv /tmp/mk-docker-opts.sh /{{ install_dir }}
+           mv /tmp/mk-docker-opts.sh {{ install_dir }}/libexec
     args:
       creates: "{{ install_dir }}/bin/flanneld-{{flannel_version}}"
     tags:
@@ -109,7 +111,7 @@
     file: path=/var/lib/docker/docker_opts.env state=absent
 
   - name: Make flannel configuration for docker
-    command: "{{ install_dir }}/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env"
+    command: "{{ install_dir }}/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env"
     changed_when: false
 
   - name: Copy docker service file
@@ -137,6 +139,15 @@
       src: templates/docker-config.json.j2
       dest: /root/.docker/config.json
     when: docker_repo_url is defined
+
+  - name: Disable swap automount
+    mount:
+      path: swap
+      state: absent
+
+  - name: Disable swap
+    command: swapoff -a
+    changed_when: false
 
   - name: Download kubernetes node binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
@@ -185,11 +196,11 @@
       state=started
       enabled=yes
 
-#  - name: Clean up /etc/hosts after puppet
-#    shell: /bin/echo "$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}') $(hostname -f)" >> /etc/hosts
-#    when: puppet_agent_rpm_check.rc == 0
-#    tags:
-#      - skip_ansible_lint
+  - name: Clean up /etc/hosts after puppet
+    shell: /bin/echo "$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}') $(hostname -f)" >> /etc/hosts
+    when: puppet_agent_rpm_check.rc == 0
+    tags:
+      - skip_ansible_lint
 
   handlers:
     - name: restart_docker
@@ -468,6 +479,11 @@
   become: yes
 
   tasks:
+  - name: Add puppet facts
+    template: src=templates/puppet-facts.master.j2 dest=/etc/puppetlabs/facter/facts.d/nais.yaml
+    when: puppet_agent_rpm_check.rc == 0
+
+  tasks:
   - name: Copy sensu client.json with correct config
     template: src=templates/sensu/master-client.json.j2 dest=/etc/sensu/conf.d/client.json
     when: sensu_rpm_check.rc == 0
@@ -488,6 +504,11 @@
 - hosts: workers
   user: "{{ remote_user }}"
   become: yes
+
+  tasks:
+  - name: Add puppet facts
+    template: src=templates/puppet-facts.worker.j2 dest=/etc/puppetlabs/facter/facts.d/nais.yaml
+    when: puppet_agent_rpm_check.rc == 0
 
   tasks:
   - name: Copy sensu client.json with correct config

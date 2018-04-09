@@ -1,7 +1,7 @@
 - name: Check if bootstrap is needed
   raw: stat $HOME/.bootstrapped
   register: need_bootstrap
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Run bootstrap.sh
   script: bootstrap.sh

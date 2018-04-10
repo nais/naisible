@@ -206,6 +206,10 @@ worker3.domain.com
 worker2.domain.com
 worker3.domain.com
 
+[coreos]
+nodename.domain.com
+nodename.domain.com
+
 # file: group_vars/storage_nodes
 
 node_taints:

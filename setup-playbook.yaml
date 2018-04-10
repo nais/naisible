@@ -197,7 +197,7 @@
       enabled=yes
 
   - name: Clean up /etc/hosts after puppet
-    shell: /bin/echo "$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}') $(hostname -f)" >> /etc/hosts
+    shell: /bin/sed -i "s/$(/sbin/ifconfig docker0 | grep inet | awk '{print $2}')/$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}')/g" /etc/hosts
     when: puppet_agent_rpm_check.rc == 0
     tags:
       - skip_ansible_lint

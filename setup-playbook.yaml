@@ -1,3 +1,9 @@
+- hosts: localhost
+  tasks:
+  - name: Verifiy that facts have been gathered for all hosts in inventory
+    assert:
+      that:
+        - ansible_play_hosts == ansible_play_hosts_all
 
 - hosts: all
   user: "{{ remote_user }}"

@@ -109,7 +109,6 @@ Variables
 #### Cluster specific variables
 |Variable name|Value|Information|
 |---|---|---|
-|master_ip|10.181.160.89|Host IP of the master node|
 |cluster_name|nais-dev|The default domain name in the cluster|
 |service_cidr|10.254.0.0/16|CIDR where all k8s services will recide. Addresses in this CIDR will only exist in iptables on the cluster nodes, but should not overlap with existing network CIDRs, as there might be existing services operating in the same range |
 |kubernetes_default_ip|10.254.0.1|Normally the first address in the service CIDR. This address will be allocated for the "kubernetes.default" service|
@@ -151,7 +150,6 @@ worker1.domain.com
 worker2.domain.com
 
 [all:vars]
-master_ip=10.181.160.89
 cluster_name=nais
 service_cidr=10.254.0.0/16
 kubernetes_default_ip=10.254.0.1
@@ -174,7 +172,6 @@ worker1.domain.com
 worker2.domain.com
 
 [all:vars]
-master_ip=10.181.160.89
 cluster_name=nais
 service_cidr=10.254.0.0/16
 kubernetes_default_ip=10.254.0.1

@@ -8,7 +8,6 @@
 <etcd-node-hostname-n>
 
 [all:vars]
-master_ip=10.181.160.99
 cluster_name=nais-dev
 service_cidr=10.254.0.0/16
 kubernetes_default_ip=10.254.0.1

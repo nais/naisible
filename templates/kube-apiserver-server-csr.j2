@@ -8,8 +8,7 @@
     "kubernetes.default.svc",
     "kubernetes.default.svc.{{ cluster_domain }}",
     "*.{{ domain }}",
-    "{{ hostvars[groups['masters'][0]]['ansible_hostname'] }}",
-    "{{ master_ip }}"
+    "{{ groups['masters'][0] }}"
   ],
   "key": {
     "algo": "rsa",

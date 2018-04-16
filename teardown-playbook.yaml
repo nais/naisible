@@ -63,11 +63,7 @@
     - name: Find overlay pids to kill
       shell: "lsof | grep '/var/lib/docker/overlay' | awk '{print $2}'"
       register: overlay_pids
-      #when: unmount_result != 0 and 'busy' in unmount_result.stderr
-      when: true
-
-    - name: Print pids
-      shell: "echo {{ overlay_pids }}"
+      when: unmount_result != 0 and 'busy' in unmount_result.stderr
 
     - name: Kill running overlay pids
       shell: "kill -9 {{ item }}"

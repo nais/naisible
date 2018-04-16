@@ -56,10 +56,6 @@ data:
     format = "json"
 
     [entryPoints]
-      [entryPoints.http]
-      address = ":80"
-      #  [entryPoints.http.redirect]
-      #    entryPoint = "https"
       [entryPoints.https]
       address = ":443"
         [entryPoints.https.tls]
@@ -109,8 +105,6 @@ spec:
             cpu: 200m
             memory: 64Mi
         ports:
-        - containerPort: 80
-          hostPort: 80
         - containerPort: 443
           hostPort: 443
         - containerPort: 8080

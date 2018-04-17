@@ -51,9 +51,11 @@ data:
         log . "{remote} - [{when}] \"{type} {class} {name} {proto} {size} {>do} {>bufsize}\" {rcode} {rsize} {duration}"
         health
         kubernetes {{ cluster_domain }} {{ service_cidr }} {
-            upstream /etc/resolv.conf
+            upstream
         }
-        proxy . /etc/resolv.conf
+        proxy . /etc/resolv.conf {
+            max_fails 0
+        }
         cache 30
         prometheus 0.0.0.0:9153
     }

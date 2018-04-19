@@ -4,7 +4,7 @@ proxy_env:
     https_proxy: "{{ nais_https_proxy | default(None) }}"
     no_proxy: "{{ nais_no_proxy | default(None) }}"
 
-remote_user: "{{ nais_remote_user | default('containerlinux') }}"
+remote_user: "{{ nais_remote_user | default('deployer') }}"
 
 # Version specific variables
 docker_version: 17.03.2.ce

@@ -48,7 +48,7 @@ spec:
     - --oidc-groups-claim={{oidc_groups_claim}}
     - --v={{log_level | default(0) }}
 {% endif %}
-    - --advertise-address={{ansible_default_ipv4.address}}
+    - --advertise-address={{ ansible_default_ipv4.address }}
     - --etcd-servers={{ etcd_urls | join(",") }}
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:

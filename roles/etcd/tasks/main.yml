@@ -14,6 +14,8 @@
     creates: "{{ install_dir}}/bin/etcd-{{ etcd_version }}"
   tags:
     - skip_ansible_lint
+  notify:
+    - restart_etcd
 
 - name: Symlink etcd
   file: src={{ install_dir }}/bin/etcd-{{etcd_version}} dest={{ install_dir }}/bin/etcd state=link
@@ -23,10 +25,12 @@
 
 - name: Creating etcd.service for systemd
   template: src=templates/etcd.service.j2 dest=/etc/systemd/system/etcd.service
+  notify:
+    - restart_etcd
 
 - name: Enable etcd
   systemd:
     daemon_reload=yes
     name=etcd
-    state=restarted
+    state=started
     enabled=yes

@@ -203,10 +203,6 @@ worker3.domain.com
 worker2.domain.com
 worker3.domain.com
 
-[coreos]
-nodename.domain.com
-nodename.domain.com
-
 # file: group_vars/storage_nodes
 
 node_taints:
@@ -215,6 +211,21 @@ node_taints:
 node_labels:
   - nais.io/storage-nodei=true
   - nais.io/role=worker
+
+[coreos]
+nodename.domain.com
+nodename.domain.com
+
+# file: group_vars/storage_nodes
+
+install_dir=/opt
+cert_dir=/etc/ssl/certs
+cert_bin=/sbin/update-ca-certificates
+
+ansible_pypy_home=/home/deployer/pypy
+ansible_pypy_bootstrap_file=/home/deployer/.bootstrapped
+ansible_python_interpreter=/home/deployer/bin/python
+
 
 ```
 

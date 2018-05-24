@@ -12,7 +12,7 @@ Naisable is a collection of ansible playbooks used to build, test and tear down 
 ansible-playbook -i inventory-file setup-playbook.yaml &&\
 ansible-playbook -i inventory-file test-playbook.yaml
 ```
-</a>
+
 ## Removing NAIS from hosts
 
 ```sh

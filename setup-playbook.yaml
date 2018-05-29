@@ -149,6 +149,15 @@
     command: swapoff -a
     changed_when: false
 
+  - name: Ensure rbd kernel module is present
+    modprobe:
+      name: rbd
+      state: present
+    when: ansible_distribution == 'RedHat'
+
+  - name: Load rbd kernel module on boot
+    copy: src=files/rbd.modules dest=/etc/sysconfig/modules/rbd.modules mode=0755
+    when: ansible_distribution == 'RedHat'
 
   - name: Download kubernetes node binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"

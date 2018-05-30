@@ -1,8 +1,9 @@
 - name: Check if bootstrap is needed
   raw: stat $HOME/.bootstrapped
   register: need_bootstrap
-  changed_when: false
   ignore_errors: yes
+  tags: 
+  - skip_ansible_lint
 
 - name: Run bootstrap.sh
   script: bootstrap.sh

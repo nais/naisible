@@ -2,7 +2,7 @@
   raw: stat $HOME/.bootstrapped
   register: need_bootstrap
   ignore_errors: yes
-  tags: 
+  tags:
   - skip_ansible_lint
 
 - name: Run bootstrap.sh

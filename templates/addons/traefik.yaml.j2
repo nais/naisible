@@ -66,6 +66,8 @@ data:
           [[entryPoints.https.tls.certificates]]
           CertFile = "/tls/tls.crt"
           KeyFile = "/tls/tls.key"
+    [ping]
+    entrypoint= "https"
 ---
 kind: DaemonSet
 apiVersion: extensions/v1beta1

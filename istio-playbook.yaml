@@ -91,11 +91,11 @@
 
   - name: Adding istio-sidecar-injector certificate secret
     shell: "{{ kubectl }} create secret generic sidecar-injector-certs --from-file=key.pem=target/istio/pki/istio-sidecar-injector-key.pem --from-file=cert.pem=target/istio/pki/istio-sidecar-injector.pem --dry-run -o yaml | {{ kubectl }} -n istio-system apply -f -"
-    ignore_errors: true
+    ignore_errors: yes
 
   - name: Adding istio-ingress certificate secret
     shell: "{{ kubectl }} create -n istio-system secret tls istio-ingress-certs --key target/istio/pki/istio-ingress-key.pem --cert target/istio/pki/istio-ingress.pem"
-    ignore_errors: true
+    ignore_errors: yes
 
   - name: Reading and encoding CA certificate bundle from file
     shell: cat target/istio/pki/ca.pem | base64 | tr -d '\n'

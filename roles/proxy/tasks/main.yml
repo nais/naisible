@@ -1,9 +1,9 @@
 - name: Ensure directories exist
-  file: state=directory path=/etc/pki/ca-trust/source/anchors
+  file: state=directory path={{ cert_dir }}
 
 - name: Install proxy cert
-  copy: src=files/webproxy.crt dest=/etc/pki/ca-trust/source/anchors/webproxy.crt
+  copy: src=files/webproxy.crt dest={{ cert_dir }}/webproxy.crt
 
 - name: update_cert_index
-  command: /usr/bin/update-ca-trust
+  command: "{{ cert_bin }}"
   changed_when: false

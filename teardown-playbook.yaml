@@ -5,10 +5,10 @@
   become: yes
   tasks:
   - name: Remove certificate
-    file: path=/etc/pki/ca-trust/source/anchors/webproxy.crt state=absent
+    file: path={{ cert_dir }}/webproxy.crt state=absent
 
   - name: update_cert_index
-    command: /usr/bin/update-ca-trust
+    command: "{{ cert_bin }}"
     changed_when: false
 
 - hosts: masters:workers
@@ -19,11 +19,13 @@
       yum_repository:
         name: Kubernetes
         state: absent
+      ignore_errors: yes 
 
     - name: Remove docker repository
       yum_repository:
         name: Docker
         state: absent
+      ignore_errors: yes
 
     - name: Stop services
       command: timeout 15 /bin/systemctl stop {{ item }}
@@ -41,26 +43,32 @@
       ignore_errors: yes
       changed_when: false
 
-    - name: Remove required packages
-      yum: name={{ item }} state=absent
-      with_items:
-        - "docker-ce"
-
     - name: Remove files
       file: path={{ item }} state=absent
       with_items:
         - /etc/systemd/system/docker.service.d
         - /etc/systemd/system/kubelet.service
         - /etc/kubernetes
-        - /etc/docker
+
+    - name: Unmount docker net resources
+      command: /bin/umount /run/docker/netns/*
+      ignore_errors: yes
 
     - name: Unmount docker resources
-      command: /bin/umount {{ item }}
-      with_items:
-        - /run/docker/netns/*
-        - /var/lib/docker/overlay
+      command: /bin/umount /var/lib/docker/overlay
       ignore_errors: yes
+      register: unmount_result
       changed_when: false
+
+    - name: Find overlay pids to kill
+      shell: "lsof | grep '/var/lib/docker/overlay' | awk '{print $2}'"
+      register: overlay_pids
+      when: unmount_result.stderr | search("busy")
+
+    - name: Kill running overlay pids
+      shell: "kill -9 {{ item }}"
+      with_items: "{{ overlay_pids.stdout_lines }}"
+      when: unmount_result.stderr | search("busy") and overlay_pids | length > 0
 
     - name: Get mounted kubelet resources
       shell: "mount | grep /var/lib/kubelet/pods | cut -d ' ' -f 3"
@@ -83,8 +91,8 @@
       file: path={{ item }} state=absent
       with_items:
         - /root/.helm/repository/repositories.yaml
-        - /usr/bin/helm-{{helm_version}}
-        - /usr/bin/helm
+        - "{{ install_dir }}/bin/helm-{{helm_version}}"
+        - "{{ install_dir }}/bin/helm"
         - /etc/sensu/conf.d/nais_master_metrics.json
 
 - hosts: etcd
@@ -97,10 +105,10 @@
     - name: Remove files
       file: path={{ item }} state=absent
       with_items:
-        - /usr/bin/etcd-{{etcd_version}}
-        - /usr/bin/etcd
-        - /usr/bin/etcdctl-{{etcd_version}}
-        - /usr/bin/etcdctl
+        - "{{ install_dir }}/bin/etcd-{{etcd_version}}"
+        - "{{ install_dir }}/bin/etcd"
+        - "{{ install_dir }}/bin/etcdctl-{{etcd_version}}"
+        - "{{ install_dir }}/bin/etcdctl"
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
 
@@ -136,33 +144,26 @@
     file: path={{ item }} state=absent
     with_items:
       - /etc/systemd/system/kubelet.service
-      - /usr/bin/kube-proxy*
-      - /usr/bin/kubelet*
-      - /usr/bin/kubectl*
+      - "{{ install_dir }}/bin/kube-proxy*"
+      - "{{ install_dir }}/bin/kubelet*"
+      - "{{ install_dir }}/bin/kubectl*"
       - /etc/systemd/system/kube-proxy.service
-      - /usr/libexec/mk-docker-opts.sh
-      - /usr/bin/flanneld
+      - "{{ install_dir }}/libexec/mk-docker-opts.sh"
+      - "{{ install_dir }}/bin/flanneld"
       - /etc/systemd/system/flannel.service
       - /etc/systemd/system/docker.service
-      - /usr/bin/flanneld-{{flannel_version}}
+      - "{{ install_dir }}/bin/flanneld-{{flannel_version}}"
       - /run/docker_opts.env
       - /run/flannel/subnet.env
       - /var/lib/docker
       - /var/lib/dockershim
       - /var/lib/kubelet
       - /var/lib/kubernetes
-      - /var/run/docker
       - /var/run/flannel
       - /var/run/kubernetes
-      - /run/docker
       - /run/flannel
       - /run/kubernetes
       - /root/.docker
-
-  - name: Remove docker interface
-    command: ip link delete docker0
-    ignore_errors: yes
-    changed_when: false
 
   - name: Remove flannel interface
     command: ip link delete flannel.1
@@ -171,3 +172,20 @@
 
   - name: Remove nais sensu check directory
     file: path=/etc/sensu/plugins/metrics/nais state=absent
+
+- hosts: masters:workers:!coreos
+  tasks:
+  - name: Remove docker interface
+    command: ip link delete docker0
+    ignore_errors: yes
+    changed_when: false
+
+- hosts: coreos
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+  - name: Remove python bootstrap file
+    file: path={{ ansible_pypy_bootstrap_file }} state=absent
+
+  - name: Remove python interpreter
+    raw: rm -rf {{ ansible_python_interpreter }} {{ ansible_pypy_home }} 

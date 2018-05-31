@@ -1,3 +1,14 @@
+- hosts: coreos
+  gather_facts: False
+  user: "{{ remote_user }}"
+  pre_tasks:
+  - name: Copy python interpreter to server
+    local_action: command scp files/pypy-5.1.0-linux64.tar.bz2 {{ remote_user }}@{{ inventory_hostname }}:/home/{{ remote_user }}/
+    tags:
+    - skip_ansible_lint
+  roles:
+    - coreos_bootstrap
+
 - hosts: localhost
   tasks:
   - name: Verifiy that facts have been gathered for all hosts in inventory
@@ -9,10 +20,7 @@
   user: "{{ remote_user }}"
   become: yes
   roles:
-  - { role: proxy, when: nais_http_proxy is defined }
-  tasks:
-  - name: Set nais puppet facts
-    template: src=templates/nais-facts.txt.j2 dest=/etc/puppetlabs/facter/facts.d/nais-facts.txt
+  -  { role: proxy, when: nais_http_proxy is defined }
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -22,6 +30,9 @@
   tasks:
   - name: Copy .bashrc
     copy: src=files/bashrc dest=/root/.bashrc
+  - name: Set nais puppet facts
+    template: src=templates/nais-facts.txt.j2 dest=/etc/puppetlabs/facter/facts.d/nais-facts.txt
+    when: puppet_agent_rpm_check.rc == 0
 
 - hosts: masters
   user: "{{ remote_user }}"
@@ -43,7 +54,7 @@
   become: yes
   tasks:
   - name: Check if flannel config exists (OK if this fails)
-    command: /usr/bin/etcdctl ls /nais/network/config
+    command: "{{ install_dir }}/bin/etcdctl ls /nais/network/config"
     environment:
       - ETCDCTL_API: 2
     register: flannelconfig
@@ -51,7 +62,7 @@
     changed_when: false
 
   - name: Set flannel configuration in etcd
-    shell: '/usr/bin/etcdctl set /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
+    shell: '"{{ install_dir }}"/bin/etcdctl set /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
     environment:
       - ETCDCTL_API: 2
     when: flannelconfig.rc != 0
@@ -82,17 +93,16 @@
 
   - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
-    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | \
-           tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
-           mv /tmp/flanneld /usr/bin/flanneld-{{flannel_version}} && \
-           mv /tmp/mk-docker-opts.sh /usr/libexec
+    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
+           mv /tmp/flanneld {{ install_dir }}/bin/flanneld-{{flannel_version}} && \
+           mv /tmp/mk-docker-opts.sh {{ install_dir }}/libexec
     args:
-      creates: /usr/bin/flanneld-{{flannel_version}}
+      creates: "{{ install_dir }}/bin/flanneld-{{flannel_version}}"
     tags:
       - skip_ansible_lint
 
   - name: Symlink flannel
-    file: src=/usr/bin/flanneld-{{flannel_version}} dest=/usr/bin/flanneld state=link
+    file: src={{ install_dir }}/bin/flanneld-{{flannel_version}} dest={{ install_dir }}/bin/flanneld state=link
 
   - name: Copy flannel service file
     template: src=templates/flannel.service.j2 dest=/etc/systemd/system/flannel.service
@@ -111,7 +121,7 @@
     file: path=/var/lib/docker/docker_opts.env state=absent
 
   - name: Make flannel configuration for docker
-    command: /usr/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env
+    command: "{{ install_dir }}/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env"
     changed_when: false
 
   - name: Copy docker service file
@@ -163,17 +173,17 @@
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://dl.k8s.io/v{{ k8s_version }}/kubernetes-node-linux-amd64.tar.gz | \
            tar xzf - -C /tmp kubernetes/node/bin/kubectl kubernetes/node/bin/kube-proxy kubernetes/node/bin/kubelet && \
-           mv /tmp/kubernetes/node/bin/kube-proxy /usr/bin/kube-proxy-{{ k8s_version }} && \
-           mv /tmp/kubernetes/node/bin/kubectl /usr/bin/kubectl-{{ k8s_version }} && \
-           mv /tmp/kubernetes/node/bin/kubelet /usr/bin/kubelet-{{ k8s_version }}
+           mv /tmp/kubernetes/node/bin/kube-proxy {{ install_dir }}/bin/kube-proxy-{{ k8s_version }} && \
+           mv /tmp/kubernetes/node/bin/kubectl {{ install_dir }}/bin/kubectl-{{ k8s_version }} && \
+           mv /tmp/kubernetes/node/bin/kubelet {{ install_dir }}/bin/kubelet-{{ k8s_version }}
     args:
-      creates: /usr/bin/kubelet-{{k8s_version}}
+      creates: "{{ install_dir }}/bin/kubelet-{{k8s_version}}"
     tags:
       - dev
       - skip_ansible_lint
 
   - name: Symlink kubernetes node binaries
-    file: src=/usr/bin/{{ item }}-{{ k8s_version }} dest=/usr/bin/{{ item }} state=link force=yes
+    file: src={{ install_dir }}/bin/{{ item }}-{{ k8s_version }} dest={{ install_dir }}/bin/{{ item }} state=link force=yes
     with_items:
       - kubectl
       - kube-proxy
@@ -183,7 +193,7 @@
       - restart_kubeproxy
 
   - name: Make kubernetes node binaries executable
-    file: path=/usr/bin/{{ item }}-{{ k8s_version }} mode=0755
+    file: path={{ install_dir }}/bin/{{ item }}-{{ k8s_version }} mode=0755
     with_items:
       - kubectl
       - kube-proxy
@@ -307,11 +317,14 @@
       - restart_kubelet
       - restart_kubeproxy
 
+  - name: Copy Issuing Internal certificate
+    copy: src=files/NAVIssuingCAIntern.crt dest={{ cert_dir }}/NAV_Issuing_Intern_CA.crt force=no
+
   - name: Ensure certs.d directory exists worker nodes
     file: state=directory path=/etc/docker/certs.d/docker.adeo.no:5000/
 
   - name: Symlink Internal CA to docker
-    file: src=/etc/pki/tls/certs/NAV_Issuing_Intern_CA.crt dest=/etc/docker/certs.d/docker.adeo.no:5000/ca.crt state=link force=yes
+    file: src=/etc/ssl/certs/NAV_Issuing_Intern_CA.crt dest=/etc/docker/certs.d/docker.adeo.no:5000/ca.crt state=link force=yes
 
   - name: Copy kubelet service manifest
     template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
@@ -354,23 +367,23 @@
     changed_when: false
 
   - name: Generate cluster-admin kubeconfig
-    shell: /usr/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
-           /usr/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
-           /usr/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
-           /usr/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf
+    shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+           {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+           {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+           {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf"
     changed_when: false
 
   - name: Wait for API server to become available
-    wait_for: port=6443 host={{ groups['masters'][0] }} delay=15 timeout=120
+    wait_for: port=6443 host={{ groups['masters'][0] }} delay=15 timeout=240
     changed_when: false
 
   - name: Setup node taints
-    command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}
+    command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
     with_items: "{{ node_taints | default([]) }}"
     changed_when: false
 
   - name: Setup node labels
-    command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}
+    command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
     with_items: "{{ node_labels | default([]) }}"
     changed_when: false
 
@@ -408,19 +421,19 @@
     changed_when: false
 
   - name: Create clusterrole and clusterrolebindings
-    command: /usr/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}
+    command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}"
     with_items:
     - clusterroles.yaml
     - clusterrolebindings.yaml
     changed_when: false
 
   - name: Create traefik tls secret
-    command: /usr/bin/kubectl -n kube-system create secret tls traefik-cert --key=/etc/kubernetes/pki/traefik-key.pem --cert=/etc/kubernetes/pki/traefik.pem
+    command: "{{ install_dir }}/bin/kubectl -n kube-system create secret tls traefik-cert --key=/etc/kubernetes/pki/traefik-key.pem --cert=/etc/kubernetes/pki/traefik.pem"
     ignore_errors: yes
     changed_when: false
 
   - name: Create addons
-    command: /usr/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}
+    command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}"
     with_items:
       - kubernetes-dashboard.yaml
       - core-dns.yaml
@@ -434,23 +447,23 @@
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://storage.googleapis.com/kubernetes-helm/helm-v{{ helm_version }}-linux-amd64.tar.gz | \
            tar xzf - -C /tmp linux-amd64/helm && \
-           mv /tmp/linux-amd64/helm /usr/bin/helm-{{ helm_version }}
+           mv /tmp/linux-amd64/helm {{ install_dir }}/bin/helm-{{ helm_version }}
     args:
-      creates: /usr/bin/helm-{{ helm_version }}
+      creates: "{{ install_dir }}/bin/helm-{{ helm_version }}"
     tags:
       - skip_ansible_lint
 
   - name: Symlink helm
-    file: src=/usr/bin/helm-{{ helm_version }} dest=/usr/bin/helm state=link
+    file: src={{ install_dir }}/bin/helm-{{ helm_version }} dest={{ install_dir }}/bin/helm state=link
 
   - name: Setup helm service account
-    shell: /usr/bin/kubectl create serviceaccount --namespace kube-system tiller &&
-           /usr/bin/kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+    shell: "{{ install_dir }}/bin/kubectl create serviceaccount --namespace kube-system tiller &&
+           {{ install_dir }}/bin/kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller"
     ignore_errors: yes
     changed_when: false
 
   - name: Initialize helm
-    command: /usr/bin/helm init --service-account=tiller --history-max 5 --upgrade
+    command: "{{ install_dir }}/bin/helm init --service-account=tiller --history-max 5 --upgrade"
     environment: "{{ proxy_env }}"
     changed_when: false
 

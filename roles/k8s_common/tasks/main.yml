@@ -5,6 +5,16 @@
     - /etc/kubernetes/pki
     - /etc/systemd/system/docker.service.d
     - /etc/docker
+    - "{{ install_dir }}/bin"
+    - "{{ install_dir }}/libexec"
+
+# Check if puppet-agent exist
+- name: Check if puppet is installed
+  command: rpm -q puppet
+  ignore_errors: yes
+  register: puppet_agent_rpm_check
+  tags:
+    - skip_ansible_lint
 
 - name: Add kubernetes repository
   yum_repository:
@@ -17,6 +27,7 @@
     gpgkey: https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
     gpgcheck: true
     state: present
+  when: puppet_agent_rpm_check.rc == 0
 
 - name: Add docker repository
   yum_repository:
@@ -28,18 +39,21 @@
     gpgkey: https://download.docker.com/linux/centos/gpg
     gpgcheck: true
     state: present
+  when: puppet_agent_rpm_check.rc == 0
 
 # install docker-selinux package separately to avoid obsoletion errors from newer docker releases
 - name: Remove container-selinux
   yum:
     name: container-selinux
     state: absent
+  when: puppet_agent_rpm_check.rc == 0
 
 - name: Install docker selinux package # need to avoid installing obsolete packages
   environment: "{{ proxy_env }}"
   shell: "yum -y --setopt=obsoletes=0 install docker-ce-selinux-{{ docker_version }}"
   tags:
     - skip_ansible_lint
+  when: puppet_agent_rpm_check.rc == 0
 
 - name: Install required packages
   environment: "{{ proxy_env }}"
@@ -47,6 +61,7 @@
   with_items:
     - "docker-ce-{{ docker_version }}"
     - "socat"
+  when: puppet_agent_rpm_check.rc == 0
 
 - name: Docker proxy settings
   template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf
@@ -57,14 +72,6 @@
   command: rpm -q sensu
   ignore_errors: yes
   register: sensu_rpm_check
-  tags:
-    - skip_ansible_lint
-
-# Check if puppet-agent exist
-- name: Check if puppet is installed
-  command: rpm -q puppet
-  ignore_errors: yes
-  register: puppet_agent_rpm_check
   tags:
     - skip_ansible_lint
 

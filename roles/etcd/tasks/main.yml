@@ -1,24 +1,27 @@
+- name: Ensure directories exist
+  file: state=directory path={{ item }}
+  with_items:
+    - "{{ install_dir }}/bin"
+    - /var/lib/etcd
+
 - name: Download and copy etcd binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
   environment: "{{ proxy_env }}"
   shell: curl --insecure https://storage.googleapis.com/etcd/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz | \
          tar xzf - -C /tmp && \
-         mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" /usr/bin/etcd-{{ etcd_version }} && \
-         mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" /usr/bin/etcdctl-{{ etcd_version }}
+         mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" "{{ install_dir}}/bin/etcd-{{ etcd_version }}" && \
+         mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" "{{ install_dir }}/bin/etcdctl-{{ etcd_version }}"
   args:
-    creates: /usr/bin/etcd-{{ etcd_version }}
+    creates: "{{ install_dir}}/bin/etcd-{{ etcd_version }}"
   tags:
     - skip_ansible_lint
   notify:
     - restart_etcd
 
 - name: Symlink etcd
-  file: src=/usr/bin/etcd-{{etcd_version}} dest=/usr/bin/etcd state=link
+  file: src={{ install_dir }}/bin/etcd-{{etcd_version}} dest={{ install_dir }}/bin/etcd state=link
 
 - name: Symlink etcdctl
-  file: src=/usr/bin/etcdctl-{{etcd_version}} dest=/usr/bin/etcdctl state=link
-
-- name: Ensure etcd directory exists
-  file: state=directory path=/var/lib/etcd
+  file: src={{ install_dir }}/bin/etcdctl-{{etcd_version}} dest={{ install_dir }}/bin/etcdctl state=link
 
 - name: Creating etcd.service for systemd
   template: src=templates/etcd.service.j2 dest=/etc/systemd/system/etcd.service

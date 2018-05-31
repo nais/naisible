@@ -11,7 +11,7 @@
     changed_when: false
 
   - name: Ensure cluster is healthy
-    shell: /usr/bin/etcdctl cluster-health | tail -n1
+    shell: "{{ install_dir }}/bin/etcdctl cluster-health | tail -n1"
     register: etcd_health_status
     failed_when: etcd_health_status.stdout != "cluster is healthy"
     changed_when: false
@@ -37,19 +37,19 @@
       changed_when: false
 
     - name: Ensure all kubernetes components are healthy
-      command: /usr/bin/kubectl get componentstatuses
+      command: "{{ install_dir }}/bin/kubectl get componentstatuses"
       register: componentstatuses
       failed_when: "'Unhealthy' in componentstatuses.stdout"
       changed_when: false
 
     - name: Verify that all nodes are in Ready-state
-      shell: /usr/bin/kubectl get nodes | grep -iw 'Ready' | wc -l
+      shell: "{{ install_dir }}/bin/kubectl get nodes | grep -iw 'Ready' | wc -l"
       register: ready_count
       failed_when: ready_count.stdout != "{{ K8S_HOST_COUNT }}"
       changed_when: false
 
     - name: Ensure addons are deployed and available
-      shell: "/usr/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
+      shell: "{{ install_dir }}/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
       with_items:
         - coredns
         - kubernetes-dashboard
@@ -91,7 +91,7 @@
   tasks:
 
     - name: Ensure node taints are set
-      shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l "
+      shell: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l "
       with_items:
         - "{{ node_taints|default([]) }}"
       register: matches_spec
@@ -99,7 +99,7 @@
       changed_when: false
 
     - name: Ensure node labels are set
-      shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l"
+      shell: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l"
       with_items:
         - "{{ node_labels|default([]) }}"
       register: matches_spec

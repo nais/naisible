@@ -3,7 +3,7 @@ Description=Kubernetes Kube Proxy
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
-ExecStart=/usr/bin/kube-proxy --cluster-cidr={{ pod_network_cidr }} --masquerade-all=true --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf --proxy-mode=iptables --v=2
+ExecStart={{ install_dir }}/bin/kube-proxy --cluster-cidr={{ pod_network_cidr }} --masquerade-all=true --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf --proxy-mode=iptables --v=2
 Restart=on-failure
 RestartSec=5
 

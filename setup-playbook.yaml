@@ -357,7 +357,7 @@
         state=restarted
 
 # Common setup for all nodes
-- hosts: all:!etcd
+- hosts: masters:workers:coreos:storage
   user: "{{ remote_user }}"
   become: yes
 

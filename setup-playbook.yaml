@@ -280,6 +280,7 @@
     tags:
     - devel
     with_items:
+      - kube-apiserver-audit-policy.yaml
       - manifests/kube-apiserver.yaml
       - manifests/kube-scheduler.yaml
       - manifests/kube-controller-manager.yaml

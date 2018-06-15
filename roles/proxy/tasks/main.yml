@@ -2,7 +2,7 @@
   file: state=directory path={{ cert_dir }}
 
 - name: Install proxy cert
-  copy: src=files/webproxy.crt dest={{ cert_dir }}/webproxy.crt
+  copy: src=files/webproxy.crt dest={{ cert_dir }}/webproxy{{ cert_postfix }}
 
 - name: update_cert_index
   command: "{{ cert_bin }}"

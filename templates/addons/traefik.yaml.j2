@@ -58,6 +58,21 @@ data:
     [accessLog]
     format = "json"
 
+      [accessLog.fields]
+        defaultMode = "keep"
+
+        [accessLog.fields.names]
+          "OriginStatusLine" = "drop"
+          "DownstreamStatusLine" = "drop"
+          "StartLocal" = "drop"
+
+        [accessLog.fields.headers]
+          defaultMode = "keep"
+
+          [accessLog.fields.headers.names]
+            "Authorization" = "redact"
+            "Password" = "redact"
+
     [entryPoints]
       [entryPoints.http]
       address = ":80"

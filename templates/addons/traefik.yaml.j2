@@ -62,8 +62,10 @@ data:
         defaultMode = "keep"
 
         [accessLog.fields.names]
-          "OriginStatusLine" = "drop"
+          "ClientAddr" = "drop"
           "DownstreamStatusLine" = "drop"
+          "OriginStatusLine" = "drop"
+          "RequestAddr" = "drop"
           "StartLocal" = "drop"
 
         [accessLog.fields.headers]
@@ -71,7 +73,9 @@ data:
 
           [accessLog.fields.headers.names]
             "Authorization" = "redact"
+            "Cookie" = "redact"
             "Password" = "redact"
+            "Set-Cookie" = "redact"
 
     [entryPoints]
       [entryPoints.http]

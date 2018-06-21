@@ -54,6 +54,28 @@ data:
 
     [traefikLog]
     format = "json"
+    
+    [accessLog]
+    format = "json"
+
+      [accessLog.fields]
+        defaultMode = "keep"
+
+        [accessLog.fields.names]
+          "ClientAddr" = "drop"
+          "DownstreamStatusLine" = "drop"
+          "OriginStatusLine" = "drop"
+          "RequestAddr" = "drop"
+          "StartLocal" = "drop"
+
+        [accessLog.fields.headers]
+          defaultMode = "keep"
+
+          [accessLog.fields.headers.names]
+            "Authorization" = "redact"
+            "Cookie" = "redact"
+            "Password" = "redact"
+            "Set-Cookie" = "redact"
 
     [entryPoints]
       [entryPoints.http]

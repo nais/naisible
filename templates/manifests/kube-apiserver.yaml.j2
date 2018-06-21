@@ -25,6 +25,9 @@ spec:
   - command:
     - kube-apiserver
     - --allow-privileged=true
+    - --audit-policy-file=/etc/kubernetes/kube-apiserver-audit-policy.yaml
+    - --audit-log-path=-
+    - --audit-log-format=json
     - --kubelet-client-certificate=/etc/kubernetes/pki/admin.pem
     - --kubelet-client-key=/etc/kubernetes/pki/admin-key.pem
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname

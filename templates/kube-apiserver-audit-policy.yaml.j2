@@ -1,0 +1,22 @@
+apiVersion: audit.k8s.io/v1beta1
+kind: Policy
+rules:
+  - level: None
+    userGroups:
+      - 'system:masters'
+      - 'system:serviceaccounts'
+  - level: None
+    nonResourceURLs:
+      - '/healthz*'
+      - /version
+      - '/swagger*'
+  - level: None
+    resources:
+      - group: ""
+        resources:
+          - events
+  - level: Metadata
+    omitStages:
+      - "ResponseStarted"
+      - "ResponseComplete"
+  - level: None

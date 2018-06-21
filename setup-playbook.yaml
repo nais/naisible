@@ -280,6 +280,7 @@
     tags:
     - devel
     with_items:
+      - kube-apiserver-audit-policy.yaml
       - manifests/kube-apiserver.yaml
       - manifests/kube-scheduler.yaml
       - manifests/kube-controller-manager.yaml
@@ -318,7 +319,7 @@
       - restart_kubeproxy
 
   - name: Copy Issuing Internal certificate
-    copy: src=files/NAVIssuingCAIntern.crt dest={{ cert_dir }}/NAV_Issuing_Intern_CA.crt force=no
+    copy: src=files/NAVIssuingCAIntern.crt dest={{ cert_dir }}/NAV_Issuing_Intern_CA{{ cert_postfix }} force=no
 
   - name: Ensure certs.d directory exists worker nodes
     file: state=directory path=/etc/docker/certs.d/docker.adeo.no:5000/

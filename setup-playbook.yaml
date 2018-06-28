@@ -223,12 +223,12 @@
       - skip_ansible_lint
 
   - name: Set kernel parameters
-    sysctl: 
-      name={{ item.kname }} 
-      value={{ item.kvalue }} 
-      state=present 
-      sysctl_file=/etc/sysctl.d/60-sysctl.conf 
-      sysctl_set=yes 
+    sysctl:
+      name={{ item.kname }}
+      value={{ item.kvalue }}
+      state=present
+      sysctl_file=/etc/sysctl.d/60-sysctl.conf
+      sysctl_set=yes
       reload=yes
     with_items:
       - { kname: 'fs.inotify.max_user_watches', kvalue: '16384' }

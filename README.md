@@ -88,6 +88,11 @@ Hosts
 <etcd-node-hostname-1>
 <etcd-node-hostname-n>
 ```
+```
+[coreos]
+<coreos-node-hostname-1>
+<coreos-node-hostname-n>
+```
 
 Variables
 ---
@@ -95,7 +100,6 @@ Variables
 |Variable name|Version|Version information location|
 |---|---|---|
 |docker_version|17.03.2.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
-|cni_version|0.6.0|https://github.com/containernetworking/cni/releases|
 |etcd_version|3.2.9|https://github.com/coreos/etcd/releases/|
 |flannel_version|0.9.0|https://github.com/coreos/flannel/releases|
 |k8s_version|1.8.1|https://github.com/kubernetes/kubernetes/releases|

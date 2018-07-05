@@ -7,6 +7,7 @@ metadata:
     tier: control-plane
   annotations:
     nais.io/logformat: glog
+    scheduler.alpha.kubernetes.io/critical-pod: ""
   name: kube-controller-manager
   namespace: kube-system
 spec:
@@ -48,6 +49,7 @@ spec:
     - mountPath: /etc/pki
       name: pki
   hostNetwork: true
+  priorityClassName: system-cluster-critical
   volumes:
   - hostPath:
       path: /etc/kubernetes

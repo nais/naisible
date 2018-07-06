@@ -52,7 +52,6 @@
       shell: "{{ install_dir }}/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
       with_items:
         - coredns
-        - kubernetes-dashboard
         - tiller-deploy
         - heapster
         - monitoring-influxdb

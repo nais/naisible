@@ -58,7 +58,6 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Install and enable Kubelet
    1. Install and enable Helm
    1. Install and enable addons:
-      1. kubernetes-dashboard
       1. core-dns
       1. traefik
       1. heapster

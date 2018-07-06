@@ -41,7 +41,7 @@ kind: ServiceAccount
 metadata:
   labels:
     k8s-app: kubernetes-dashboard
-  name: kubernetes-dashboard
+  name: nais-kubernetes-dashboard
   namespace: k8s-dashboard
 
 ---
@@ -91,5 +91,5 @@ roleRef:
   name: kubernetes-dashboard-minimal
 subjects:
 - kind: ServiceAccount
-  name: kubernetes-dashboard
+  name: nais-kubernetes-dashboard
   namespace: k8s-dashboard

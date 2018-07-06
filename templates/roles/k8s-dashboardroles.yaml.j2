@@ -1,0 +1,35 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: k8s-dashboard-for-nais-developer
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods/portforward
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: k8s-dashboard-for-nais-developer
+  namespace: k8s-dashboard
+roleRef:
+  kind: ClusterRole
+  name: k8s-dashbaord-for-nais-developer
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: 55465c5b-55a7-4e99-86b1-4c94818c1573
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: ff7122a0-99b0-4126-92d6-b80214b3b0ec
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: 99f15c1b-cc3a-4f17-b1e6-c4b4a25118fc

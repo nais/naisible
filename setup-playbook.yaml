@@ -414,7 +414,6 @@
   - name: Copy kubernetes-addons manifest templates
     template: src=templates/addons/{{ item }}.j2 dest=/etc/kubernetes/addons/{{ item }}
     with_items:
-      - kubernetes-dashboard.yaml
       - core-dns.yaml
       - traefik.yaml
       - heapster.yaml
@@ -427,6 +426,7 @@
     with_items:
       - clusterroles.yaml
       - clusterrolebindings.yaml
+      - k8s-dashboardroles.yaml
 
   - name: Wait for API server to become available
     wait_for: port=8080 host=127.0.0.1 delay=5
@@ -437,6 +437,7 @@
     with_items:
     - clusterroles.yaml
     - clusterrolebindings.yaml
+    - k8s-dashboardroles.yaml
     changed_when: false
 
   - name: Create traefik tls secret
@@ -447,7 +448,6 @@
   - name: Create addons
     command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}"
     with_items:
-      - kubernetes-dashboard.yaml
       - core-dns.yaml
       - traefik.yaml
       - heapster.yaml

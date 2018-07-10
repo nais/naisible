@@ -102,7 +102,6 @@ Variables
 |etcd_version|3.2.9|https://github.com/coreos/etcd/releases/|
 |flannel_version|0.9.0|https://github.com/coreos/flannel/releases|
 |k8s_version|1.8.1|https://github.com/kubernetes/kubernetes/releases|
-|dashboard_version|1.7.1|https://github.com/kubernetes/dashboard/releases|
 |coredns_version|011|https://github.com/coredns/coredns/releases|
 |traefik_version|1.4-alpine|https://hub.docker.com/r/library/traefik/tags/|
 |helm_version|2.7.0|https://github.com/kubernetes/helm/releases|

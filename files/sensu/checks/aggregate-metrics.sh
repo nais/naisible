@@ -22,7 +22,6 @@ if [[ ${CATEGORY} == master ]]; then
     /etc/sensu/plugins/metrics/nais/component-metrics.sh etcd-2 || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/nodes-metrics.sh || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/addon-metrics.sh coredns || AGGREGATERESULT=1
-    /etc/sensu/plugins/metrics/nais/addon-metrics.sh kubernetes-dashboard 2>/dev/null || AGGREGATERESULT=1
     /etc/sensu/plugins/metrics/nais/addon-metrics.sh tiller-deploy || AGGREGATERESULT=1
 
     if [[ ${AGGREGATERESULT} == 0 ]]; then

@@ -10,7 +10,7 @@
 
 # Check if puppet-agent exist
 - name: Check if puppet is installed
-  command: rpm -q puppet
+  shell: rpm -q puppet || rpm -q pe-puppet
   ignore_errors: yes
   register: puppet_agent_rpm_check
   tags:

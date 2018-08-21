@@ -24,7 +24,9 @@
   file: src={{ install_dir }}/bin/etcdctl-{{etcd_version}} dest={{ install_dir }}/bin/etcdctl state=link
 
 - name: Creating etcd.service for systemd
-  template: src=templates/etcd.service.j2 dest=/etc/systemd/system/etcd.service
+  template:
+    src: "{{ role_path }}/templates/etcd.service.j2"
+    dest: /etc/systemd/system/etcd.service
   notify:
     - restart_etcd
 

@@ -1,5 +1,7 @@
 - name: Ensure directories exist
-  file: state=directory path={{ item }}
+  file:
+    state: directory
+    path: "{{ item }}"
   with_items:
     - "{{ install_dir }}/bin"
     - /var/lib/etcd
@@ -18,10 +20,16 @@
     - restart_etcd
 
 - name: Symlink etcd
-  file: src={{ install_dir }}/bin/etcd-{{etcd_version}} dest={{ install_dir }}/bin/etcd state=link
+  file:
+    src: "{{ install_dir }}/bin/etcd-{{etcd_version}}"
+    dest: "{{ install_dir }}/bin/etcd"
+    state: link
 
 - name: Symlink etcdctl
-  file: src={{ install_dir }}/bin/etcdctl-{{etcd_version}} dest={{ install_dir }}/bin/etcdctl state=link
+  file:
+    src: "{{ install_dir }}/bin/etcdctl-{{etcd_version}}"
+    dest: "{{ install_dir }}/bin/etcdctl"
+    state: link
 
 - name: Creating etcd.service for systemd
   template:
@@ -32,7 +40,7 @@
 
 - name: Enable etcd
   systemd:
-    daemon_reload=yes
-    name=etcd
-    state=started
-    enabled=yes
+    daemon_reload: yes
+    name: etcd
+    state: started
+    enabled: yes

@@ -1,5 +1,7 @@
 - name: Ensure directories exist
-  file: state=directory path={{ item }}
+  file:
+    state: directory
+    path: "{{ item }}"
   with_items:
     - /etc/kubernetes/kubeconfigs
     - /etc/kubernetes/pki
@@ -57,14 +59,18 @@
 
 - name: Install required packages
   environment: "{{ proxy_env }}"
-  yum: name={{ item }} state=present
+  yum:
+    name: "{{ item }}"
+    state: present
   with_items:
     - "docker-ce-{{ docker_version }}"
     - "socat"
   when: puppet_agent_rpm_check.rc == 0
 
 - name: Docker proxy settings
-  template: src=templates/docker-proxy.conf.j2 dest=/etc/systemd/system/docker.service.d/proxy.conf
+  template:
+    src: "{{ role_path }}/templates/docker-proxy.conf.j2"
+    dest: /etc/systemd/system/docker.service.d/proxy.conf
   when: nais_http_proxy is defined
 
 # Check if sensu-core exist

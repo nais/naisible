@@ -5,6 +5,15 @@
   with_items:
     - "{{ install_dir }}/bin"
     - /var/lib/etcd
+    - /etc/etcd/certs
+
+- name: Copy etcd certificate
+  copy:
+    src: "/target/pki/{{ item }}"
+    dest: "/etc/etcd/certs/"
+  with_items:
+    - etcd.pem
+    - etcd-key.pem
 
 - name: Download and copy etcd binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
   environment: "{{ proxy_env }}"

@@ -19,6 +19,8 @@ ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} --initial-adv
   --initial-cluster {{all_etcd|join(',')}} \
   --initial-cluster-state new \
   --data-dir=/var/lib/etcd \
+  --client-cert-auth \
+  --trusted-ca-file=/etc/etcd/certs/ca.pem \
   --cert-file=/etc/etcd/certs/etcd.pem \
   --key-file=/etc/etcd/certs/etcd-key.pem
 Type=notify

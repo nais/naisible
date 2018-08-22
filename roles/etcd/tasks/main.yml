@@ -12,6 +12,8 @@
     src: "target/pki/{{ item }}"
     dest: "/etc/etcd/certs/"
   with_items:
+    - etcd-client.pem
+    - etcd-client-key.pem
     - etcd.pem
     - etcd-key.pem
     - ca.pem

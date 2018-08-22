@@ -48,6 +48,11 @@
   args:
     creates: target/pki/etcd.pem
 
+- name: Creating etcd certificate
+  shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client target/pki/etcd-csr.json | bin/cfssljson -bare target/pki/etcd-client
+  args:
+    creates: target/pki/etcd-client.pem
+
 - name: Creating kube apiserver certificate
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/kube-apiserver-server-csr.json | bin/cfssljson -bare target/pki/kube-apiserver-server
   args:

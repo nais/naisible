@@ -15,6 +15,8 @@
     - etcd.pem
     - etcd-key.pem
     - ca.pem
+  notify:
+    - restart_etcd
 
 - name: Download and copy etcd binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
   environment: "{{ proxy_env }}"

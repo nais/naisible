@@ -18,6 +18,11 @@
     src: "{{ role_path }}/templates/ca-csr.j2"
     dest: target/pki/ca-csr.json
 
+- name: Generate etcd.json
+  template:
+    src: "{{ role_path }}/templates/etcd-csr.j2"
+    dest: target/pki/etcd-csr.json
+
 - name: Generate kube-apiserver-csr.json
   template:
     src: "{{ role_path }}/templates/kube-apiserver-server-csr.j2"
@@ -37,6 +42,11 @@
   shell: "bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client {{ role_path }}/files/admin-csr.json | bin/cfssljson -bare target/pki/admin"
   args:
     creates: target/pki/admin.pem
+
+- name: Creating etcd certificate
+  shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/etcd-crs.json | bin/cfssljson -bare target/pki/etcd
+  args:
+    creates: target/pki/etcd.pem
 
 - name: Creating kube apiserver certificate
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/kube-apiserver-server-csr.json | bin/cfssljson -bare target/pki/kube-apiserver-server

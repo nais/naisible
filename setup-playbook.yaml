@@ -113,7 +113,7 @@
     systemd:
       daemon_reload: yes
       name: flannel.service
-      state: restarted
+      state: started
       enabled: yes
 
   - name: Ensure /var/lib/docker exists

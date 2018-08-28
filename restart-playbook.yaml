@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: all:!etcd
   user: "{{ remote_user }}"
   become: yes
   tasks:
@@ -17,7 +17,6 @@
         daemon_reload: yes
         name: kube-proxy.service
         state: restarted
-# Services nedenfor kjører ikke på alle noder
     - name: Docker
       systemd:
         daemon_reload: yes
@@ -29,7 +28,12 @@
         name: flannel.service
         state: restarted
       ignore_errors: yes
-    - name: ETCD
+
+- hosts: etcd
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+    - name: Etcd
       systemd:
         daemon_reload: yes
         name: docker.service

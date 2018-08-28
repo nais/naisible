@@ -8,18 +8,3 @@
 - name: Run bootstrap.sh
   script: bootstrap.sh
   when: need_bootstrap | failed
-
-- name: Add systemd unit to fix issue 32728 (symlinks in /sys)
-  copy:
-    src: "{{ role_path }}/files/kube-issue-32728-fix.service"
-    dest: /etc/systemd/system/kube-issue-32728-fix.service
-    owner: group
-    group: root
-    mode: 0644
-
-- name: Enable the fix for 32728 during boot
-  systemd:
-    daemon_reload: yes
-    name: kube-issue-32728-fix.service
-    state: started
-    enabled: yes

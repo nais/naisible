@@ -1,0 +1,36 @@
+- hosts: all
+  user: "{{ remote_user }}"
+  tasks:
+    - name: Docker
+      systemd:
+        daemon_reload: yes
+        name: docker.service
+        state: restarted
+    - name: Kubelet
+      systemd:
+        daemon_reload: yes
+        name: kubelet.service
+        state: restarted
+    - name: Kube-proxy
+      systemd:
+        daemon_reload: yes
+        name: kube-proxy.service
+        state: restarted
+    - name: Sensu
+      systemd:
+        daemon_reload: yes
+        name: kube-proxy.service
+        state: restarted
+# Services nedenfor kjører ikke på alle noder
+    - name: Flannel
+      systemd:
+        daemon_reload: yes
+        name: flannel.service
+        state: restarted
+      ignore_errors: yes
+    - name: ETCD
+      systemd:
+        daemon_reload: yes
+        name: docker.service
+        state: restarted
+      ignore_errors: yes

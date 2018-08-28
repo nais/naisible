@@ -12,11 +12,13 @@
     src: "target/pki/{{ item }}"
     dest: "/etc/etcd/certs/"
   with_items:
-    - etcd-client.pem
-    - etcd-client-key.pem
-    - etcd.pem
-    - etcd-key.pem
     - ca.pem
+    - /etcd/etcd.pem
+    - /etcd/etcd-key.pem
+    - /etcd/client.pem
+    - /etcd/client-key.pem
+    - "etcd/peer-{{ ansible_hostname }}.pem"
+    - "etcd/peer-{{ ansible_hostname }}-key.pem"
   notify:
     - restart_etcd
 

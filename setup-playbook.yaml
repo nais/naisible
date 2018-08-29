@@ -118,13 +118,15 @@
 
   - name: Copy flannel service file
     template: src=templates/flannel.service.j2 dest=/etc/systemd/system/flannel.service
+    notify:
+      - restart_flannel
 
   - name: Enable flannel
     systemd:
-      daemon_reload=yes
-      name=flannel
-      state=started
-      enabled=yes
+      daemon_reload: yes
+      name: flannel.service
+      state: started
+      enabled: yes
 
   - name: Ensure /var/lib/docker exists
     file: path=/var/lib/docker state=directory
@@ -148,10 +150,10 @@
 
   - name: Start and enable docker
     systemd:
-      daemon_reload=yes
-      name=docker
-      state=started
-      enabled=yes
+      daemon_reload: yes
+      name: docker.service
+      state: started
+      enabled: yes
 
   - name: Ensure /root/.docker exists
     file: path=/root/.docker state=directory
@@ -223,10 +225,10 @@
 
   - name: Enable kube-proxy
     systemd:
-      daemon_reload=yes
-      name=kube-proxy
-      state=started
-      enabled=yes
+      daemon_reload: yes
+      name: kube-proxy.service
+      state: started
+      enabled: yes
 
   - name: Clean up /etc/hosts after puppet
     shell: /bin/sed -i "s/$(/sbin/ifconfig docker0 | grep inet | awk '{print $2}')/$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}')/g" /etc/hosts
@@ -248,23 +250,29 @@
   handlers:
     - name: restart_docker
       systemd:
-        daemon_reload=yes
-        name=docker
-        state=restarted
+        daemon_reload: yes
+        name: docker.service
+        state: restarted
 
     - name: restart_kubelet
       systemd:
-        name=kubelet
-        daemon_reload=yes
-        state=restarted
+        daemon_reload: yes
+        name: kubelet.service
+        state: restarted
       # on new nodes kublet will not yet be install, ignore errors
       ignore_errors: yes
 
+    - name: restart_flannel
+      systemd:
+        daemon_reload: yes
+        name: flannel.service
+        state: restarted
+
     - name: restart_kubeproxy
       systemd:
-        daemon_reload=yes
-        name=kube-proxy
-        state=restarted
+        daemon_reload: yes
+        name: kube-proxy.service
+        state: restarted
 
 # Start control plane
 - hosts: masters
@@ -284,10 +292,10 @@
 
   - name: Enable kubelet
     systemd:
-      daemon_reload=yes
-      name=kubelet
-      state=started
-      enabled=yes
+      daemon_reload: yes
+      name: kubelet.service
+      state: started
+      enabled: yes
 
   - name: Ensure kubectl config directory exists on master
     file: state=directory path=/root/.kube
@@ -315,15 +323,15 @@
   handlers:
     - name: restart_docker
       systemd:
-        name=docker
-        daemon_reload=yes
-        state=restarted
+        daemon_reload: yes
+        name: docker.service
+        state: restarted
 
     - name: restart_kubelet
       systemd:
-        name=kubelet
-        daemon_reload=yes
-        state=restarted
+        daemon_reload: yes
+        name: kubelet.service
+        state: restarted
 
 # Configure workers
 - hosts: workers
@@ -362,23 +370,23 @@
 
   - name: Enable kubelet
     systemd:
-      daemon_reload=yes
-      name=kubelet
-      state=started
-      enabled=yes
+      daemon_reload: yes
+      name: kubelet.service
+      state: started
+      enabled: yes
 
   handlers:
     - name: restart_kubeproxy
       systemd:
-        daemon_reload=yes
-        name=kube-proxy
-        state=restarted
+        daemon_reload: yes
+        name: kube-proxy.service
+        state: restarted
 
     - name: restart_kubelet
       systemd:
-        daemon_reload=yes
-        name=kubelet
-        state=restarted
+        daemon_reload: yes
+        name: kubelet.service
+        state: restarted
 
 # Common setup for all nodes
 - hosts: masters:workers:coreos:storage
@@ -515,9 +523,9 @@
   handlers:
   - name: restart_sensu
     systemd:
-      daemon_reload=yes
-      name=sensu-client
-      state=restarted
+      daemon_reload: yes
+      name: sensu-client.service
+      state: restarted
 
 - hosts: masters
   user: "{{ remote_user }}"
@@ -543,9 +551,9 @@
   handlers:
    - name: restart_sensu
      systemd:
-      daemon_reload=yes
-      name=sensu-client
-      state=restarted
+      daemon_reload: yes
+      name: sensu-client.service
+      state: restarted
 
 - hosts: workers
   user: "{{ remote_user }}"
@@ -571,9 +579,6 @@
   handlers:
   - name: restart_sensu
     systemd:
-      daemon_reload=yes
-      name=sensu-client
-      state=restarted
-
-
-#- import_playbook: istio.yaml
+      daemon_reload: yes
+      name: sensu-client.service
+      state: restarted

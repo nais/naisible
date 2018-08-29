@@ -12,11 +12,6 @@
         daemon_reload: yes
         name: kube-proxy.service
         state: restarted
-    - name: Sensu
-      systemd:
-        daemon_reload: yes
-        name: sensu-client.service
-        state: restarted
     - name: Docker
       systemd:
         daemon_reload: yes

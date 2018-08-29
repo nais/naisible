@@ -15,7 +15,7 @@
     - name: Sensu
       systemd:
         daemon_reload: yes
-        name: kube-proxy.service
+        name: sensu-client.service
         state: restarted
     - name: Docker
       systemd:
@@ -36,6 +36,6 @@
     - name: Etcd
       systemd:
         daemon_reload: yes
-        name: docker.service
+        name: etcd.service
         state: restarted
       ignore_errors: yes

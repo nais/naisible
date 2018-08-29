@@ -6,7 +6,8 @@
   "CN": "etcd",
   "hosts": [
     "127.0.0.1",
-    {{ all_etcd|join(',\n')|indent }}
+    {{ all_etcd|join(',\n')|indent }},
+    "{{ groups['etcd']|join('",\n"')|indent }}"
   ],
   "key": {
     "algo": "ecdsa",

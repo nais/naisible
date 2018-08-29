@@ -1,6 +1,6 @@
 {% set etcd_urls = [] -%}
 {% for host in groups['etcd'] -%}
-  {% set _ = etcd_urls.append("http://%s:2379" % (host)) -%}
+  {% set _ = etcd_urls.append("https://%s:2379" % (host)) -%}
 {% endfor -%}
 [Unit]
 Description=flannel
@@ -8,7 +8,12 @@ Documentation=https://coreos.com/flannel
 Before=docker.service
 
 [Service]
-ExecStart={{ install_dir }}/bin/flanneld --etcd-endpoints={{ etcd_urls | join(",") }} --etcd-prefix=/nais/network
+ExecStart={{ install_dir }}/bin/flanneld \
+  --etcd-endpoints={{ etcd_urls | join(",") }} \
+  --etcd-prefix=/nais/network \
+  --etcd-cafile=/etc/kubernetes/pki/ca.pem \
+  --etcd-certfile=/etc/kubernetes/pki/etcd.pem \
+  --etcd-keyfile=/etc/kubernetes/pki/etcd-key.pem
 
 Restart=always
 StartLimitInterval=0

@@ -13,7 +13,7 @@
     src: "{{ role_path }}/templates/ca-csr.j2"
     dest: target/pki/ca-csr.json
 
-- name: Generate etcd.json
+- name: Generate etcd-csr.json
   template:
     src: "{{ role_path }}/templates/etcd-csr.j2"
     dest: target/pki/etcd-csr.json

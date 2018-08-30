@@ -2,12 +2,14 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
-    - name: Etcd
+    - name: Ensure Etcd is stopped
       systemd:
         daemon_reload: yes
         name: etcd.service
-        state: stop
+        state: stopped
       ignore_errors: yes
 
     - name: Remove old cache
-      command: rm -r /var/lib/etcd/
+      file:
+        path: /var/lib/etcd/
+        state: absent

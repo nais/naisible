@@ -1,0 +1,11 @@
+[Unit]
+Description=Fixes kube issue 32728
+Documentation=https://github.com/kubernetes/kubernetes/issues/32728#issuecomment-252469277
+Before=docker.service
+
+[Service]
+User=root
+ExecStart=/bin/bash -c 'mount -o remount,rw /sys/fs/cgroup && ln -s /sys/fs/cgroup/cpu,cpuacct /sys/fs/cgroup/cpuacct,cpu ; mount -o remount,ro /sys/fs/cgroup'
+
+[Install]
+WantedBy=multi-user.target

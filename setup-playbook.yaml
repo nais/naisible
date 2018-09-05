@@ -16,10 +16,10 @@
       that:
         - ansible_play_hosts == ansible_play_hosts_all
 
-- hosts: workers:!storage
-  user: "{{ remote_user }}"
-  roles:
-  - bigip_pool
+#- hosts: workers:!storage
+#  user: "{{ remote_user }}"
+#  roles:
+#  - bigip_pool
 
 - hosts: all
   user: "{{ remote_user }}"

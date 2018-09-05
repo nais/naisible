@@ -22,4 +22,5 @@
 
 - name: Setup timezone
   become: yes
-  command: timedatectl set-timezone {{ timezone }}
+  timezone:
+    name: "{{ timezone }}"

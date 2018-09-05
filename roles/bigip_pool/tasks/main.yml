@@ -1,0 +1,13 @@
+- name: Add pool member
+  bigip_pool_member:
+    server: "{{ bigip_address }}"
+    state: present
+    pool: "{{ bigip_pool_name }}"
+    partition: AutoProv
+    host: "{{ ansible_default_ipv4['address'] }}"
+    port: 443
+  delegate_to: localhost
+  when: (
+        bigip_pool_name is defined and
+        bigip_address is defined and
+        )

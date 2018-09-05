@@ -585,3 +585,7 @@
       daemon_reload: yes
       name: sensu-client.service
       state: restarted
+
+- hosts: workers:!storage
+  roles:
+  - bigip_pool

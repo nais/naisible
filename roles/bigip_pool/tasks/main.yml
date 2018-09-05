@@ -1,5 +1,4 @@
 - name: Add pool member
-  unless: 
   bigip_pool_member:
     server: "{{ bigip_address }}"
     state: present

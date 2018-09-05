@@ -587,5 +587,6 @@
       state: restarted
 
 - hosts: workers:!storage
+  user: "{{ remote_user }}"
   roles:
   - bigip_pool

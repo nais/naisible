@@ -8,3 +8,18 @@
 - name: Run bootstrap.sh
   script: bootstrap.sh
   when: need_bootstrap | failed
+
+- name: Setup timesyncd.conf
+  become: yes
+  template:
+    src: "{{ role_path }}/templates/timesyncd.conf.j2"
+    dest: /etc/systemd/timesyncd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart systemd-timesyncd
+
+- name: Setup timezone
+  become: yes
+  command: timedatectl set-timezone {{ timezone }}

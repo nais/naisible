@@ -11,6 +11,17 @@
     command: "{{ cert_bin }}"
     changed_when: false
 
+  - name: Disable the fix for 32728
+    systemd:
+      name: kube-issue-32728-fix.service
+      state: stopped
+      enabled: no
+
+  - name: Remove systemd unit file for 32728 fix (symlinks in /sys)
+    file:
+      path: /etc/systemd/system/kube-issue-32728-fix.service
+      state: absent
+
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes

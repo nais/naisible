@@ -14,7 +14,6 @@ rules:
   - endpoints
   - persistentvolumeclaims
   - pods
-  - redisfailover
   - replicationcontrollers
   - replicationcontrollers/scale
   - serviceaccounts
@@ -110,6 +109,19 @@ rules:
   - replicasets
   - replicasets/scale
   - replicationcontrollers/scale
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - storage.spotahome.com
+  resources:
+  - redisfailovers
   verbs:
   - create
   - delete

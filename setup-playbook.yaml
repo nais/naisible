@@ -16,11 +16,31 @@
       that:
         - ansible_play_hosts == ansible_play_hosts_all
 
+#- hosts: workers:!storage
+#  user: "{{ remote_user }}"
+#  roles:
+#  - bigip_pool
+
 - hosts: all
   user: "{{ remote_user }}"
   become: yes
   roles:
   -  { role: proxy, when: nais_http_proxy is defined }
+  tasks:
+  - name: Add systemd unit to fix issue 32728 (symlinks in /sys)
+    copy:
+      src: files/kube-issue-32728-fix.service
+      dest: /etc/systemd/system/kube-issue-32728-fix.service
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Enable the fix for 32728 during boot
+    systemd:
+      daemon_reload: yes
+      name: kube-issue-32728-fix.service
+      state: started
+      enabled: yes
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -29,9 +49,13 @@
   - k8s_common
   tasks:
   - name: Copy .bashrc
-    copy: src=files/bashrc dest=/root/.bashrc
+    copy:
+      src: files/bashrc
+      dest: /root/.bashrc
   - name: Set nais puppet facts
-    template: src=templates/nais-facts.txt.j2 dest=/etc/puppetlabs/facter/facts.d/nais-facts.txt
+    template:
+      src: templates/nais-facts.txt.j2
+      dest: /etc/puppetlabs/facter/facts.d/nais-facts.txt
     when: puppet_agent_rpm_check.rc == 0
 
 - hosts: masters
@@ -114,10 +138,15 @@
       - skip_ansible_lint
 
   - name: Symlink flannel
-    file: src={{ install_dir }}/bin/flanneld-{{flannel_version}} dest={{ install_dir }}/bin/flanneld state=link
+    file:
+      src: "{{ install_dir }}/bin/flanneld-{{flannel_version}}"
+      dest: "{{ install_dir }}/bin/flanneld"
+      state: link
 
   - name: Copy flannel service file
-    template: src=templates/flannel.service.j2 dest=/etc/systemd/system/flannel.service
+    template:
+      src: templates/flannel.service.j2
+      dest: /etc/systemd/system/flannel.service
     notify:
       - restart_flannel
 
@@ -129,22 +158,30 @@
       enabled: yes
 
   - name: Ensure /var/lib/docker exists
-    file: path=/var/lib/docker state=directory
+    file:
+      path: /var/lib/docker
+      state: directory
 
   - name: Force delete docker_opts.env
-    file: path=/var/lib/docker/docker_opts.env state=absent
+    file:
+      path: /var/lib/docker/docker_opts.env
+      state: absent
 
   - name: Make flannel configuration for docker
     command: "{{ install_dir }}/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env"
     changed_when: false
 
   - name: Copy docker service file
-    copy: src=files/docker.service dest=/etc/systemd/system/docker.service
+    copy:
+      src: files/docker.service
+      dest: /etc/systemd/system/docker.service
     notify:
       - restart_docker
 
   - name: Setup docker daemon
-    copy: src=files/daemon.json  dest=/etc/docker/daemon.json
+    copy:
+      src: files/daemon.json
+      dest: /etc/docker/daemon.json
     notify:
       - restart_docker
 
@@ -156,7 +193,9 @@
       enabled: yes
 
   - name: Ensure /root/.docker exists
-    file: path=/root/.docker state=directory
+    file:
+      path: /root/.docker
+      state: directory
 
   - name: Add docker credentials if defined
     template:
@@ -180,7 +219,10 @@
     when: ansible_distribution == 'RedHat'
 
   - name: Load rbd kernel module on boot
-    copy: src=files/rbd.modules dest=/etc/sysconfig/modules/rbd.modules mode=0755
+    copy:
+      src: files/rbd.modules
+      dest: /etc/sysconfig/modules/rbd.modules
+      mode: 0755
     when: ansible_distribution == 'RedHat'
 
   - name: Download kubernetes node binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
@@ -197,7 +239,11 @@
       - skip_ansible_lint
 
   - name: Symlink kubernetes node binaries
-    file: src={{ install_dir }}/bin/{{ item }}-{{ k8s_version }} dest={{ install_dir }}/bin/{{ item }} state=link force=yes
+    file:
+      src: "{{ install_dir }}/bin/{{ item }}-{{ k8s_version }}"
+      dest: "{{ install_dir }}/bin/{{ item }}"
+      state: link
+      force: yes
     with_items:
       - kubectl
       - kube-proxy
@@ -207,19 +253,25 @@
       - restart_kubeproxy
 
   - name: Make kubernetes node binaries executable
-    file: path={{ install_dir }}/bin/{{ item }}-{{ k8s_version }} mode=0755
+    file:
+      path: "{{ install_dir }}/bin/{{ item }}-{{ k8s_version }}"
+      mode: 0755
     with_items:
       - kubectl
       - kube-proxy
       - kubelet
 
   - name: Copy kube-proxy service file
-    template: src=templates/kube-proxy.service.j2 dest=/etc/systemd/system/kube-proxy.service
+    template:
+      src: templates/kube-proxy.service.j2
+      dest: /etc/systemd/system/kube-proxy.service
     notify:
       - restart_kubeproxy
 
   - name: Copy kube-proxy kubeconfig
-    template: src=templates/kubeconfigs/kube-proxy.conf.j2 dest=/etc/kubernetes/kubeconfigs/kube-proxy.conf
+    template:
+      src: templates/kubeconfigs/kube-proxy.conf.j2
+      dest: /etc/kubernetes/kubeconfigs/kube-proxy.conf
     notify:
       - restart_kubeproxy
 
@@ -238,12 +290,12 @@
 
   - name: Set kernel parameters
     sysctl:
-      name={{ item.kname }}
-      value={{ item.kvalue }}
-      state=present
-      sysctl_file=/etc/sysctl.d/60-sysctl.conf
-      sysctl_set=yes
-      reload=yes
+      name: "{{ item.kname }}"
+      value: "{{ item.kvalue }}"
+      state: present
+      sysctl_file: /etc/sysctl.d/60-sysctl.conf
+      sysctl_set: yes
+      reload: yes
     with_items:
       - { kname: 'fs.inotify.max_user_watches', kvalue: '16384' }
 
@@ -281,12 +333,16 @@
   tasks:
 
   - name: Copy kubelet service manifest
-    template: src=templates/master-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
+    template:
+      src: templates/master-kubelet.service.j2
+      dest: /etc/systemd/system/kubelet.service
     notify:
       - restart_kubelet
 
   - name: Copy kubelet kubeconfig
-    template: src=templates/kubeconfigs/master-kubelet.conf.j2 dest=/etc/kubernetes/kubeconfigs/kubelet.conf
+    template:
+      src: templates/kubeconfigs/master-kubelet.conf.j2
+      dest: /etc/kubernetes/kubeconfigs/kubelet.conf
     notify:
       - restart_kubelet
 
@@ -298,16 +354,24 @@
       enabled: yes
 
   - name: Ensure kubectl config directory exists on master
-    file: state=directory path=/root/.kube
+    file:
+      state: directory
+      path: /root/.kube
 
   - name: Copy API server pod description
-    copy: src=files/kubectl-config dest=/root/.kube/config
+    copy:
+      src: files/kubectl-config
+      dest: /root/.kube/config
 
   - name: Ensure manifests directory exists on master
-    file: state=directory path=/etc/kubernetes/manifests
+    file:
+      state: directory
+      path: /etc/kubernetes/manifests
 
   - name: Copy manifests and kubeconfigs
-    template: src=templates/{{ item }}.j2 dest=/etc/kubernetes/{{ item }}
+    template:
+      src: "templates/{{ item }}.j2"
+      dest: "/etc/kubernetes/{{ item }}"
     tags:
     - devel
     with_items:
@@ -340,7 +404,9 @@
   tasks:
 
   - name: Copy certificates
-    copy: src=target/pki/{{ item }} dest=/etc/kubernetes/pki/ # to ensure idempotency
+    copy:
+      src: "target/pki/{{ item }}"
+      dest: /etc/kubernetes/pki/ # to ensure idempotency
     with_items:
       - admin.pem
       - admin-key.pem
@@ -352,21 +418,34 @@
       - restart_kubeproxy
 
   - name: Copy Issuing Internal certificate
-    copy: src=files/NAVIssuingCAIntern.crt dest={{ cert_dir }}/NAV_Issuing_Intern_CA{{ cert_postfix }} force=no
+    copy:
+      src: files/NAVIssuingCAIntern.crt
+      dest: "{{ cert_dir }}/NAV_Issuing_Intern_CA{{ cert_postfix }}"
+      force: no
 
   - name: Ensure certs.d directory exists worker nodes
-    file: state=directory path=/etc/docker/certs.d/docker.adeo.no:5000/
+    file:
+      state: directory
+      path: /etc/docker/certs.d/docker.adeo.no:5000/
 
   - name: Symlink Internal CA to docker
-    file: src=/etc/ssl/certs/NAV_Issuing_Intern_CA{{ cert_postfix }} dest=/etc/docker/certs.d/docker.adeo.no:5000/ca.crt state=link force=yes
+    file:
+      src: "/etc/ssl/certs/NAV_Issuing_Intern_CA{{ cert_postfix }}"
+      dest: /etc/docker/certs.d/docker.adeo.no:5000/ca.crt
+      state: link
+      force: yes
 
   - name: Copy kubelet service manifest
-    template: src=templates/worker-kubelet.service.j2 dest=/etc/systemd/system/kubelet.service
+    template:
+      src: templates/worker-kubelet.service.j2
+      dest: /etc/systemd/system/kubelet.service
     notify:
       - restart_kubelet
 
   - name: Copy kubelet kubeconfig
-    template: src=templates/kubeconfigs/worker-kubelet.conf.j2 dest=/etc/kubernetes/kubeconfigs/kubelet.conf
+    template:
+      src: templates/kubeconfigs/worker-kubelet.conf.j2
+      dest: /etc/kubernetes/kubeconfigs/kubelet.conf
     notify:
       - restart_kubelet
 
@@ -397,7 +476,9 @@
 
   tasks:
   - name: Delete cluster-admin.conf
-    file: path=/etc/kubernetes/kubeconfigs/cluster-admin.conf state=absent
+    file:
+      path: /etc/kubernetes/kubeconfigs/cluster-admin.conf
+      state: absent
     changed_when: false
 
   - name: Generate cluster-admin kubeconfig
@@ -408,7 +489,11 @@
     changed_when: false
 
   - name: Wait for API server to become available
-    wait_for: port=6443 host={{ groups['masters'][0] }} delay=15 timeout=240
+    wait_for:
+      port: 6443
+      host: "{{ groups['masters'][0] }}"
+      delay: 15
+      timeout: 240
     changed_when: false
 
   - name: Setup node taints
@@ -428,13 +513,19 @@
 
   tasks:
   - name: Ensure addons directory exists
-    file: state=directory path=/etc/kubernetes/addons
+    file:
+      state: directory
+      path: /etc/kubernetes/addons
 
   - name: Ensure roles directory exists
-    file: state=directory path=/etc/kubernetes/roles
+    file:
+      state: directory
+      path: /etc/kubernetes/roles
 
   - name: Copy kubernetes-addons manifest templates
-    template: src=templates/addons/{{ item }}.j2 dest=/etc/kubernetes/addons/{{ item }}
+    template:
+      src: "templates/addons/{{ item }}.j2"
+      dest: "/etc/kubernetes/addons/{{ item }}"
     with_items:
       - core-dns.yaml
       - traefik.yaml
@@ -443,14 +534,19 @@
       - debug.yaml
 
 
-  - name: Copy kubernetes clusterroles and clusterrolebindings templates
-    template: src=templates/roles/{{ item }}.j2 dest=/etc/kubernetes/roles/{{ item }}
+  - name: Copy kubernetes clusterroles and clusterrolebindings
+    copy:
+      src: "templates/roles/{{ item }}.j2"
+      dest: "/etc/kubernetes/roles/{{ item }}"
     with_items:
       - clusterroles.yaml
       - clusterrolebindings.yaml
 
   - name: Wait for API server to become available
-    wait_for: port=8080 host=127.0.0.1 delay=5
+    wait_for:
+      port: 8080
+      host: 127.0.0.1
+      delay: 5
     changed_when: false
 
   - name: Create clusterrole and clusterrolebindings
@@ -486,7 +582,10 @@
       - skip_ansible_lint
 
   - name: Symlink helm
-    file: src={{ install_dir }}/bin/helm-{{ helm_version }} dest={{ install_dir }}/bin/helm state=link
+    file:
+      src: "{{ install_dir }}/bin/helm-{{ helm_version }}"
+      dest: "{{ install_dir }}/bin/helm"
+      state: link
 
   - name: Setup helm service account
     shell: "{{ install_dir }}/bin/kubectl create serviceaccount --namespace kube-system tiller &&
@@ -506,11 +605,16 @@
 
   tasks:
   - name: Ensure sensu monitoring script folder exists
-    file: state=directory path=/etc/sensu/plugins/metrics/nais
+    file:
+      state: directory
+      path: /etc/sensu/plugins/metrics/nais
     when: sensu_rpm_check.rc == 0
 
   - name: Ensure sensu monitoring scripts exist
-    copy: src=files/sensu/checks/{{ item }} dest=/etc/sensu/plugins/metrics/nais/{{ item }} mode=0775
+    copy:
+      src: "files/sensu/checks/{{ item }}"
+      dest: "/etc/sensu/plugins/metrics/nais/{{ item }}"
+      mode: 0775
     with_items:
       - aggregate-metrics.sh
       - addon-metrics.sh
@@ -535,17 +639,23 @@
 
   tasks:
   - name: Add puppet facts
-    template: src=templates/puppet-facts.master.j2 dest=/etc/puppetlabs/facter/facts.d/nais.yaml
+    template:
+      src: templates/puppet-facts.master.j2
+      dest: /etc/puppetlabs/facter/facts.d/nais.yaml
     when: puppet_agent_rpm_check.rc == 0
 
   - name: Copy sensu client.json with correct config
-    template: src=templates/sensu/master-client.json.j2 dest=/etc/sensu/conf.d/client.json
+    template:
+      src: templates/sensu/master-client.json.j2
+      dest: /etc/sensu/conf.d/client.json
     when: sensu_rpm_check.rc == 0
     notify:
       - restart_sensu
 
   - name: Ensure sensu monitoring config for master node exists
-    copy: src=files/sensu/config/nais_master_metrics.json dest=/etc/sensu/conf.d/nais_master_metrics.json
+    copy:
+      src: files/sensu/config/nais_master_metrics.json
+      dest: /etc/sensu/conf.d/nais_master_metrics.json
     when: sensu_rpm_check.rc == 0
     notify:
       - restart_sensu
@@ -563,17 +673,23 @@
 
   tasks:
   - name: Add puppet facts
-    template: src=templates/puppet-facts.worker.j2 dest=/etc/puppetlabs/facter/facts.d/nais.yaml
+    template:
+      src: templates/puppet-facts.worker.j2
+      dest: /etc/puppetlabs/facter/facts.d/nais.yaml
     when: puppet_agent_rpm_check.rc == 0
 
   - name: Copy sensu client.json with correct config
-    template: src=templates/sensu/worker-client.json.j2 dest=/etc/sensu/conf.d/client.json
+    template:
+      src: templates/sensu/worker-client.json.j2
+      dest: /etc/sensu/conf.d/client.json
     when: sensu_rpm_check.rc == 0
     notify:
       - restart_sensu
 
   - name: Ensure sensu monitoring config for worker nodes exist
-    copy: src=files/sensu/config/nais_worker_metrics.json dest=/etc/sensu/conf.d/nais_worker_metrics.json
+    copy:
+      src: files/sensu/config/nais_worker_metrics.json
+      dest: /etc/sensu/conf.d/nais_worker_metrics.json
     when: sensu_rpm_check.rc == 0
     notify:
       - restart_sensu

@@ -1,17 +1,26 @@
-# naisible &middot;  [nais](http://nais.io) &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
+Naisible
+========
+
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)]()
+
 Naisable is a collection of ansible playbooks used to build, test and tear down NAIS kubernetes cluster.
 
+
 ## Prerequisites
+
 * [Ansible binaries](http://docs.ansible.com/ansible/intro_installation.html)
-* [An inventory file](example-inventory-file)
+* [An inventory file](example-inventory-files.md)
 * [SSH access to the hosts using keys](https://www.ssh.com/ssh/copy-id)
 * A user with passwordless sudo privileges on the hosts
 
+
 ## Building and testing an environment
+
 ```sh
-ansible-playbook -i inventory-file setup-playbook.yaml &&\
+ansible-playbook -i inventory-file setup-playbook.yaml && \
 ansible-playbook -i inventory-file test-playbook.yaml
 ```
+
 
 ## Removing NAIS from hosts
 
@@ -19,8 +28,11 @@ ansible-playbook -i inventory-file test-playbook.yaml
 ansible-playbook -i inventory-file teardown-playbook.yaml
 ```
 
+
 ## Playbook details
+
 ### Setup Playbook
+
 1. All nodes
    1. Install Webproxy certificate and update truststore
    1. Add Kubernetes RPM repository
@@ -42,7 +54,7 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Configure iptables
 1. Master Node
    1. Install and enable Kubelet
-   1. Install and enable kubernets controle plane:
+   1. Install and enable kubernets controle plane
       1. kube-apiserver
       1. kube-scheduler
       1. kube-controller-manager
@@ -61,41 +73,50 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
       1. core-dns
       1. traefik
       1. heapster
-   1. Enable monitoring   
+   1. Enable monitoring
+
 
 ### Teardown Playbook
+
 ### Test Playbook
 
+
 ## NAIS inventory file
+
 Template for creating a NAIS cluster inventory file.
 
 Each inventory file consist of a hosts section, where the master and worker nodes are defined, and a variables section, where both versions and cluster specific information.
+
 
 Hosts
 ---
 ```
 [masters]
 <K8S-master-hostname>
-```
-```
+
 [workers]
 <K8S-worker-hostname-1>
 <K8S-worker-hostname-n>
-```
-```
+
 [etcd]
 <etcd-node-hostname-1>
 <etcd-node-hostname-n>
-```
-```
+
 [coreos]
 <coreos-node-hostname-1>
 <coreos-node-hostname-n>
+
+[storage_nodes]
+<storage-node-hostname-1>
+<storage-node-hostname-n>
 ```
+
 
 Variables
 ---
+
 #### Version specific variables. Configured in group_vars/all
+
 |Variable name|Version|Version information location|
 |---|---|---|
 |docker_version|17.03.2.ce|https://download.docker.com/linux/centos/7/x86_64/stable/Packages/|
@@ -108,7 +129,9 @@ Variables
 |heapster_version|1.4.3|https://github.com/kubernetes/heapster/releases|
 |heapster_influxdb_version|1.3.3|https://gcr.io/google_containers/heapster-influxdb-amd64|
 
+
 #### Cluster specific variables
+
 |Variable name|Value|Information|
 |---|---|---|
 |cluster_name|nais-dev|The default domain name in the cluster|
@@ -133,103 +156,8 @@ Variables
 
 
 #### Host group specific variables
-|Variable name|Value|Information|
-|---|---|---|
-|node_taints|key=value:NoSchedule| List of taints to set on a a node (Optional)|
-|node_labels|key=value| List of labels to set on a node (Optional)|
 
-
-Example inventory files
----
-
-#### 3 node cluster
-```
-[masters]
-master.domain.com
-
-[workers]
-worker1.domain.com
-worker2.domain.com
-
-[all:vars]
-cluster_name=nais
-service_cidr=10.254.0.0/16
-kubernetes_default_ip=10.254.0.1
-cluster_dns_ip=10.254.0.53
-pod_network_cidr=192.168.0.0/16
-domain=domain.com
-cluster_domain=nais.local
-cluster_lb_suffix=nais.domain.com
-```
-
-#### HTTP proxy
-3 node cluster with a HTTP proxy to internet. Uses a remote user
-named `deployuser` to access _[master]_ and _[worker]_ hosts.
-```
-[masters]
-master.domain.com
-
-[workers]
-worker1.domain.com
-worker2.domain.com
-
-[all:vars]
-cluster_name=nais
-service_cidr=10.254.0.0/16
-kubernetes_default_ip=10.254.0.1
-cluster_dns_ip=10.254.0.53
-pod_network_cidr=192.168.0.0/16
-domain=domain.com
-cluster_domain=nais.local
-cluster_lb_suffix=nais.domain.com
-nais_http_proxy=http://webproxy.domain.com:8088
-nais_https_proxy=http://webproxy.domain.com:8088
-nais_no_proxy="localhost,127.0.0.1,.local,.domain.com,.devillo.no,{{ansible_default_ipv4.address}}"
-nais_remote_user=deployuser
-```
-#### Node taints and labels
-
-Example of labeling and tainting two nodes(worker2.domain.com and worker3.domain.com)
-```
-# file: hosts
-
-[masters]
-master.domain.com
-
-[workers]
-worker1.domain.com
-worker2.domain.com
-worker3.domain.com
-
-[storage_nodes]
-worker2.domain.com
-worker3.domain.com
-
-# file: group_vars/storage_nodes
-
-node_taints:
-  - nais.io/storage-node=true:NoSchedule
-
-node_labels:
-  - nais.io/storage-nodei=true
-  - nais.io/role=worker
-
-[coreos]
-nodename.domain.com
-nodename.domain.com
-
-# file: group_vars/storage_nodes
-
-install_dir=/opt
-cert_dir=/etc/ssl/certs
-cert_bin=/sbin/update-ca-certificates
-
-ansible_pypy_home=/home/deployer/pypy
-ansible_pypy_bootstrap_file=/home/deployer/.bootstrapped
-ansible_python_interpreter=/home/deployer/bin/python
-
-
-```
-
-
- 
+| Variable name | Value | Information |
+| ------------- | ----- | ----------- |
+| node_taints | key=value:NoSchedule | List of taints to set on a a node (Optional) |
+| node_labels | key=value | List of labels to set on a node (Optional) |

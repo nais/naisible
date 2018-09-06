@@ -22,7 +22,6 @@
         daemon_reload: yes
         name: flannel.service
         state: restarted
-      ignore_errors: yes
 
 - hosts: etcd
   user: "{{ remote_user }}"
@@ -33,4 +32,3 @@
         daemon_reload: yes
         name: etcd.service
         state: restarted
-      ignore_errors: yes

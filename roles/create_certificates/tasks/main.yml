@@ -5,7 +5,6 @@
   with_items:
     - target
     - target/pki
-    - target/pki/worker
     - target/pki/etcd
 
 - name: Generate ca-csr.json

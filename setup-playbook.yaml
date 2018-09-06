@@ -16,7 +16,7 @@
       that:
         - ansible_play_hosts == ansible_play_hosts_all
 
-- hosts: workers:!storage
+- hosts: workers:!storage_nodes
   user: "{{ remote_user }}"
   roles:
     - { role: bigip_pool

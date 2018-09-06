@@ -18,10 +18,18 @@
 
 - hosts: workers:!storage_nodes
   user: "{{ remote_user }}"
-  roles:
-    - { role: bigip_pool
-      , when: bigip_address is defined and bigip_pool_name is defined
-      }
+  tasks:
+  - name: Add pool member
+    when: bigip_address is defined and bigip_pool_name is defined
+    bigip_pool_member:
+      state: present
+      partition: AutoProv
+      server: "{{ bigip_address }}"
+      pool: "{{ bigip_pool_name }}"
+      host: "{{ ansible_default_ipv4['address'] }}"
+      validate_certs: no
+      port: 443
+    delegate_to: localhost
 
 - hosts: all
   user: "{{ remote_user }}"

@@ -524,7 +524,7 @@
 
   - name: Copy kubernetes clusterroles and clusterrolebindings
     copy:
-      src: "templates/roles/{{ item }}.j2"
+      src: "files/roles/{{ item }}"
       dest: "/etc/kubernetes/roles/{{ item }}"
     with_items:
       - clusterroles.yaml

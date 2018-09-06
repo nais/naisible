@@ -19,7 +19,9 @@
 - hosts: workers:!storage
   user: "{{ remote_user }}"
   roles:
-  - bigip_pool
+    - { role: bigip_pool
+      , when: bigip_address is defined and bigip_pool_name is defined
+      }
 
 - hosts: all
   user: "{{ remote_user }}"

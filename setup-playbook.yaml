@@ -522,8 +522,8 @@
       - debug.yaml
 
 
-  - name: Copy kubernetes clusterroles and clusterrolebindings templates
-    template:
+  - name: Copy kubernetes clusterroles and clusterrolebindings
+    copy:
       src: "templates/roles/{{ item }}.j2"
       dest: "/etc/kubernetes/roles/{{ item }}"
     with_items:

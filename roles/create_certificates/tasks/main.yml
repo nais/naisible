@@ -50,6 +50,11 @@
   args:
     creates: target/pki/traefik.pem
 
+- name: Creating aggregator certificate
+  shell: "bin/cfssl gencert -ca=target/pki/requestheader-client-ca.pem -ca-key=target/pki/requestheader-client-ca-key.pem -config=target/pki/ca-config.json -profile=server {{ role_path }}/files/aggregator-csr.json | bin/cfssljson -bare target/pki/aggregator"
+  args:
+    creates: target/pki/aggregator.pem
+
 - name: Creating service account keypair
   shell: /usr/bin/openssl genrsa -out sa.key 2048 && /usr/bin/openssl rsa -pubout -in sa.key -out sa.pub
   args:

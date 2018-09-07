@@ -117,6 +117,8 @@
       - ca-key.pem
       - requestheader-client-ca.pem
       - requestheader-client-ca-key.pem
+      - aggregator.pem
+      - aggregator-key.pem
       - kube-apiserver-server-key.pem
       - kube-apiserver-server.pem
       - sa.key

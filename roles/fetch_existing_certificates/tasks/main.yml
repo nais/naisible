@@ -23,6 +23,11 @@
     path: /etc/kubernetes/pki/admin.pem
   register: admin
 
+- name: Check master for aggregator cert
+  stat:
+    path: /etc/kubernetes/pki/aggregator.pem
+  register: aggregator
+
 - name: Fetch ca.pem
   fetch:
     src: /etc/kubernetes/pki/ca.pem
@@ -64,6 +69,20 @@
     dest: target/pki/
     flat: yes
   when: admin.stat.exists
+
+- name: Fetch aggregator.pem
+  fetch:
+    src: /etc/kubernetes/pki/aggregator.pem
+    dest: target/pki/
+    flat: yes
+  when: aggregator.stat.exists
+
+- name: Fetch aggregator-key.pem
+  fetch:
+    src: /etc/kubernetes/pki/aggregator-key.pem
+    dest: target/pki/
+    flat: yes
+  when: aggregator.stat.exists
 
 - name: Fetch kube-apiserver-server.pem
   fetch:

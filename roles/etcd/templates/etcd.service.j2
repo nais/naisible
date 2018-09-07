@@ -9,6 +9,7 @@
 [Unit]
 Description=etcd
 Documentation=https://coreos.com/etcd/
+After=network.target
 
 [Service]
 ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} --initial-advertise-peer-urls http://{{ local_ip }}:2380 \

@@ -10,10 +10,10 @@
   environment: "{{ proxy_env }}"
   shell: curl --insecure https://storage.googleapis.com/etcd/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz | \
          tar xzf - -C /tmp && \
-         mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" "{{ install_dir}}/bin/etcd-{{ etcd_version }}" && \
+         mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcd" "{{ install_dir }}/bin/etcd-{{ etcd_version }}" && \
          mv "/tmp/etcd-v{{ etcd_version }}-linux-amd64/etcdctl" "{{ install_dir }}/bin/etcdctl-{{ etcd_version }}"
   args:
-    creates: "{{ install_dir}}/bin/etcd-{{ etcd_version }}"
+    creates: "{{ install_dir }}/bin/etcd-{{ etcd_version }}"
   tags:
     - skip_ansible_lint
   notify:
@@ -21,13 +21,13 @@
 
 - name: Symlink etcd
   file:
-    src: "{{ install_dir }}/bin/etcd-{{etcd_version}}"
+    src: "{{ install_dir }}/bin/etcd-{{ etcd_version }}"
     dest: "{{ install_dir }}/bin/etcd"
     state: link
 
 - name: Symlink etcdctl
   file:
-    src: "{{ install_dir }}/bin/etcdctl-{{etcd_version}}"
+    src: "{{ install_dir }}/bin/etcdctl-{{ etcd_version }}"
     dest: "{{ install_dir }}/bin/etcdctl"
     state: link
 

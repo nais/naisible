@@ -3,6 +3,11 @@
     path: /etc/kubernetes/pki/ca.pem
   register: ca
 
+- name: Check master for RequestHeader client CA cert
+  stat:
+    path: /etc/kubernetes/pki/requestheader-client-ca.pem
+  register: requestheaderclientca
+
 - name: Check master for api-server-server cert
   stat:
     path: /etc/kubernetes/pki/kube-apiserver-server.pem
@@ -31,6 +36,20 @@
     dest: target/pki/
     flat: yes
   when: ca.stat.exists
+
+- name: Fetch requestheader-client-ca.pem
+  fetch:
+    src: /etc/kubernetes/pki/requestheader-client-ca.pem
+    dest: target/pki/
+    flat: yes
+  when: requestheaderclientca.stat.exists
+
+- name: Fetch requestheader-client-ca-key.pem
+  fetch:
+    src: /etc/kubernetes/pki/requestheader-client-ca-key.pem
+    dest: target/pki/
+    flat: yes
+  when: requestheaderclientca.stat.exists
 
 - name: Fetch admin.pem
   fetch:

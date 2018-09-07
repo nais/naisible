@@ -13,25 +13,27 @@
     state: directory
     path: target/pki/worker
 
-- name: Generate ca-csr.json
+- name: Generate CSRs
   template:
-    src: "{{ role_path }}/templates/ca-csr.j2"
-    dest: target/pki/ca-csr.json
-
-- name: Generate kube-apiserver-csr.json
-  template:
-    src: "{{ role_path }}/templates/kube-apiserver-server-csr.j2"
-    dest: target/pki/kube-apiserver-server-csr.json
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: target/pki/{{ item }}.json
+  with_items:
+    - ca-csr
+    - requestheader-client-ca-csr
+    - kube-apiserver-server-csr
 
 - name: Copy ca-config.json
   copy:
     src: "{{ role_path }}/files/ca-config.json"
     dest: target/pki/ca-config.json
 
-- name: Initializing the CA
-  shell: bin/cfssl gencert -initca target/pki/ca-csr.json | bin/cfssljson -bare target/pki/ca
+- name: Initializing CA
+  shell: bin/cfssl gencert -initca target/pki/{{ item }}-csr.json | bin/cfssljson -bare target/pki/{{ item }}
   args:
-    creates: target/pki/ca.pem
+    creates: target/pki/{{ item }}.pem
+  with_items:
+    - ca
+    - requestheader-client-ca
 
 - name: Creating admin certificate
   shell: "bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client {{ role_path }}/files/admin-csr.json | bin/cfssljson -bare target/pki/admin"

@@ -19,6 +19,15 @@
           "client auth"
         ],
         "expiry": "69690h"
+      },
+      "peer": {
+        "usages": [
+          "signing",
+          "key encipherment",
+          "server auth",
+          "client auth"
+        ],
+        "expiry": "69690h"
       }
     }
   }

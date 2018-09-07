@@ -125,6 +125,8 @@
       - sa.pub
       - traefik.pem
       - traefik-key.pem
+      - etcd/etcd.pem
+      - etcd/etcd-key.pem
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -415,6 +417,8 @@
       - admin.pem
       - admin-key.pem
       - ca.pem
+      - etcd/etcd.pem
+      - etcd/etcd-key.pem
     notify:
       - restart_kubelet
       - restart_kubeproxy

@@ -1,0 +1,10 @@
+- name: Fetch Etcd-peer certificates
+  include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
+  with_items:
+    - client.pem
+    - client-key.pem
+    - "peer-{{ ansible_hostname }}.pem"
+    - "peer-{{ ansible_hostname }}-key.pem"
+  vars:
+    src_path: /etc/ssl/etcd
+    dest_path: target/pki/etcd

@@ -88,6 +88,13 @@
   roles:
   - fetch_existing_certificates
 
+- hosts: etcd
+  user: "{{ remote_user }}"
+  include_role:
+    name: fetch_existing_certificates
+    tasks_from: etcd
+
+
 - hosts: localhost
   roles:
   - create_certificates

@@ -1,137 +1,27 @@
-- name: Check master for CA cert
-  stat:
-    path: /etc/kubernetes/pki/ca.pem
-  register: ca
+- name: Fetch certificates on master node
+  include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
+  with_items:
+    - ca.pem
+    - ca-key.pem
+    - requestheader-client-ca.pem
+    - requestheader-client-ca-key.pem
+    - kube-apiserver-server.pem
+    - kube-apiserver-server-key.pem
+    - sa.pub
+    - sa.key
+    - admin.pem
+    - admin-key.pem
+    - aggregator.pem
+    - aggregator-key.pem
+  vars:
+    src_path: /etc/kubernetes/pki
+    dest_path: target/pki
 
-- name: Check master for RequestHeader client CA cert
-  stat:
-    path: /etc/kubernetes/pki/requestheader-client-ca.pem
-  register: requestheaderclientca
-
-- name: Check master for api-server-server cert
-  stat:
-    path: /etc/kubernetes/pki/kube-apiserver-server.pem
-  register: apiserver
-
-- name: Check master for service account key
-  stat:
-    path: /etc/kubernetes/pki/sa.key
-  register: sa
-
-- name: Check master for admin cert
-  stat:
-    path: /etc/kubernetes/pki/admin.pem
-  register: admin
-
-- name: Check master for aggregator cert
-  stat:
-    path: /etc/kubernetes/pki/aggregator.pem
-  register: aggregator
-
-- name: Check master for etcd.pem
-  stat:
-    path: /etc/kubernetes/pki/etcd.pem
-  register: etcd
-
-- name: Check master for etcd-key.pem
-  stat:
-    path: /etc/kubernetes/pki/etcd-key.pem
-  register: etcdkey
-
-- name: Fetch ca.pem
-  fetch:
-    src: /etc/kubernetes/pki/ca.pem
-    dest: target/pki/
-    flat: yes
-  when: ca.stat.exists
-
-- name: Fetch etcd.pem
-  fetch:
-    src: /etc/kubernetes/pki/etcd.pem
-    dest: target/pki/etcd/
-    flat: yes
-  when: etcd.stat.exists
-
-- name: Fetch etcd-key.pem
-  fetch:
-    src: /etc/kubernetes/pki/etcd-key.pem
-    dest: target/pki/etcd/
-    flat: yes
-  when: etcdkey.stat.exists
-
-- name: Fetch ca-key.pem
-  fetch:
-    src: /etc/kubernetes/pki/ca-key.pem
-    dest: target/pki/
-    flat: yes
-  when: ca.stat.exists
-
-- name: Fetch requestheader-client-ca.pem
-  fetch:
-    src: /etc/kubernetes/pki/requestheader-client-ca.pem
-    dest: target/pki/
-    flat: yes
-  when: requestheaderclientca.stat.exists
-
-- name: Fetch requestheader-client-ca-key.pem
-  fetch:
-    src: /etc/kubernetes/pki/requestheader-client-ca-key.pem
-    dest: target/pki/
-    flat: yes
-  when: requestheaderclientca.stat.exists
-
-- name: Fetch admin.pem
-  fetch:
-    src: /etc/kubernetes/pki/admin.pem
-    dest: target/pki/
-    flat: yes
-  when: admin.stat.exists
-
-- name: Fetch admin-key.pem
-  fetch:
-    src: /etc/kubernetes/pki/admin-key.pem
-    dest: target/pki/
-    flat: yes
-  when: admin.stat.exists
-
-- name: Fetch aggregator.pem
-  fetch:
-    src: /etc/kubernetes/pki/aggregator.pem
-    dest: target/pki/
-    flat: yes
-  when: aggregator.stat.exists
-
-- name: Fetch aggregator-key.pem
-  fetch:
-    src: /etc/kubernetes/pki/aggregator-key.pem
-    dest: target/pki/
-    flat: yes
-  when: aggregator.stat.exists
-
-- name: Fetch kube-apiserver-server.pem
-  fetch:
-    src: /etc/kubernetes/pki/kube-apiserver-server.pem
-    dest: target/pki/
-    flat: yes
-  when: apiserver.stat.exists
-
-- name: Fetch kube-apiserver-server-key.pem
-  fetch:
-    src: /etc/kubernetes/pki/kube-apiserver-server-key.pem
-    dest: target/pki/
-    flat: yes
-  when: apiserver.stat.exists
-
-- name: Fetch sa.key
-  fetch:
-    src: /etc/kubernetes/pki/sa.key
-    dest: target/pki/
-    flat: yes
-  when: sa.stat.exists
-
-- name: Fetch sa.pub
-  fetch:
-    src: /etc/kubernetes/pki/sa.pub
-    dest: target/pki/
-    flat: yes
-  when: sa.stat.exists
+- name: Fetch etcd client-certificates
+  include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
+  with_items:
+    - etcd.pem
+    - etcd-key.pem
+  vars:
+    src_path: /etc/kubernetes/pki
+    dest_path: target/pki/etcd

@@ -1,0 +1,11 @@
+- name: get file stat to be able to perform check in the following task
+  stat:
+    path: "{{ src_path }}/{{ item }}"
+  register: file
+
+- name: "Fetch {{ item }}"
+  fetch:
+    src: "{{ src_path }}/{{ item }}"
+    dest: "{{ dest_path }}/"
+    flat: yes
+  when: file.stat.exists

@@ -88,6 +88,15 @@
   roles:
   - fetch_existing_certificates
 
+- hosts: etcd
+  user: "{{ remote_user }}"
+  tasks:
+  - name: Fetch Etcd-specific certificates (if exists)
+    include_role:
+      name: fetch_existing_certificates
+      tasks_from: etcd
+
+
 - hosts: localhost
   roles:
   - create_certificates

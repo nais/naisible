@@ -30,7 +30,10 @@
     - "{{ groups['bigips'] }}"
 
   - name: Add pool member to first bigip
-    when: bigip_pool_name is defined and bigip_partition is defined device['/Common/' + system_info.system_information.host_name].failover_state == "HA_STATE_ACTIVE"
+    when: 
+    - bigip_pool_name is defined 
+    - bigip_partition is defined
+    - device['/Common/' + system_info.system_information.host_name].failover_state == "HA_STATE_ACTIVE"
     delegate_to: localhost
     bigip_pool_member:
       state: present

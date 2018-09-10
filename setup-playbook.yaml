@@ -16,35 +16,35 @@
       that:
         - ansible_play_hosts == ansible_play_hosts_all
 
-- hosts: workers:!storage_nodes
-  user: "{{ remote_user }}"
-  tasks:
-  - name: Gather bigip facts
-    when: bigip_pool_name is defined and bigip_partition is defined
-    delegate_to: localhost
-    bigip_facts:
-      server: "{{ item }}"
-      include: "device,device_group,system_info"
-      validate_certs: no
-    with_items:
-    - "{{ groups['bigips'] }}"
-
-  - name: Add pool member to first bigip
-    when: 
-    - bigip_pool_name is defined 
-    - bigip_partition is defined
-    - device['/Common/' + system_info.system_information.host_name].failover_state == "HA_STATE_ACTIVE"
-    delegate_to: localhost
-    bigip_pool_member:
-      state: present
-      partition: "{{ bigip_partition }}"
-      server: "{{ item }}"
-      pool: "{{ bigip_pool_name }}"
-      host: "{{ ansible_default_ipv4['address'] }}"
-      validate_certs: no
-      port: 443
-    with_items:
-    - "{{ groups['bigips'] }}"
+#- hosts: workers:!storage_nodes
+#  user: "{{ remote_user }}"
+#  tasks:
+#  - name: Gather bigip facts
+#    when: bigip_pool_name is defined and bigip_partition is defined
+#    delegate_to: localhost
+#    bigip_facts:
+#      server: "{{ item }}"
+#      include: "device,device_group,system_info"
+#      validate_certs: no
+#    with_items:
+#    - "{{ groups['bigips'] }}"
+#
+#  - name: Add pool member to first bigip
+#    when: 
+#    - bigip_pool_name is defined 
+#    - bigip_partition is defined
+#    - device['/Common/' + system_info.system_information.host_name].failover_state == "HA_STATE_ACTIVE"
+#    delegate_to: localhost
+#    bigip_pool_member:
+#      state: present
+#      partition: "{{ bigip_partition }}"
+#      server: "{{ item }}"
+#      pool: "{{ bigip_pool_name }}"
+#      host: "{{ ansible_default_ipv4['address'] }}"
+#      validate_certs: no
+#      port: 443
+#    with_items:
+#    - "{{ groups['bigips'] }}"
 
 - hosts: all
   user: "{{ remote_user }}"

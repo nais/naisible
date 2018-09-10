@@ -28,12 +28,36 @@
     path: /etc/kubernetes/pki/aggregator.pem
   register: aggregator
 
+- name: Check master for etcd.pem
+  stat:
+    path: /etc/kubernetes/pki/etcd/etcd.pem
+  register: etcd
+
+- name: Check master for etcd-key.pem
+  stat:
+    path: /etc/kubernetes/pki/etcd/etcd-key.pem
+  register: etcd-key
+
 - name: Fetch ca.pem
   fetch:
     src: /etc/kubernetes/pki/ca.pem
     dest: target/pki/
     flat: yes
   when: ca.stat.exists
+
+- name: Fetch etcd.pem
+  fetch:
+    src: /etc/kubernetes/pki/etcd/etcd.pem
+    dest: target/pki/etcd/
+    flat: yes
+  when: etcd.stat.exists
+
+- name: Fetch etcd-key.pem
+  fetch:
+    src: /etc/kubernetes/pki/etcd/etcd-key.pem
+    dest: target/pki/etcd/
+    flat: yes
+  when: etcd-key.stat.exists
 
 - name: Fetch ca-key.pem
   fetch:

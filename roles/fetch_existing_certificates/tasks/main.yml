@@ -36,7 +36,7 @@
 - name: Check master for etcd-key.pem
   stat:
     path: /etc/kubernetes/pki/etcd/etcd-key.pem
-  register: etcd-key
+  register: etcdkey
 
 - name: Fetch ca.pem
   fetch:
@@ -57,7 +57,7 @@
     src: /etc/kubernetes/pki/etcd/etcd-key.pem
     dest: target/pki/etcd/
     flat: yes
-  when: etcd-key.stat.exists
+  when: etcdkey.stat.exists
 
 - name: Fetch ca-key.pem
   fetch:

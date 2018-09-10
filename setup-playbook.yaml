@@ -46,7 +46,7 @@
 #    with_items:
 #    - "{{ groups['bigips'] }}"
 
-- hosts: all
+- hosts: all:!bigips
   user: "{{ remote_user }}"
   become: yes
   roles:

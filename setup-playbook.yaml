@@ -90,9 +90,11 @@
 
 - hosts: etcd
   user: "{{ remote_user }}"
-  include_role:
-    name: fetch_existing_certificates
-    tasks_from: etcd
+  tasks:
+  - name: Fetch Etcd-specific certificates (if exists)
+    include_role:
+      name: fetch_existing_certificates
+      tasks_from: etcd
 
 
 - hosts: localhost

@@ -20,8 +20,8 @@
   user: "{{ remote_user }}"
   tasks:
   - name: Add pool member to first bigip
-    when: 
-    - bigip_pool_name is defined 
+    when:
+    - bigip_pool_name is defined
     - bigip_partition is defined
     delegate_to: localhost
     bigip_pool_member:

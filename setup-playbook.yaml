@@ -487,7 +487,7 @@
         state: restarted
 
 # Common setup for all nodes
-- hosts: masters:workers:coreos:storage
+- hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
 

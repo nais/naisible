@@ -7,7 +7,7 @@
 
 - name: Run bootstrap.sh
   script: bootstrap.sh
-  when: need_bootstrap | failed
+  when: need_bootstrap is failed
 
 - name: Setup timesyncd.conf
   become: yes

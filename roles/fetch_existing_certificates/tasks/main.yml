@@ -1,6 +1,6 @@
 - name: Fetch certificates on master node
   include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
-  with_items:
+  loop:
     - ca.pem
     - ca-key.pem
     - requestheader-client-ca.pem
@@ -19,7 +19,7 @@
 
 - name: Fetch etcd client-certificates
   include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
-  with_items:
+  loop:
     - etcd.pem
     - etcd-key.pem
   vars:

@@ -1,6 +1,6 @@
 - name: Fetch Etcd certificates
   include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
-  with_items:
+  loop:
     - etcd.pem
     - etcd-key.pem
     - client.pem
@@ -12,7 +12,7 @@
 
 - name: Fetch Etcd peer-certificates
   include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
-  with_items:
+  loop:
     - "peer-{{ ansible_hostname }}.pem"
     - "peer-{{ ansible_hostname }}-key.pem"
   vars:
@@ -21,7 +21,7 @@
 
 - name: Fetch ca.pem
   include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
-  with_items:
+  loop:
     - ca.pem
   vars:
     src_path: /etc/ssl/etcd

@@ -2,7 +2,7 @@
   file:
     state: directory
     path: "{{ item }}"
-  with_items:
+  loop:
     - "{{ install_dir }}/bin"
     - /var/lib/etcd
     - /etc/ssl/etcd
@@ -11,7 +11,7 @@
   copy:
     src: "target/pki/{{ item }}"
     dest: "/etc/ssl/etcd/"
-  with_items:
+  loop:
     - ca.pem
     - /etcd/etcd.pem
     - /etcd/etcd-key.pem

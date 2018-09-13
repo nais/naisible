@@ -2,7 +2,7 @@
   file:
     state: directory
     path: "{{ item }}"
-  with_items:
+  loop:
     - target
     - target/pki
     - target/pki/etcd
@@ -11,7 +11,7 @@
   template:
     src: "{{ role_path }}/templates/{{ item }}.j2"
     dest: target/pki/{{ item }}.json
-  with_items:
+  loop:
     - ca-csr
     - etcd-csr
     - requestheader-client-ca-csr
@@ -26,7 +26,7 @@
   shell: bin/cfssl gencert -initca target/pki/{{ item }}-csr.json | bin/cfssljson -bare target/pki/{{ item }}
   args:
     creates: target/pki/{{ item }}.pem
-  with_items:
+  loop:
     - ca
     - requestheader-client-ca
 
@@ -64,7 +64,7 @@
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=peer target/pki/etcd-csr.json | bin/cfssljson -bare target/pki/etcd/peer-{{ hostvars[item].inventory_hostname.split(".")[0] }}
   args:
     creates: target/pki/etcd/peer-{{ hostvars[item].inventory_hostname.split(".")[0] }}.pem
-  with_items:
+  loop:
     - "{{ groups.etcd }}"
 
 - name: Creating service account keypair

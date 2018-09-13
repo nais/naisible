@@ -513,12 +513,12 @@
 
   - name: Setup node taints
     command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
-    loop: "{{ node_taints|flatten(levels=1) }}"
+    loop: "{{ node_taints|default([]) }}"
     changed_when: false
 
   - name: Setup node labels
     command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
-    loop: "{{ node_labels|flatten(levels=1) }}"
+    loop: "{{ node_labels|default([]) }}"
     changed_when: false
 
 

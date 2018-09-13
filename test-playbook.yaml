@@ -91,14 +91,14 @@
 
     - name: Ensure node taints are set
       shell: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l "
-      loop: "{{ node_taints|flatten(levels=1) }}"
+      loop: "{{ node_taints|default([]) }}"
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
       changed_when: false
 
     - name: Ensure node labels are set
       shell: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l"
-      loop: "{{ node_labels|flatten(levels=1) }}"
+      loop: "{{ node_labels|default([]) }}"
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
       changed_when: false

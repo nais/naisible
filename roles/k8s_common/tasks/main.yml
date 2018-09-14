@@ -2,7 +2,7 @@
   file:
     state: directory
     path: "{{ item }}"
-  with_items:
+  loop:
     - /etc/kubernetes/kubeconfigs
     - /etc/kubernetes/pki
     - /etc/systemd/system/docker.service.d
@@ -62,7 +62,7 @@
   yum:
     name: "{{ item }}"
     state: present
-  with_items:
+  loop:
     - "docker-ce-{{ docker_version }}"
     - "socat"
   when: puppet_agent_rpm_check.rc == 0

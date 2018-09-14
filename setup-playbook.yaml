@@ -121,7 +121,7 @@
     copy:
       src: "target/pki/{{ item }}"
       dest: /etc/kubernetes/pki/
-    with_items:
+    loop:
       - admin.pem
       - admin-key.pem
       - ca.pem
@@ -261,7 +261,7 @@
       dest: "{{ install_dir }}/bin/{{ item }}"
       state: link
       force: yes
-    with_items:
+    loop:
       - kubectl
       - kube-proxy
       - kubelet
@@ -273,7 +273,7 @@
     file:
       path: "{{ install_dir }}/bin/{{ item }}-{{ k8s_version }}"
       mode: 0755
-    with_items:
+    loop:
       - kubectl
       - kube-proxy
       - kubelet
@@ -307,14 +307,12 @@
 
   - name: Set kernel parameters
     sysctl:
-      name: "{{ item.kname }}"
-      value: "{{ item.kvalue }}"
+      name: fs.inotify.max_user_watches
+      value: 16384
       state: present
       sysctl_file: /etc/sysctl.d/60-sysctl.conf
       sysctl_set: yes
       reload: yes
-    with_items:
-      - { kname: 'fs.inotify.max_user_watches', kvalue: '16384' }
 
   handlers:
     - name: restart_docker
@@ -391,7 +389,7 @@
       dest: "/etc/kubernetes/{{ item }}"
     tags:
     - devel
-    with_items:
+    loop:
       - kube-apiserver-audit-policy.yaml
       - manifests/kube-apiserver.yaml
       - manifests/kube-scheduler.yaml
@@ -424,7 +422,7 @@
     copy:
       src: "target/pki/{{ item }}"
       dest: /etc/kubernetes/pki/ # to ensure idempotency
-    with_items:
+    loop:
       - admin.pem
       - admin-key.pem
       - ca.pem
@@ -515,12 +513,12 @@
 
   - name: Setup node taints
     command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
-    with_items: "{{ node_taints | default([]) }}"
+    loop: "{{ node_taints|default([]) }}"
     changed_when: false
 
   - name: Setup node labels
     command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
-    with_items: "{{ node_labels | default([]) }}"
+    loop: "{{ node_labels|default([]) }}"
     changed_when: false
 
 
@@ -543,7 +541,7 @@
     template:
       src: "templates/addons/{{ item }}.j2"
       dest: "/etc/kubernetes/addons/{{ item }}"
-    with_items:
+    loop:
       - core-dns.yaml
       - traefik.yaml
       - heapster.yaml
@@ -555,7 +553,7 @@
     copy:
       src: "files/roles/{{ item }}"
       dest: "/etc/kubernetes/roles/{{ item }}"
-    with_items:
+    loop:
       - clusterroles.yaml
       - clusterrolebindings.yaml
 
@@ -568,7 +566,7 @@
 
   - name: Create clusterrole and clusterrolebindings
     command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}"
-    with_items:
+    loop:
     - clusterroles.yaml
     - clusterrolebindings.yaml
     changed_when: false
@@ -580,7 +578,7 @@
 
   - name: Create addons
     command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}"
-    with_items:
+    loop:
       - core-dns.yaml
       - traefik.yaml
       - heapster.yaml
@@ -632,7 +630,7 @@
       src: "files/sensu/checks/{{ item }}"
       dest: "/etc/sensu/plugins/metrics/nais/{{ item }}"
       mode: 0775
-    with_items:
+    loop:
       - aggregate-metrics.sh
       - addon-metrics.sh
       - component-metrics.sh

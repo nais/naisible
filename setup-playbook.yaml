@@ -105,7 +105,6 @@
       - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd.pem
       - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-key.pem
       - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
-      - ETCDCTL_ENDPOINT: https://127.0.0.1:2379
     register: flannelconfig
     ignore_errors: yes
     changed_when: false
@@ -117,7 +116,6 @@
       - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd.pem
       - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-key.pem
       - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
-      - ETCDCTL_ENDPOINT: https://127.0.0.1:2379
     when: flannelconfig.rc != 0
 
 # Configure kubernetes Master node

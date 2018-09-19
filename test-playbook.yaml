@@ -16,7 +16,6 @@
       - ETCDCTL_CERT_FILE: /etc/etcd/certs/etcd.pem
       - ETCDCTL_KEY_FILE: /etc/etcd/certs/etcd-key.pem
       - ETCDCTL_CA_FILE: /etc/etcd/certs/ca.pem
-      - ETCDCTL_ENDPOINT: https://127.0.0.1:2379
     register: etcd_health_status
     failed_when: etcd_health_status.stdout != "cluster is healthy"
     changed_when: false

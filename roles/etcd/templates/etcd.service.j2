@@ -15,11 +15,15 @@ After=network.target
 ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} \
   --initial-advertise-peer-urls http://{{ local_ip }}:2380 \
   --listen-peer-urls http://{{ local_ip }}:2380 \
-  --listen-client-urls http://{{ local_ip }}:2379,http://127.0.0.1:2379 \
-  --advertise-client-urls http://{{ local_ip }}:2379 \
+  --listen-client-urls https://{{ local_ip }}:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls https://{{ local_ip }}:2379 \
   --initial-cluster-token {{ cluster_name }}-etcd \
   --initial-cluster {{all_etcd|join(',')}} \
   --initial-cluster-state new \
+  --client-cert-auth \
+  --trusted-ca-file=/etc/ssl/etcd/ca.pem \
+  --cert-file=/etc/ssl/etcd/client.pem \
+  --key-file=/etc/ssl/etcd/client-key.pem \
   --data-dir=/var/lib/etcd
 Type=notify
 Restart=always

@@ -1,6 +1,6 @@
 {% set etcd_urls = [] -%}
 {% for host in groups['etcd'] -%}
-  {% set _ = etcd_urls.append("http://%s:2379" % (host)) -%}
+  {% set _ = etcd_urls.append("https://%s:2379" % (host)) -%}
 {% endfor -%}
 
 {% set worker_ips = [] -%}
@@ -52,6 +52,9 @@ spec:
 {% endif %}
     - --advertise-address={{ ansible_default_ipv4.address }}
     - --etcd-servers={{ etcd_urls | join(",") }}
+    - --etcd-cafile=/etc/kubernetes/pki/ca.pem
+    - --etcd-certfile=/etc/kubernetes/pki/etcd.pem
+    - --etcd-keyfile=/etc/kubernetes/pki/etcd-key.pem
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8

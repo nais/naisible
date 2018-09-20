@@ -32,6 +32,8 @@
       host: "{{ ansible_default_ipv4['address'] }}"
       validate_certs: no
       port: 443
+    tags:
+      - bigip
 
 - hosts: all
   user: "{{ remote_user }}"

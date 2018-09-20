@@ -36,7 +36,7 @@ spec:
     - --secure-port=6443
     - --enable-bootstrap-token-auth 
     - --storage-backend=etcd3
-    - --service-cluster-ip-range={{ service_cidr }}
+    - --service-cluster-ip-range={{ service_cidr }}
     - --service-account-key-file=/etc/kubernetes/pki/sa.pub
     - --client-ca-file=/etc/kubernetes/pki/ca.pem
     - --insecure-port=8080

@@ -8,6 +8,19 @@ metadata:
   name: nais-developer
 rules:
 - apiGroups:
+  - "nais.io"
+  resources:
+  - applications
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - ""
   resources:
   - configmaps

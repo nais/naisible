@@ -56,6 +56,21 @@
       state: started
       enabled: yes
 
+- hosts: redhat
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+  - name: Set nais puppet facts
+    template:
+      src: templates/nais-facts.txt.j2
+      dest: /etc/puppetlabs/facter/facts.d/nais-facts.txt
+
+- hosts: redhat:!etcd
+  user: "{{ remote_user }}"
+  become: yes
+  roles:
+  - k8s_redhat
+
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
@@ -66,11 +81,6 @@
     copy:
       src: files/bashrc
       dest: /root/.bashrc
-  - name: Set nais puppet facts
-    template:
-      src: templates/nais-facts.txt.j2
-      dest: /etc/puppetlabs/facter/facts.d/nais-facts.txt
-    when: puppet_agent_rpm_check.rc == 0
 
 - hosts: masters
   user: "{{ remote_user }}"
@@ -237,19 +247,6 @@
     command: swapoff -a
     changed_when: false
 
-  - name: Ensure rbd kernel module is present
-    modprobe:
-      name: rbd
-      state: present
-    when: ansible_distribution == 'RedHat'
-
-  - name: Load rbd kernel module on boot
-    copy:
-      src: files/rbd.modules
-      dest: /etc/sysconfig/modules/rbd.modules
-      mode: 0755
-    when: ansible_distribution == 'RedHat'
-
   - name: Download kubernetes node binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://dl.k8s.io/v{{ k8s_version }}/kubernetes-node-linux-amd64.tar.gz | \
@@ -309,7 +306,7 @@
 
   - name: Clean up /etc/hosts after puppet
     shell: /bin/sed -i "s/$(/sbin/ifconfig docker0 | grep inet | awk '{print $2}')/$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}')/g" /etc/hosts
-    when: puppet_agent_rpm_check.rc == 0
+    when: "'redhat' in group_names"
     tags:
       - skip_ansible_lint
 
@@ -621,105 +618,3 @@
     environment: "{{ proxy_env }}"
     changed_when: false
 
-# Configure sensu cluster metrics
-- hosts: masters:workers
-  user: "{{ remote_user }}"
-  become: yes
-
-  tasks:
-  - name: Ensure sensu monitoring script folder exists
-    file:
-      state: directory
-      path: /etc/sensu/plugins/metrics/nais
-    when: sensu_rpm_check.rc == 0
-
-  - name: Ensure sensu monitoring scripts exist
-    copy:
-      src: "files/sensu/checks/{{ item }}"
-      dest: "/etc/sensu/plugins/metrics/nais/{{ item }}"
-      mode: 0775
-    loop:
-      - aggregate-metrics.sh
-      - addon-metrics.sh
-      - component-metrics.sh
-      - interface-metrics.sh
-      - nodes-metrics.sh
-      - process-metrics.sh
-    when: sensu_rpm_check.rc == 0
-    notify:
-      - restart_sensu
-
-  handlers:
-  - name: restart_sensu
-    systemd:
-      daemon_reload: yes
-      name: sensu-client.service
-      state: restarted
-
-- hosts: masters
-  user: "{{ remote_user }}"
-  become: yes
-
-  tasks:
-  - name: Add puppet facts
-    template:
-      src: templates/puppet-facts.master.j2
-      dest: /etc/puppetlabs/facter/facts.d/nais.yaml
-    when: puppet_agent_rpm_check.rc == 0
-
-  - name: Copy sensu client.json with correct config
-    template:
-      src: templates/sensu/master-client.json.j2
-      dest: /etc/sensu/conf.d/client.json
-    when: sensu_rpm_check.rc == 0
-    notify:
-      - restart_sensu
-
-  - name: Ensure sensu monitoring config for master node exists
-    copy:
-      src: files/sensu/config/nais_master_metrics.json
-      dest: /etc/sensu/conf.d/nais_master_metrics.json
-    when: sensu_rpm_check.rc == 0
-    notify:
-      - restart_sensu
-
-  handlers:
-   - name: restart_sensu
-     systemd:
-      daemon_reload: yes
-      name: sensu-client.service
-      state: restarted
-
-- hosts: workers
-  user: "{{ remote_user }}"
-  become: yes
-
-  tasks:
-  - name: Add puppet facts
-    template:
-      src: templates/puppet-facts.worker.j2
-      dest: /etc/puppetlabs/facter/facts.d/nais.yaml
-    when: puppet_agent_rpm_check.rc == 0
-
-  - name: Copy sensu client.json with correct config
-    template:
-      src: templates/sensu/worker-client.json.j2
-      dest: /etc/sensu/conf.d/client.json
-    when: sensu_rpm_check.rc == 0
-    notify:
-      - restart_sensu
-
-  - name: Ensure sensu monitoring config for worker nodes exist
-    copy:
-      src: files/sensu/config/nais_worker_metrics.json
-      dest: /etc/sensu/conf.d/nais_worker_metrics.json
-    when: sensu_rpm_check.rc == 0
-    notify:
-      - restart_sensu
-
-  handlers:
-  - name: restart_sensu
-    systemd:
-      daemon_reload: yes
-      name: sensu-client.service
-      state: restarted

@@ -204,7 +204,7 @@
 
   - name: Wait for flannel to write subnet and mtu values
     wait_for:
-      path: /run/flannel/subnet.env 
+      path: /run/flannel/subnet.env
       state: present
       timeout: 60
       search_regex: FLANNEL_SUBNET

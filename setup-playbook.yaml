@@ -167,6 +167,7 @@
     loop:
       - etcd/etcd.pem
       - etcd/etcd-key.pem
+      - ca.pem
     notify:
       - restart_kubelet
       - restart_kubeproxy
@@ -448,7 +449,6 @@
     loop:
       - admin.pem
       - admin-key.pem
-      - ca.pem
     notify:
       - restart_kubelet
       - restart_kubeproxy

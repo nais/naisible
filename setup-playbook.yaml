@@ -154,14 +154,24 @@
       - sa.pub
       - traefik.pem
       - traefik-key.pem
-      - etcd/etcd.pem
-      - etcd/etcd-key.pem
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
   tasks:
 
+  - name: Copy etcd certificates
+    copy:
+      src: "target/pki/{{ item }}"
+      dest: /etc/kubernetes/pki/ # to ensure idempotency
+    loop:
+      - etcd/etcd.pem
+      - etcd/etcd-key.pem
+    notify:
+      - restart_kubelet
+      - restart_kubeproxy
+      - restart_flannel
+ 
   - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
@@ -439,8 +449,6 @@
       - admin.pem
       - admin-key.pem
       - ca.pem
-      - etcd/etcd.pem
-      - etcd/etcd-key.pem
     notify:
       - restart_kubelet
       - restart_kubeproxy

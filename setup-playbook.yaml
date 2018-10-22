@@ -3,7 +3,7 @@
   user: "{{ remote_user }}"
   pre_tasks:
   - name: Copy python interpreter to server
-    local_action: command scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null files/pypy-5.1.0-linux64.tar.bz2 {{ remote_user }}@{{ inventory_hostname }}:/home/{{ remote_user }}/
+    local_action: command scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ lookup('env', 'SSH_OPTS') }} files/pypy-5.1.0-linux64.tar.bz2 {{ remote_user }}@{{ inventory_hostname }}:/home/{{ remote_user }}/
     tags:
     - skip_ansible_lint
   roles:

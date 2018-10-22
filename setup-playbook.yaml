@@ -144,10 +144,10 @@
       - admin-key.pem
       - ca.pem
       - ca-key.pem
-      - requestheader-client-ca.pem
-      - requestheader-client-ca-key.pem
-      - aggregator.pem
-      - aggregator-key.pem
+      - front-proxy-ca.pem
+      - front-proxy-ca-key.pem
+      - front-proxy-client.pem
+      - front-proxy-client-key.pem
       - kube-apiserver-server-key.pem
       - kube-apiserver-server.pem
       - sa.key

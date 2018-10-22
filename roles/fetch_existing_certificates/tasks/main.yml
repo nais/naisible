@@ -3,16 +3,16 @@
   loop:
     - ca.pem
     - ca-key.pem
-    - requestheader-client-ca.pem
-    - requestheader-client-ca-key.pem
+    - front-proxy-ca.pem
+    - front-proxy-ca-key.pem
     - kube-apiserver-server.pem
     - kube-apiserver-server-key.pem
     - sa.pub
     - sa.key
     - admin.pem
     - admin-key.pem
-    - aggregator.pem
-    - aggregator-key.pem
+    - front-proxy-client.pem
+    - front-proxy-client-key.pem
   vars:
     src_path: /etc/kubernetes/pki
     dest_path: target/pki

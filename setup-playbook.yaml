@@ -20,6 +20,8 @@
   user: "{{ remote_user }}"
   tasks:
   - name: Add pool member to first bigip
+    ignore_errors: true
+    poll: 0
     when:
     - bigip_pool_name is defined
     - bigip_partition is defined
@@ -27,10 +29,12 @@
     bigip_pool_member:
       state: present
       partition: "{{ bigip_partition }}"
-      server: "{{ bigip_address }}"
+      provider:
+        server: "{{ bigip_address }}"
+        timeout: 10
+        validate_certs: no
       pool: "{{ bigip_pool_name }}"
       host: "{{ ansible_default_ipv4['address'] }}"
-      validate_certs: no
       port: 443
     tags:
       - bigip

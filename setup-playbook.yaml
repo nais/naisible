@@ -574,12 +574,11 @@
       - debug.yaml
 
 
-  - name: Copy kubernetes clusterroles and clusterrolebindings
+  - name: Copy kubernetes clusterrolebindings
     copy:
       src: "files/roles/{{ item }}"
       dest: "/etc/kubernetes/roles/{{ item }}"
     loop:
-      - clusterroles.yaml
       - clusterrolebindings.yaml
 
   - name: Wait for API server to become available

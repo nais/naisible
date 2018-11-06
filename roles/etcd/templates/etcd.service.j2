@@ -1,9 +1,15 @@
 {% set local_ip = ansible_default_ipv4.address -%}
-{% set all_etcd = [] -%}
+{% set http_etcd = [] -%}
 {% for host in groups['etcd'] -%}
   {% set other_ip = hostvars[host]['ansible_default_ipv4']['address'] -%}
   {% set shortname = hostvars[host]['ansible_hostname'] -%}
-  {% set _ = all_etcd.append("%s=https://%s:2380" % (shortname, other_ip)) -%}
+  {% set _ = http_etcd.append("%s=http://%s:2380" % (shortname, other_ip)) -%}
+{% endfor -%}
+{% set https_etcd = [] -%}
+{% for host in groups['etcd_coreos'] -%}
+  {% set other_ip = hostvars[host]['ansible_default_ipv4']['address'] -%}
+  {% set shortname = hostvars[host]['ansible_hostname'] -%}
+  {% set _ = http_etcd.append("%s=https://%s:2380" % (shortname, other_ip)) -%}
 {% endfor -%}
 
 [Unit]
@@ -13,12 +19,17 @@ After=network.target
 
 [Service]
 ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} \
+{% if ansible_fqdn in groups['etcd'] %}
+  --initial-advertise-peer-url http://{{ local_ip }}:2380 \
+  --listen-peer-urls http://{{ local_ip }}:2380 \
+{% else %}
   --initial-advertise-peer-urls https://{{ local_ip }}:2380 \
   --listen-peer-urls https://{{ local_ip }}:2380 \
+{% endif %}
   --listen-client-urls https://{{ local_ip }}:2379,http://127.0.0.1:2379 \
   --advertise-client-urls https://{{ local_ip }}:2379 \
   --initial-cluster-token {{ cluster_name }}-etcd \
-  --initial-cluster {{all_etcd|join(',')}} \
+  --initial-cluster {{http_etcd|join(',')}},{{https_etcd|join(',')}} \
   --initial-cluster-state existing \
   --client-cert-auth \
   --trusted-ca-file=/etc/ssl/etcd/ca.pem \

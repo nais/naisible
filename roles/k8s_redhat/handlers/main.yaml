@@ -1,0 +1,6 @@
+- name: restart_sensu
+  systemd:
+    daemon_reload: yes
+    name: sensu-client.service
+    state: restarted
+

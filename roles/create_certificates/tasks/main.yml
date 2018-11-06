@@ -14,7 +14,7 @@
   loop:
     - ca-csr
     - etcd-csr
-    - requestheader-client-ca-csr
+    - front-proxy-ca-csr
     - kube-apiserver-server-csr
 
 - name: Copy ca-config.json
@@ -28,7 +28,7 @@
     creates: target/pki/{{ item }}.pem
   loop:
     - ca
-    - requestheader-client-ca
+    - front-proxy-ca
 
 - name: Creating admin certificate
   shell: "bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client {{ role_path }}/files/admin-csr.json | bin/cfssljson -bare target/pki/admin"
@@ -45,10 +45,10 @@
   args:
     creates: target/pki/traefik.pem
 
-- name: Creating aggregator certificate
-  shell: "bin/cfssl gencert -ca=target/pki/requestheader-client-ca.pem -ca-key=target/pki/requestheader-client-ca-key.pem -config=target/pki/ca-config.json -profile=server {{ role_path }}/files/aggregator-csr.json | bin/cfssljson -bare target/pki/aggregator"
+- name: Creating front-proxy-client certificate
+  shell: "bin/cfssl gencert -ca=target/pki/front-proxy-ca.pem -ca-key=target/pki/front-proxy-ca-key.pem -config=target/pki/ca-config.json -profile=server {{ role_path }}/files/front-proxy-client-csr.json | bin/cfssljson -bare target/pki/front-proxy-client"
   args:
-    creates: target/pki/aggregator.pem
+    creates: target/pki/front-proxy-client.pem
 
 - name: Creating etcd certificate
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/etcd-csr.json | bin/cfssljson -bare target/pki/etcd/client

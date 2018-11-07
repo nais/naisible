@@ -20,7 +20,7 @@ After=network.target
 [Service]
 ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} \
 {% if ansible_fqdn in groups['etcd'] %}
-  --initial-advertise-peer-url http://{{ local_ip }}:2380 \
+  --initial-advertise-peer-urls http://{{ local_ip }}:2380 \
   --listen-peer-urls http://{{ local_ip }}:2380 \
 {% else %}
   --initial-advertise-peer-urls https://{{ local_ip }}:2380 \

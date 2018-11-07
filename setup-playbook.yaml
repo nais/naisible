@@ -98,7 +98,8 @@
     include_role:
       name: fetch_existing_certificates
       tasks_from: etcd
-
+    tags:
+      - fetch_etcd_certs
 
 - hosts: localhost
   roles:

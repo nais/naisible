@@ -104,13 +104,13 @@
   roles:
   - create_certificates
 
-- hosts: etcd
+- hosts: etcd:etcd_coreos
   user: "{{ remote_user }}"
   become: yes
   roles:
     - etcd
 
-- hosts: etcd[0]
+- hosts: etcd[0]:etcd_coreos[0]
   user: "{{ remote_user }}"
   become: yes
   tasks:

@@ -1,6 +1,11 @@
 {% set local_ip = ansible_default_ipv4.address -%}
 {% set all_etcd = [] -%}
-{% for host in groups['etcd'] | intersect(groups['etcd_coreos']) -%}
+{% for host in groups['etcd'] -%}
+  {% set other_ip = hostvars[host]['ansible_default_ipv4']['address'] -%}
+  {% set shortname = hostvars[host]['ansible_hostname'] -%}
+  {% set _ = all_etcd.append("%s=http://%s:2380" % (shortname, other_ip)) -%}
+{% endfor -%}
+{% for host in groups['etcd_coreos'] -%}
   {% set other_ip = hostvars[host]['ansible_default_ipv4']['address'] -%}
   {% set shortname = hostvars[host]['ansible_hostname'] -%}
   {% set _ = all_etcd.append("%s=http://%s:2380" % (shortname, other_ip)) -%}

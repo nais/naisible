@@ -1,5 +1,5 @@
 {% set ip_etcd = [] -%}
-{% for host in groups['etcd'] | intersect(groups['etcd_coreos'] -%}
+{% for host in groups['etcd'] | intersect(groups['etcd_coreos']) -%}
   {% set _ = ip_etcd.append("\"%s\"" % (hostvars[host]['ansible_default_ipv4']['address'])) -%}
 {% endfor -%}
 {% set hostname_etcd = [] -%}

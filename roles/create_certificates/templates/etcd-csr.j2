@@ -7,10 +7,10 @@
 {% endfor -%}
 {% set hostname_etcd = [] -%}
 {% for host in groups['etcd'] -%}
-  {% set _ = hostname_etcd.append(host) -%}
+  {% set _ = hostname_etcd.append("\"%s\"" % host) -%}
 {% endfor -%}
 {% for host in groups['etcd_coreos'] -%}
-  {% set _ = hostname_etcd.append(host) -%}
+  {% set _ = hostname_etcd.append("\"%s\"" % host) -%}
 {% endfor -%}
 {
   "CN": "etcd",

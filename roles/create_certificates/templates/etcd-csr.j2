@@ -1,17 +1,17 @@
-{% set all_etcd = [] -%}
-{% for host in groups['etcd'] -%}
-  {% set _ = all_etcd.append("\"%s\"" % (hostvars[host]['ansible_default_ipv4']['address'])) -%}
+{% set ip_etcd = [] -%}
+{% for host in groups['etcd'] | intersect(groups['etcd_coreos'] -%}
+  {% set _ = ip_etcd.append("\"%s\"" % (hostvars[host]['ansible_default_ipv4']['address'])) -%}
 {% endfor -%}
-{% for host in groups['etcd_coreos'] -%}
-  {% set _ = all_etcd.append("\"%s\"" % (hostvars[host]['ansible_default_ipv4']['address'])) -%}
+{% set hostname_etcd = [] -%}
+{% for host in groups['etcd'] | intersect(groups['etcd_coreos']) -%}
+  {% set _ = hostname_etcd.append(host) -%}
 {% endfor -%}
 {
   "CN": "etcd",
   "hosts": [
     "127.0.0.1",
-    {{ all_etcd|join(',\n')|indent }},
-    "{{ groups['etcd']|join('",\n"')|indent }}",
-    "{{ groups['etcd_coreos']|join('",\n"')|indent }}"
+    {{ ip_etcd|join(',\n')|indent }},
+    {{ hostname_etcd|join(',\n')|indent }}
   ],
   "key": {
     "algo": "ecdsa",

@@ -71,6 +71,7 @@
   args:
     creates: target/pki/etcd/peer-{{ hostvars[item].inventory_hostname.split(".")[0] }}.pem
   loop: "{{ groups.etcd_coreos|flatten(levels=1) }}"
+  when: "'etcd_coreos' in groups"
 
 - name: Creating service account keypair
   shell: /usr/bin/openssl genrsa -out sa.key 2048 && /usr/bin/openssl rsa -pubout -in sa.key -out sa.pub

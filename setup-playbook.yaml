@@ -592,7 +592,6 @@
   - name: Create clusterrole and clusterrolebindings
     command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}"
     loop:
-    - clusterroles.yaml
     - clusterrolebindings.yaml
     changed_when: false
 

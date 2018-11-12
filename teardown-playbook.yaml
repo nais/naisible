@@ -129,6 +129,7 @@
         - "{{ install_dir }}/bin/etcdctl"
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
+        - /etc/ssl/etcd
 
 - hosts: workers
   user: "{{ remote_user }}"

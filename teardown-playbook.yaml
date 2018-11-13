@@ -113,7 +113,7 @@
         - "{{ install_dir }}/bin/helm"
         - /etc/sensu/conf.d/nais_master_metrics.json
 
-- hosts: etcd
+- hosts: etcd:etcd_coreos
   user: "{{ remote_user }}"
   become: yes
   tasks:

@@ -25,3 +25,5 @@
   vars:
     src_path: /etc/kubernetes/pki
     dest_path: target/pki/etcd
+  tags:
+    - fetch_etcd_certs

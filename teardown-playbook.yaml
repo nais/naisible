@@ -11,16 +11,23 @@
     command: "{{ cert_bin }}"
     changed_when: false
 
+  - name: get file stat to be able to perform check in the following task
+    stat:
+      path: /etc/systemd/system/kube-issue-32728-fix.service
+    register: service_32728
+
   - name: Disable the fix for 32728
     systemd:
       name: kube-issue-32728-fix.service
       state: stopped
       enabled: no
+    when: service_32728.stat.exists
 
   - name: Remove systemd unit file for 32728 fix (symlinks in /sys)
     file:
       path: /etc/systemd/system/kube-issue-32728-fix.service
       state: absent
+    when: service_32728.stat.exists
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -106,7 +113,7 @@
         - "{{ install_dir }}/bin/helm"
         - /etc/sensu/conf.d/nais_master_metrics.json
 
-- hosts: etcd
+- hosts: etcd:etcd_coreos
   user: "{{ remote_user }}"
   become: yes
   tasks:
@@ -122,6 +129,7 @@
         - "{{ install_dir }}/bin/etcdctl"
         - /var/lib/etcd
         - /etc/systemd/system/etcd.service
+        - /etc/ssl/etcd
 
 - hosts: workers
   user: "{{ remote_user }}"

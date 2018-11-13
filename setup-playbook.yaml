@@ -91,26 +91,27 @@
   roles:
   - fetch_existing_certificates
 
-- hosts: etcd
+- hosts: etcd:etcd_coreos
   user: "{{ remote_user }}"
   tasks:
   - name: Fetch Etcd-specific certificates (if exists)
     include_role:
       name: fetch_existing_certificates
       tasks_from: etcd
-
+    tags:
+      - fetch_etcd_certs
 
 - hosts: localhost
   roles:
   - create_certificates
 
-- hosts: etcd
+- hosts: etcd:etcd_coreos
   user: "{{ remote_user }}"
   become: yes
   roles:
     - etcd
 
-- hosts: etcd[0]
+- hosts: etcd[0]:etcd_coreos[0]
   user: "{{ remote_user }}"
   become: yes
   tasks:
@@ -591,7 +592,6 @@
   - name: Create clusterrole and clusterrolebindings
     command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}"
     loop:
-    - clusterroles.yaml
     - clusterrolebindings.yaml
     changed_when: false
 

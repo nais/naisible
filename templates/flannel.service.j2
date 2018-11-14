@@ -2,6 +2,11 @@
 {% for host in groups['etcd'] -%}
   {% set _ = etcd_urls.append("https://%s:2379" % (host)) -%}
 {% endfor -%}
+{% if 'etcd_coreos' in groups -%}
+  {% for host in groups['etcd_coreos'] -%}
+    {% set _ = etcd_urls.append("https://%s:2379" % (host)) -%}
+  {% endfor -%}
+{% endif -%}
 [Unit]
 Description=flannel
 Documentation=https://coreos.com/flannel

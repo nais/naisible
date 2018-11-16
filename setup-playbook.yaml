@@ -91,7 +91,7 @@
   roles:
   - fetch_existing_certificates
 
-- hosts: etcd:etcd_coreos
+- hosts: etcd
   user: "{{ remote_user }}"
   tasks:
   - name: Fetch Etcd-specific certificates (if exists)
@@ -105,13 +105,13 @@
   roles:
   - create_certificates
 
-- hosts: etcd:etcd_coreos
+- hosts: etcd
   user: "{{ remote_user }}"
   become: yes
   roles:
     - etcd
 
-- hosts: etcd[0]:etcd_coreos[0]
+- hosts: etcd[0]
   user: "{{ remote_user }}"
   become: yes
   tasks:

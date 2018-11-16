@@ -2,20 +2,10 @@
 {% for host in groups['etcd'] -%}
   {% set _ = ip_etcd.append("\"%s\"" % (hostvars[host]['ansible_default_ipv4']['address'])) -%}
 {% endfor -%}
-{% if 'etcd_coreos' in groups -%}
-  {% for host in groups['etcd_coreos'] -%}
-    {% set _ = ip_etcd.append("\"%s\"" % (hostvars[host]['ansible_default_ipv4']['address'])) -%}
-  {% endfor -%}
-{% endif -%}
 {% set hostname_etcd = [] -%}
 {% for host in groups['etcd'] -%}
   {% set _ = hostname_etcd.append("\"%s\"" % host) -%}
 {% endfor -%}
-{% if 'etcd_coreos' in groups -%}
-  {% for host in groups['etcd_coreos'] -%}
-    {% set _ = hostname_etcd.append("\"%s\"" % host) -%}
-  {% endfor -%}
-{% endif -%}
 {
   "CN": "etcd",
   "hosts": [

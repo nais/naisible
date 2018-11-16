@@ -3,7 +3,7 @@
 {% for host in groups['etcd'] -%}
   {% set other_ip = hostvars[host]['ansible_default_ipv4']['address'] -%}
   {% set shortname = hostvars[host]['ansible_hostname'] -%}
-  {% set _ = all_etcd.append("%s=http://%s:2380" % (shortname, other_ip)) -%}
+  {% set _ = all_etcd.append("%s=https://%s:2380" % (shortname, other_ip)) -%}
 {% endfor -%}
 [Unit]
 Description=etcd
@@ -12,8 +12,8 @@ After=network.target
 
 [Service]
 ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} \
-  --initial-advertise-peer-urls http://{{ local_ip }}:2380 \
-  --listen-peer-urls http://{{ local_ip }}:2380 \
+  --initial-advertise-peer-urls https://{{ local_ip }}:2380 \
+  --listen-peer-urls https://{{ local_ip }}:2380 \
   --listen-client-urls https://{{ local_ip }}:2379,http://127.0.0.1:2379 \
   --advertise-client-urls https://{{ local_ip }}:2379 \
   --initial-cluster-token {{ cluster_name }}-etcd \
@@ -23,6 +23,10 @@ ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} \
   --trusted-ca-file=/etc/ssl/etcd/ca.pem \
   --cert-file=/etc/ssl/etcd/client.pem \
   --key-file=/etc/ssl/etcd/client-key.pem \
+  --peer-client-cert-auth \
+  --peer-trusted-ca-file=/etc/etcd/certs/ca.pem \
+  --peer-cert-file=/etc/etcd/certs/peer-{{ ansible_hostname }}.pem \
+  --peer-key-file=/etc/etcd/certs/peer-{{ ansible_hostname }}-key.pem \
   --data-dir=/var/lib/etcd
 Type=notify
 Restart=always

@@ -60,21 +60,6 @@
       state: started
       enabled: yes
 
-- hosts: redhat
-  user: "{{ remote_user }}"
-  become: yes
-  tasks:
-  - name: Set nais puppet facts
-    template:
-      src: templates/nais-facts.txt.j2
-      dest: /etc/puppetlabs/facter/facts.d/nais-facts.txt
-
-- hosts: redhat:!etcd
-  user: "{{ remote_user }}"
-  become: yes
-  roles:
-  - k8s_redhat
-
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
@@ -327,12 +312,6 @@
       name: kube-proxy.service
       state: started
       enabled: yes
-
-  - name: Clean up /etc/hosts after puppet
-    shell: /bin/sed -i "s/$(/sbin/ifconfig docker0 | grep inet | awk '{print $2}')/$(/sbin/ifconfig $(ls /sys/class/net/ | grep en) | grep inet | awk '{print $2}')/g" /etc/hosts
-    when: "'redhat' in group_names"
-    tags:
-      - skip_ansible_lint
 
   - name: Set kernel parameters
     sysctl:

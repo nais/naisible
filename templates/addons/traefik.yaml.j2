@@ -84,6 +84,11 @@ data:
           [[entryPoints.https.tls.certificates]]
           CertFile = "/tls/tls.crt"
           KeyFile = "/tls/tls.key"
+      [entryPoints.traefik]
+      address = ":8080"
+    [metrics]
+      [metrics.prometheus]
+        entryPoint = "traefik"
 ---
 kind: DaemonSet
 apiVersion: extensions/v1beta1
@@ -130,11 +135,10 @@ spec:
         - containerPort: 443
           hostPort: 443
         - containerPort: 8080
+          hostPort: 8080
         args:
         - --web
         - --kubernetes
-        - --web.metrics
-        - --web.metrics.prometheus
         - --checknewversion=false
         - --configfile=/config/traefik.toml
       volumes:
@@ -154,20 +158,7 @@ spec:
   selector:
     k8s-app: traefik-ingress-lb
   ports:
-  - port: 80
+  - port: 443
+    targetPort: 443
+  - port: 8080
     targetPort: 8080
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: traefik-web-ui
-  namespace: kube-system
-spec:
-  rules:
-  - host: traefik.{{ cluster_lb_suffix }}
-    http:
-      paths:
-      - backend:
-          serviceName: traefik-web-ui
-          servicePort: 80
-

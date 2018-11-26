@@ -134,8 +134,10 @@ spec:
         ports:
         - containerPort: 443
           hostPort: 443
+          name: ingress
         - containerPort: 8080
           hostPort: 8080
+          name: metrics
         args:
         - --web
         - --kubernetes
@@ -160,5 +162,7 @@ spec:
   ports:
   - port: 443
     targetPort: 443
+    name: ingress
   - port: 8080
     targetPort: 8080
+    name: metrics

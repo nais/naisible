@@ -39,7 +39,7 @@ spec:
     - --client-ca-file=/etc/kubernetes/pki/ca.pem
     - --insecure-port=8080
     - --insecure-bind-address=127.0.0.1
-    - --enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
+    - --enable-admission-plugins=PodSecurityPolicy,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
     - --authorization-mode=RBAC
 {% if oidc_issuer_url is defined %}
     - --oidc-issuer-url={{oidc_issuer_url}}

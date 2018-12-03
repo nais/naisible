@@ -6,7 +6,7 @@ etcd
 
 ## Fremgangsmåte for å legge til en etcd-node
 
-1. Legg til noden under `etcd` og `coreos` i `nais-inventory`
+1. Legg til noden under `etcd` i `nais-inventory`
 2. Legg noden til clusteret med `etcdctl member add <hostname> http://<ip>:2380` på en av etcd-nodene
 3. Kjør Ansible med `skip-tags=fetch_etcd_certs`
 4. Sjekk at alt fungerer med `etcdctl cluster-health`
@@ -20,7 +20,7 @@ export ETCDCTL_KEY_FILE=/etc/ssl/etcd/etcd-key.pem
 export ETCDCTL_CA_FILE=/etc/ssl/etcd/ca.pem
 ```
 
-**PS2**: Du kan kun legge til en node om gangen, så steg 1-4 må gjøres **per** node.
+**PS2**: Du kan **kun** legge til **en** node om gangen, så steg 1-4 må gjøres **per** node.
 
 
 ## Oppgradere noder fra HTTP til HTTPS

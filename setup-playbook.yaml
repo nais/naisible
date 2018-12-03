@@ -313,10 +313,19 @@
       state: started
       enabled: yes
 
-  - name: Set kernel parameters
+  - name: Set max_user_watches kernel parameter
     sysctl:
       name: fs.inotify.max_user_watches
       value: 16384
+      state: present
+      sysctl_file: /etc/sysctl.d/60-sysctl.conf
+      sysctl_set: yes
+      reload: yes
+
+  - name: Set max_map_count kernel parameter
+    sysctl:
+      name: vm.max_map_count
+      value: 262144
       state: present
       sysctl_file: /etc/sysctl.d/60-sysctl.conf
       sysctl_set: yes

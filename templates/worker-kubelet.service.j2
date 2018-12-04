@@ -13,7 +13,6 @@ ExecStart={{ install_dir}}/bin/kubelet \
   --anonymous-auth=false \
   --client-ca-file=/etc/kubernetes/pki/ca.pem \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
-  --cadvisor-port 0 \
   --runtime-cgroups=/systemd/system.slice \
   --kubelet-cgroups=/systemd/system.slice \
   --allow-privileged=true \

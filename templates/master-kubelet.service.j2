@@ -13,7 +13,6 @@ ExecStart={{ install_dir}}/bin/kubelet \
   --v={{log_level | default(2) }} \
   --register-with-taints=node.alpha.kubernetes.io/ismaster=:NoSchedule \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
-  --cadvisor-port 0 \
   --runtime-cgroups=/systemd/system.slice \
   --kubelet-cgroups=/systemd/system.slice \
   --volume-plugin-dir={{ volume_plugin_dir }}

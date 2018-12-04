@@ -4,8 +4,19 @@ Documentation=http://kubernetes.io/docs/
 
 [Service]
 Environment=HOME=/root
-ExecStart={{ install_dir}}/bin/kubelet --hostname-override {{ inventory_hostname }} --node-labels=nais.io/type=master --allow-privileged=true --image-pull-progress-deadline=10m --pod-manifest-path=/etc/kubernetes/manifests --v={{log_level | default(2) }} --register-with-taints=node.alpha.kubernetes.io/ismaster=:NoSchedule --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --cadvisor-port 0 --runtime-cgroups=/systemd/system.slice --kubelet-cgroups=/systemd/system.slice --volume-plugin-dir={{ volume_plugin_dir }}
-
+ExecStart={{ install_dir}}/bin/kubelet \
+  --hostname-override {{ inventory_hostname }} \
+  --node-labels=nais.io/type=master \
+  --allow-privileged=true \
+  --image-pull-progress-deadline=10m \
+  --pod-manifest-path=/etc/kubernetes/manifests \
+  --v={{log_level | default(2) }} \
+  --register-with-taints=node.alpha.kubernetes.io/ismaster=:NoSchedule \
+  --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
+  --cadvisor-port 0 \
+  --runtime-cgroups=/systemd/system.slice \
+  --kubelet-cgroups=/systemd/system.slice \
+  --volume-plugin-dir={{ volume_plugin_dir }}
 Restart=always
 StartLimitInterval=0
 RestartSec=10

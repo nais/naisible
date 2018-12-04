@@ -103,7 +103,6 @@
   - name: Check if flannel config exists (OK if this fails)
     command: "{{ install_dir }}/bin/etcdctl ls /nais/network/config"
     environment:
-      - ETCDCTL_API: 2
       - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd.pem
       - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-key.pem
       - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
@@ -114,7 +113,6 @@
   - name: Set flannel configuration in etcd
     shell: '"{{ install_dir }}"/bin/etcdctl set /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
     environment:
-      - ETCDCTL_API: 2
       - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd.pem
       - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-key.pem
       - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem

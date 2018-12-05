@@ -86,10 +86,6 @@ node_labels:
 ## When cluster contains coreos-nodes
 
 ```ini
-[coreos]
-nodename.domain.com
-nodename.domain.com
-
 install_dir=/opt
 cert_dir=/etc/ssl/certs
 cert_bin=/sbin/update-ca-certificates

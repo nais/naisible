@@ -1,11 +1,12 @@
 ---
-# proxy role
 - hosts: all
   user: "{{ remote_user }}"
   become: yes
   tasks:
   - name: Remove certificate
-    file: path={{ cert_dir }}/webproxy.crt state=absent
+    file:
+      path: "{{ cert_dir }}/webproxy.crt"
+      state: absent
 
   - name: update_cert_index
     command: "{{ cert_bin }}"
@@ -28,6 +29,14 @@
       path: /etc/systemd/system/kube-issue-32728-fix.service
       state: absent
     when: service_32728.stat.exists
+
+  - name: Remove python bootstrap file
+    file:
+      path: "{{ ansible_pypy_bootstrap_file }}"
+      state: absent
+
+  - name: Remove python interpreter
+    raw: "rm -rf {{ ansible_python_interpreter }} {{ ansible_pypy_home }}"
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -62,7 +71,9 @@
       changed_when: false
 
     - name: Remove files
-      file: path={{ item }} state=absent
+      file:
+        path: "{{ item }}"
+        state: absent
       loop:
         - /etc/systemd/system/docker.service.d
         - /etc/systemd/system/kubelet.service
@@ -106,7 +117,9 @@
   become: yes
   tasks:
     - name: Remove files
-      file: path={{ item }} state=absent
+      file:
+        path: "{{ item }}"
+        state: absent
       loop:
         - /root/.helm/repository/repositories.yaml
         - "{{ install_dir }}/bin/helm-{{helm_version}}"
@@ -118,10 +131,16 @@
   become: yes
   tasks:
     - name: Disable etcd
-      systemd: name=etcd enabled=no state=stopped
+      systemd:
+        name: etcd
+        enabled: no
+        state: stopped
       ignore_errors: yes
+
     - name: Remove files
-      file: path={{ item }} state=absent
+      file:
+        path: "{{ item }}"
+        state: absent
       loop:
         - "{{ install_dir }}/bin/etcd-{{etcd_version}}"
         - "{{ install_dir }}/bin/etcd"
@@ -143,7 +162,9 @@
 - hosts: localhost
   tasks:
     - name: Remove target folder
-      file: path=target state=absent
+      file:
+        path: target
+        state: absent
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -151,16 +172,18 @@
   tasks:
   - name: Stop services
     systemd:
-      name={{ item }}
-      state=stopped
-      enabled=no
+      name: "{{ item }}"
+      state: stopped
+      enabled: no
     loop:
       - kube-proxy
       - flannel
     ignore_errors: yes
 
   - name: Remove files
-    file: path={{ item }} state=absent
+    file:
+      path: "{{ item }}"
+      state: absent
     loop:
       - /etc/systemd/system/kubelet.service
       - "{{ install_dir }}/bin/kube-proxy*"
@@ -190,21 +213,6 @@
     changed_when: false
 
   - name: Remove nais sensu check directory
-    file: path=/etc/sensu/plugins/metrics/nais state=absent
-
-- hosts: masters:workers:!coreos
-  tasks:
-  - name: Remove docker interface
-    command: ip link delete docker0
-    ignore_errors: yes
-    changed_when: false
-
-- hosts: coreos
-  user: "{{ remote_user }}"
-  become: yes
-  tasks:
-  - name: Remove python bootstrap file
-    file: path={{ ansible_pypy_bootstrap_file }} state=absent
-
-  - name: Remove python interpreter
-    raw: rm -rf {{ ansible_python_interpreter }} {{ ansible_pypy_home }} 
+    file:
+      path: /etc/sensu/plugins/metrics/nais
+      state: absent

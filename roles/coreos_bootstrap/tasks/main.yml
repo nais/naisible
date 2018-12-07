@@ -22,6 +22,5 @@
 
 - name: Setup timezone
   become: yes
-  ignore_errors: yes
   timezone:
     name: "{{ timezone }}"

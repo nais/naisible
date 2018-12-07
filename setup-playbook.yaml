@@ -1,6 +1,7 @@
 - hosts: all
   gather_facts: False
   user: "{{ remote_user }}"
+  any_errors_fatal: true
   roles:
     - coreos_bootstrap
   pre_tasks:

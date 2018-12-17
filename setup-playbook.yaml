@@ -17,29 +17,6 @@
       that:
         - ansible_play_hosts == ansible_play_hosts_all
 
-- hosts: workers:!storage_nodes
-  user: "{{ remote_user }}"
-  tasks:
-  - name: Add pool member to first bigip
-    ignore_errors: true
-    poll: 0
-    when:
-    - bigip_pool_name is defined
-    - bigip_partition is defined
-    delegate_to: localhost
-    bigip_pool_member:
-      state: present
-      partition: "{{ bigip_partition }}"
-      provider:
-        server: "{{ bigip_address }}"
-        timeout: 10
-        validate_certs: no
-      pool: "{{ bigip_pool_name }}"
-      host: "{{ ansible_default_ipv4['address'] }}"
-      port: 443
-    tags:
-      - bigip
-
 - hosts: all
   user: "{{ remote_user }}"
   become: yes

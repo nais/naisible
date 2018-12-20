@@ -87,6 +87,13 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "9153"
     spec:
+      affinity: # never schedule coredns on a node that is already running one
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+            labelSelector:                               
+              matchLabels:                               
+                k8s-app: coredns
       serviceAccountName: coredns
       containers:
       - name: coredns

@@ -486,7 +486,7 @@
     changed_when: false
 
   - name: Generate cluster-admin kubeconfig
-    shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+    shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf"
@@ -495,7 +495,7 @@
   - name: Wait for API server to become available
     wait_for:
       port: 6443
-      host: "{{ groups['masters'][0] }}"
+      host: "{{ groups.masters|random }}"
       delay: 15
       timeout: 240
     changed_when: false

@@ -513,6 +513,12 @@
 - hosts: workers
   user: "{{ remote_user }}"
   tasks:
+    - name: Delete cluster-admin.conf
+      file:
+        path: /etc/kubernetes/kubeconfigs/cluster-admin.conf
+        state: absent
+      changed_when: false
+
     - name: Setup node taints
       command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
       loop: "{{ node_taints|default([]) }}"

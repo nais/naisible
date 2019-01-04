@@ -50,7 +50,7 @@
 - name: Creating kubelet certificates
   shell: "bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client target/pki/kubelet/{{ item }}-csr.json | bin/cfssljson -bare target/pki/kubelet/{{ item.split('.')[0] }}"
   args:
-    creates: "target/pki/kubelet/{{ item].split('.')[0] }}.pem"
+    creates: "target/pki/kubelet/{{ item.split('.')[0] }}.pem"
   loop: "{{ groups.all|flatten(levels=1) }}"
 
 - name: Creating kube apiserver certificate

@@ -6,6 +6,7 @@
     - target
     - target/pki
     - target/pki/etcd
+    - target/pki/kubelet
 
 - name: Generate CSRs
   template:
@@ -16,6 +17,12 @@
     - etcd-csr
     - front-proxy-ca-csr
     - kube-apiserver-server-csr
+
+- name: Generate kubelet-csrs
+  template:
+    src: "{{ role_path }}/templates/kubelet-csr.json.j2"
+    dest: target/pki/kubelet/{{ item }}-csr.json
+  loop: "{{ groups.all|flatten(levels=1) }}"
 
 - name: Copy ca-config.json
   copy:
@@ -39,6 +46,12 @@
   shell: "bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client {{ role_path }}/files/kube-proxy-csr.json | bin/cfssljson -bare target/pki/kube-proxy"
   args:
     creates: target/pki/kube-proxy.pem
+
+- name: Creating kubelet certificates
+  shell: "bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client target/pki/kubelet/{{ item }}-csr.json | bin/cfssljson -bare target/pki/kubelet/{{ item.split('.')[0] }}"
+  args:
+    creates: "target/pki/kubelet/{{ item].split('.')[0] }}.pem"
+  loop: "{{ groups.all|flatten(levels=1) }}"
 
 - name: Creating kube apiserver certificate
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/kube-apiserver-server-csr.json | bin/cfssljson -bare target/pki/kube-apiserver-server

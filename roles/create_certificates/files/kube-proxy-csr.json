@@ -1,0 +1,10 @@
+{
+  "CN": "kube-proxy",
+  "names": [{
+    "O": "system:kube-proxy"
+  }],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  }
+}

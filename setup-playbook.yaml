@@ -6,9 +6,9 @@
     - coreos_bootstrap
   pre_tasks:
   - name: Copy python interpreter to server
-    local_action: command scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ lookup('env', 'SSH_OPTS') }} files/pypy-5.1.0-linux64.tar.bz2 {{ remote_user }}@{{ inventory_hostname }}:/home/{{ remote_user }}/
-    tags:
-    - skip_ansible_lint
+    delegate_to: localhost
+    command: "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {{ lookup('env', 'SSH_OPTS') }} files/pypy-5.1.0-linux64.tar.bz2 {{ remote_user }}@{{ inventory_hostname }}:/home/{{ remote_user }}/"
+    changed_when: false
 
 - hosts: localhost
   tasks:
@@ -116,6 +116,8 @@
       - front-proxy-client-key.pem
       - kube-apiserver-server-key.pem
       - kube-apiserver-server.pem
+      - kube-proxy.pem
+      - kube-proxy-key.pem
       - sa.key
       - sa.pub
       - traefik.pem
@@ -141,17 +143,15 @@
 
   - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
-    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{flannel_version}}/flannel-v{{flannel_version}}-linux-amd64.tar.gz | tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
-           mv /tmp/flanneld {{ install_dir }}/bin/flanneld-{{flannel_version}} && \
+    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{ flannel_version }}/flannel-v{{ flannel_version }}-linux-amd64.tar.gz | tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
+           mv /tmp/flanneld {{ install_dir }}/bin/flanneld-{{ flannel_version }} && \
            mv /tmp/mk-docker-opts.sh {{ install_dir }}/libexec
     args:
-      creates: "{{ install_dir }}/bin/flanneld-{{flannel_version}}"
-    tags:
-      - skip_ansible_lint
+      creates: "{{ install_dir }}/bin/flanneld-{{ flannel_version }}"
 
   - name: Symlink flannel
     file:
-      src: "{{ install_dir }}/bin/flanneld-{{flannel_version}}"
+      src: "{{ install_dir }}/bin/flanneld-{{ flannel_version }}"
       dest: "{{ install_dir }}/bin/flanneld"
       state: link
 
@@ -240,10 +240,7 @@
            mv /tmp/kubernetes/node/bin/kubectl {{ install_dir }}/bin/kubectl-{{ k8s_version }} && \
            mv /tmp/kubernetes/node/bin/kubelet {{ install_dir }}/bin/kubelet-{{ k8s_version }}
     args:
-      creates: "{{ install_dir }}/bin/kubelet-{{k8s_version}}"
-    tags:
-      - dev
-      - skip_ansible_lint
+      creates: "{{ install_dir }}/bin/kubelet-{{ k8s_version }}"
 
   - name: Symlink kubernetes node binaries
     file:
@@ -261,7 +258,7 @@
 
   - name: Make kubernetes node binaries executable
     file:
-      path: "{{ install_dir }}/bin/{{ item }}-{{ k8s_version }}"
+      path: "{{ install_dir }}/bin/{{ item }}-{{ k8s_version }}"
       mode: 0755
     loop:
       - kubectl
@@ -416,8 +413,8 @@
       src: "target/pki/{{ item }}"
       dest: /etc/kubernetes/pki/ # to ensure idempotency
     loop:
-      - admin.pem
-      - admin-key.pem
+      - kube-proxy.pem
+      - kube-proxy-key.pem
     notify:
       - restart_kubelet
       - restart_kubeproxy
@@ -474,11 +471,9 @@
         name: kubelet.service
         state: restarted
 
-# Common setup for all nodes
-- hosts: masters:workers
+- hosts: masters
   user: "{{ remote_user }}"
   become: yes
-
   tasks:
   - name: Delete cluster-admin.conf
     file:
@@ -487,7 +482,7 @@
     changed_when: false
 
   - name: Generate cluster-admin kubeconfig
-    shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups['masters'][0] }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+    shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
            {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf"
@@ -496,7 +491,7 @@
   - name: Wait for API server to become available
     wait_for:
       port: 6443
-      host: "{{ groups['masters'][0] }}"
+      host: "{{ groups.masters|random }}"
       delay: 15
       timeout: 240
     changed_when: false
@@ -511,6 +506,33 @@
     loop: "{{ node_labels|default([]) }}"
     changed_when: false
 
+- hosts: workers
+  user: "{{ remote_user }}"
+  tasks:
+    - name: Delete kube-proxy.conf
+      file:
+        path: /etc/kubernetes/kubeconfigs/kube-proxy.conf
+        state: absent
+      changed_when: false
+
+    - name: Generate kube-proxy kubeconfig
+      shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
+             {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-kube-proxy --client-certificate=/etc/kubernetes/pki/kube-proxy.pem --client-key=/etc/kubernetes/pki/kube-proxy-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
+             {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-kube-proxy --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
+             {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf"
+      changed_when: false
+
+    - name: Setup node taints
+      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
+      loop: "{{ node_taints|default([]) }}"
+      delegate_to: "{{ groups.masters|random }}"
+      changed_when: false
+
+    - name: Setup node labels
+      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
+      loop: "{{ node_labels|default([]) }}"
+      delegate_to: "{{ groups.masters|random }}"
+      changed_when: false
 
 - hosts: masters
   user: "{{ remote_user }}"
@@ -581,8 +603,6 @@
            mv /tmp/linux-amd64/helm {{ install_dir }}/bin/helm-{{ helm_version }}
     args:
       creates: "{{ install_dir }}/bin/helm-{{ helm_version }}"
-    tags:
-      - skip_ansible_lint
 
   - name: Symlink helm
     file:

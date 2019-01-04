@@ -90,19 +90,19 @@
 - hosts: all
   user: "{{ remote_user }}"
   become: yes
-
   tasks:
-
     - name: Ensure node taints are set
-      shell: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l "
+      shell: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no {{ inventory_hostname }} | grep '{{ item }}$' | wc -l "
       loop: "{{ node_taints|default([]) }}"
+      delegate_to: "{{ groups.masters|random }}"
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
       changed_when: false
 
     - name: Ensure node labels are set
-      shell: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no  {{ inventory_hostname }} | grep '{{ item }}$' | wc -l"
+      shell: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf describe no {{ inventory_hostname }} | grep '{{ item }}$' | wc -l"
       loop: "{{ node_labels|default([]) }}"
+      delegate_to: "{{ groups.masters|random }}"
       register: matches_spec
       failed_when: matches_spec.stdout != "1"
       changed_when: false

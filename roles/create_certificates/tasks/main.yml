@@ -35,6 +35,11 @@
   args:
     creates: target/pki/admin.pem
 
+- name: Creating kube-proxy certificate
+  shell: "bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=client {{ role_path }}/files/kube-proxy-csr.json | bin/cfssljson -bare target/pki/kube-proxy"
+  args:
+    creates: target/pki/kube-proxy.pem
+
 - name: Creating kube apiserver certificate
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/kube-apiserver-server-csr.json | bin/cfssljson -bare target/pki/kube-apiserver-server
   args:

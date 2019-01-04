@@ -508,6 +508,7 @@
 
 - hosts: workers
   user: "{{ remote_user }}"
+  become: yes
   tasks:
     - name: Delete kube-proxy.conf
       file:

@@ -407,8 +407,17 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
+  - name: Copy kubelet certificates
+    copy:
+      src: "target/pki/kubelet/{{ item }}"
+      dest: /etc/kubernetes/pki/ # to ensure idempotency
+    loop:
+      - "{{ ansible_hostname }}.pem"
+      - "{{ ansible_hostname }}-key.pem"
+    notify:
+      - restart_kubelet
 
-  - name: Copy certificates
+  - name: Copy kube-proxy certificates
     copy:
       src: "target/pki/{{ item }}"
       dest: /etc/kubernetes/pki/ # to ensure idempotency
@@ -416,7 +425,6 @@
       - kube-proxy.pem
       - kube-proxy-key.pem
     notify:
-      - restart_kubelet
       - restart_kubeproxy
 
   - name: Copy Issuing Internal certificate
@@ -510,6 +518,26 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
+    # Denne blir fjernet etter nytt oppsett har blitt kjørt på alle noder
+    - name: Delete cluster-admin.conf
+      file:
+        path: /etc/kubernetes/kubeconfigs/cluster-admin.conf
+        state: absent
+      changed_when: false
+
+    - name: Delete kubelet.conf
+      file:
+        path: /etc/kubernetes/kubeconfigs/kubelet.conf
+        state: absent
+      changed_when: false
+
+    - name: Generate kubelet kubeconfig
+      shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf &&
+             {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-kubelet --client-certificate=/etc/kubernetes/pki/kubelet.pem --client-key=/etc/kubernetes/pki/kubelet-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf &&
+             {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-kubelet --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf &&
+             {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf"
+      changed_when: false
+
     - name: Delete kube-proxy.conf
       file:
         path: /etc/kubernetes/kubeconfigs/kube-proxy.conf

@@ -409,11 +409,11 @@
   tasks:
   - name: Copy kubelet certificates
     copy:
-      src: "target/pki/kubelet/{{ item }}"
-      dest: /etc/kubernetes/pki/ # to ensure idempotency
+      src: "target/pki/kubelet/{{ ansible_hostname }}{{ item }}"
+      dest: "/etc/kubernetes/pki/kubelet{{ item }}" # to ensure idempotency
     loop:
-      - "{{ ansible_hostname }}.pem"
-      - "{{ ansible_hostname }}-key.pem"
+      - ".pem"
+      - "-key.pem"
     notify:
       - restart_kubelet
 

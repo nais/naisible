@@ -42,11 +42,11 @@ spec:
     - --enable-admission-plugins=PodSecurityPolicy,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
     - --authorization-mode=RBAC
 {% if oidc_issuer_url is defined %}
-    - --oidc-issuer-url={{oidc_issuer_url}}
-    - --oidc-client-id={{oidc_client_id}}
-    - --oidc-username-claim={{oidc_username_claim}}
-    - --oidc-groups-claim={{oidc_groups_claim}}
-    - --v={{log_level | default(0) }}
+    - --oidc-issuer-url={{ oidc_issuer_url }}
+    - --oidc-client-id={{ oidc_client_id }}
+    - --oidc-username-claim={{ oidc_username_claim }}
+    - --oidc-groups-claim={{ oidc_groups_claim }}
+    - --v={{ log_level|default(0) }}
 {% endif %}
     - --advertise-address={{ ansible_default_ipv4.address }}
     - --etcd-servers={{ etcd_urls | join(",") }}

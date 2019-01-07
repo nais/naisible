@@ -40,7 +40,7 @@ spec:
     - --insecure-port=8080
     - --insecure-bind-address=127.0.0.1
     - --enable-admission-plugins=PodSecurityPolicy,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota
-    - --authorization-mode=RBAC
+    - --authorization-mode=Node,RBAC
 {% if oidc_issuer_url is defined %}
     - --oidc-issuer-url={{ oidc_issuer_url }}
     - --oidc-client-id={{ oidc_client_id }}

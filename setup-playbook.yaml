@@ -413,6 +413,8 @@
       src: "target/pki/{{ item }}"
       dest: /etc/kubernetes/pki/ # to ensure idempotency
     loop:
+      - admin.pem
+      - admin-key.pem
       - kube-proxy.pem
       - kube-proxy-key.pem
     notify:

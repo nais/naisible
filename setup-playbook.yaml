@@ -131,6 +131,14 @@
       - traefik.pem
       - traefik-key.pem
 
+  - name: Copy kubelet certificates
+    copy:
+      src: "target/pki/kubelet/{{ ansible_hostname.split('.')[0] }}{{ item }}"
+      dest: "/etc/kubernetes/pki/kubelet{{ item }}"
+    loop:
+      - ".pem"
+      - "-key.pem"
+
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes

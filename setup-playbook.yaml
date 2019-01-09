@@ -54,6 +54,14 @@
   roles:
   - fetch_existing_certificates
 
+- hosts: masters:workers
+  user: "{{ remote_user }}"
+  tasks:
+  - name: Fetch Kubelet-specific certificates (if exists)
+    include_role:
+      name: fetch_existing_certificates
+      tasks_from: kubelet
+
 - hosts: etcd
   user: "{{ remote_user }}"
   tasks:
@@ -409,7 +417,7 @@
   tasks:
   - name: Copy kubelet certificates
     copy:
-      src: "target/pki/kubelet/{{ ansible_hostname }}{{ item }}"
+      src: "target/pki/kubelet/{{ ansible_hostname.split('.')[0] }}{{ item }}"
       dest: "/etc/kubernetes/pki/kubelet{{ item }}" # to ensure idempotency
     loop:
       - ".pem"

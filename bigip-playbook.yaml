@@ -1,5 +1,4 @@
-- hosts: workers:!storage_nodes
-  user: "{{ remote_user }}"
+- hosts: localhost
   tasks:
   - name: Add pool member to first bigip
     ignore_errors: true
@@ -16,7 +15,6 @@
         timeout: 10
         validate_certs: no
       pool: "{{ bigip_pool_name }}"
-      host: "{{ ansible_default_ipv4['address'] }}"
-      port: 443
-    tags:
-      - bigip
+      host: "{{ lookup('dig', item)}}"
+      port: 443 
+    loop: "{{ query('inventory_hostnames', 'workers:!storage_nodes') }}"

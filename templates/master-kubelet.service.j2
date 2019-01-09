@@ -4,13 +4,13 @@ Documentation=http://kubernetes.io/docs/
 
 [Service]
 Environment=HOME=/root
-ExecStart={{ install_dir}}/bin/kubelet \
+ExecStart={{ install_dir }}/bin/kubelet \
   --hostname-override {{ inventory_hostname }} \
   --node-labels=nais.io/type=master \
   --allow-privileged=true \
   --image-pull-progress-deadline=10m \
   --pod-manifest-path=/etc/kubernetes/manifests \
-  --v={{log_level | default(2) }} \
+  --v={{ log_level|default(2) }} \
   --register-with-taints=node.alpha.kubernetes.io/ismaster=:NoSchedule \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
   --runtime-cgroups=/systemd/system.slice \

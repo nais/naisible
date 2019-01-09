@@ -418,7 +418,7 @@
   - name: Copy kubelet certificates
     copy:
       src: "target/pki/kubelet/{{ ansible_hostname.split('.')[0] }}{{ item }}"
-      dest: "/etc/kubernetes/pki/kubelet{{ item }}" # to ensure idempotency
+      dest: "/etc/kubernetes/pki/kubelet{{ item }}"
     loop:
       - ".pem"
       - "-key.pem"
@@ -428,7 +428,7 @@
   - name: Copy kube-proxy certificates
     copy:
       src: "target/pki/{{ item }}"
-      dest: /etc/kubernetes/pki/ # to ensure idempotency
+      dest: /etc/kubernetes/pki/
     loop:
       - kube-proxy.pem
       - kube-proxy-key.pem

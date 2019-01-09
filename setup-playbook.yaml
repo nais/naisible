@@ -498,6 +498,8 @@
 - hosts: masters
   user: "{{ remote_user }}"
   become: yes
+  roles:
+    - generate_kubeconfig
   tasks:
   - name: Delete cluster-admin.conf
     file:
@@ -533,38 +535,14 @@
 - hosts: workers
   user: "{{ remote_user }}"
   become: yes
+  roles:
+    - generate_kubeconfig
   tasks:
     # Denne blir fjernet etter nytt oppsett har blitt kjørt på alle noder
     - name: Delete cluster-admin.conf
       file:
         path: /etc/kubernetes/kubeconfigs/cluster-admin.conf
         state: absent
-      changed_when: false
-
-    - name: Delete kubelet.conf
-      file:
-        path: /etc/kubernetes/kubeconfigs/kubelet.conf
-        state: absent
-      changed_when: false
-
-    - name: Generate kubelet kubeconfig
-      shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf &&
-             {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-kubelet --client-certificate=/etc/kubernetes/pki/kubelet.pem --client-key=/etc/kubernetes/pki/kubelet-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf &&
-             {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-kubelet --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf &&
-             {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf"
-      changed_when: false
-
-    - name: Delete kube-proxy.conf
-      file:
-        path: /etc/kubernetes/kubeconfigs/kube-proxy.conf
-        state: absent
-      changed_when: false
-
-    - name: Generate kube-proxy kubeconfig
-      shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
-             {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-kube-proxy --client-certificate=/etc/kubernetes/pki/kube-proxy.pem --client-key=/etc/kubernetes/pki/kube-proxy-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
-             {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-kube-proxy --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
-             {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf"
       changed_when: false
 
     - name: Setup node taints

@@ -530,13 +530,6 @@
       loop: "{{ node_labels|default([]) }}"
       changed_when: false
 
-    # Denne blir fjernet etter nytt oppsett har blitt kjørt på alle noder
-    - name: Delete cluster-admin.conf
-      file:
-        path: /etc/kubernetes/kubeconfigs/cluster-admin.conf
-        state: absent
-      changed_when: false
-
 # Denne blir fjernet etter nytt oppsett har blitt kjørt på alle noder
 - hosts: workers
   user: "{{ remote_user }}"
@@ -549,6 +542,12 @@
       loop:
         - pki/admin.pem
         - pki/admin-key.pem
+      changed_when: false
+
+    - name: Delete cluster-admin.conf
+      file:
+        path: /etc/kubernetes/kubeconfigs/cluster-admin.conf
+        state: absent
       changed_when: false
 
 - hosts: masters

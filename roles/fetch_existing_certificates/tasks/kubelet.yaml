@@ -1,0 +1,23 @@
+- name: Get file stat for kubelet.pem
+  stat:
+    path: "/etc/kubernetes/pki/kubelet.pem"
+  register: file
+
+- name: Fetch kubelet.pem
+  fetch:
+    src: "/etc/kubernetes/pki/kubelet.pem"
+    dest: "target/pki/kubelet/{{ ansible_hostname.split('.')[0] }}.pem"
+    flat: yes
+  when: file.stat.exists
+
+- name: Get file stat for kubelet-key.pem
+  stat:
+    path: "/etc/kubernetes/pki/kubelet-key.pem"
+  register: file
+
+- name: Fetch kubelet-key.pem
+  fetch:
+    src: "/etc/kubernetes/pki/kubelet-key.pem"
+    dest: "target/pki/kubelet/{{ ansible_hostname.split('.')[0] }}-key.pem"
+    flat: yes
+  when: file.stat.exists

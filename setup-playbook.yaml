@@ -54,6 +54,14 @@
   roles:
   - fetch_existing_certificates
 
+- hosts: masters:workers
+  user: "{{ remote_user }}"
+  tasks:
+  - name: Fetch Kubelet-specific certificates (if exists)
+    include_role:
+      name: fetch_existing_certificates
+      tasks_from: kubelet
+
 - hosts: etcd
   user: "{{ remote_user }}"
   tasks:
@@ -122,6 +130,14 @@
       - sa.pub
       - traefik.pem
       - traefik-key.pem
+
+  - name: Copy kubelet certificates
+    copy:
+      src: "target/pki/kubelet/{{ ansible_hostname.split('.')[0] }}{{ item }}"
+      dest: "/etc/kubernetes/pki/kubelet{{ item }}"
+    loop:
+      - ".pem"
+      - "-key.pem"
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -407,18 +423,24 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
+  - name: Copy kubelet certificates
+    copy:
+      src: "target/pki/kubelet/{{ ansible_hostname.split('.')[0] }}{{ item }}"
+      dest: "/etc/kubernetes/pki/kubelet{{ item }}"
+    loop:
+      - ".pem"
+      - "-key.pem"
+    notify:
+      - restart_kubelet
 
-  - name: Copy certificates
+  - name: Copy kube-proxy certificates
     copy:
       src: "target/pki/{{ item }}"
-      dest: /etc/kubernetes/pki/ # to ensure idempotency
+      dest: /etc/kubernetes/pki/
     loop:
-      - admin.pem
-      - admin-key.pem
       - kube-proxy.pem
       - kube-proxy-key.pem
     notify:
-      - restart_kubelet
       - restart_kubeproxy
 
   - name: Copy Issuing Internal certificate
@@ -477,64 +499,55 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
-  - name: Delete cluster-admin.conf
-    file:
-      path: /etc/kubernetes/kubeconfigs/cluster-admin.conf
-      state: absent
-    changed_when: false
+    - name: Generate cluster-admin kubeconfig, used by nsync
+      shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+             {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+             {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
+             {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf"
+      changed_when: false
 
-  - name: Generate cluster-admin kubeconfig
-    shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
-           {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-cluster-admin --client-certificate=/etc/kubernetes/pki/admin.pem --client-key=/etc/kubernetes/pki/admin-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
-           {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-cluster-admin --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf &&
-           {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf"
-    changed_when: false
+    - name: Wait for API server to become available
+      wait_for:
+        port: 6443
+        host: "{{ groups.masters|random }}"
+        delay: 15
+        timeout: 240
+      changed_when: false
 
-  - name: Wait for API server to become available
-    wait_for:
-      port: 6443
-      host: "{{ groups.masters|random }}"
-      delay: 15
-      timeout: 240
-    changed_when: false
+- hosts: masters:workers
+  user: "{{ remote_user }}"
+  become: yes
+  roles:
+    - generate_kubeconfigs
+  tasks:
+    - name: Setup node taints
+      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
+      loop: "{{ node_taints|default([]) }}"
+      changed_when: false
 
-  - name: Setup node taints
-    command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
-    loop: "{{ node_taints|default([]) }}"
-    changed_when: false
+    - name: Setup node labels
+      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
+      loop: "{{ node_labels|default([]) }}"
+      changed_when: false
 
-  - name: Setup node labels
-    command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
-    loop: "{{ node_labels|default([]) }}"
-    changed_when: false
-
+# Denne blir fjernet etter nytt oppsett har blitt kjørt på alle noder
 - hosts: workers
   user: "{{ remote_user }}"
   become: yes
   tasks:
-    - name: Delete kube-proxy.conf
+    - name: Delete admin-sertifikat
       file:
-        path: /etc/kubernetes/kubeconfigs/kube-proxy.conf
+        path: "/etc/kubernetes/pki/{{ item }}"
         state: absent
+      loop:
+        - pki/admin.pem
+        - pki/admin-key.pem
       changed_when: false
 
-    - name: Generate kube-proxy kubeconfig
-      shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|random }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
-             {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-kube-proxy --client-certificate=/etc/kubernetes/pki/kube-proxy.pem --client-key=/etc/kubernetes/pki/kube-proxy-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
-             {{ install_dir }}/bin/kubectl config set-context {{ cluster_name }} --cluster={{ cluster_name }} --user={{ cluster_name }}-kube-proxy --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
-             {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf"
-      changed_when: false
-
-    - name: Setup node taints
-      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
-      loop: "{{ node_taints|default([]) }}"
-      delegate_to: "{{ groups.masters|random }}"
-      changed_when: false
-
-    - name: Setup node labels
-      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/cluster-admin.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
-      loop: "{{ node_labels|default([]) }}"
-      delegate_to: "{{ groups.masters|random }}"
+    - name: Delete cluster-admin.conf
+      file:
+        path: /etc/kubernetes/kubeconfigs/cluster-admin.conf
+        state: absent
       changed_when: false
 
 - hosts: masters

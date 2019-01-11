@@ -1,6 +1,7 @@
 {% set etcd_urls = [] -%}
 {% for host in groups['etcd'] -%}
-  {% set _ = etcd_urls.append("https://%s:2379" % (host)) -%}
+  {% set ip = hostvars[host]['ansible_default_ipv4']['address'] -%}
+  {% set _ = etcd_urls.append("https://%s:2379" % (ip)) -%}
 {% endfor -%}
 {% set worker_ips = [] -%}
 {% for host in groups['workers'] -%}

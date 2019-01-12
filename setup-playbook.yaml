@@ -540,8 +540,8 @@
         path: "/etc/kubernetes/pki/{{ item }}"
         state: absent
       loop:
-        - pki/admin.pem
-        - pki/admin-key.pem
+        - admin.pem
+        - admin-key.pem
       changed_when: false
 
     - name: Delete cluster-admin.conf

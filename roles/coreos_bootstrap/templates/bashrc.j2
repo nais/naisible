@@ -23,11 +23,11 @@ alias k='kubectl'
 alias ks='kubectl --namespace kube-system'
 alias kn='kubectl --namespace nais'
 
-{% if ansible_hostname in groups.etcd -%}
+{% if inventory_hostname in groups.etcd -%}
 export ETCDCTL_CERT_FILE=/etc/ssl/etcd/etcd.pem
 export ETCDCTL_KEY_FILE=/etc/ssl/etcd/etcd-key.pem
 export ETCDCTL_CA_FILE=/etc/ssl/etcd/ca.pem
-{% elif ansible_hostname in groups.masters -%}
+{% elif inventory_hostname in groups.masters -%}
 export ETCDCTL_CERT_FILE=/etc/kubernetes/pki/etcd.pem
 export ETCDCTL_KEY_FILE=/etc/kubernetes/pki/etcd-key.pem
 export ETCDCTL_CA_FILE=/etc/kubernetes/pki/ca.pem

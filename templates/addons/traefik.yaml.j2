@@ -139,7 +139,6 @@ spec:
           hostPort: 8080
           name: metrics
         args:
-        - --web
         - --kubernetes
         - --checknewversion=false
         - --configfile=/config/traefik.toml
@@ -150,19 +149,3 @@ spec:
         - name: certificates
           secret:
             secretName: traefik-cert
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: traefik-web-ui
-  namespace: kube-system
-spec:
-  selector:
-    k8s-app: traefik-ingress-lb
-  ports:
-  - port: 443
-    targetPort: 443
-    name: ingress
-  - port: 8080
-    targetPort: 8080
-    name: metrics

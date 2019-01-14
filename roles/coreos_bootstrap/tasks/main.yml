@@ -24,3 +24,8 @@
   become: yes
   timezone:
     name: "{{ timezone }}"
+
+- name: Add simple bashrc
+  template:
+    src: "{{ role_path }}/templates/bashrc.j2"
+    dest: /home/deployer/.bashrc

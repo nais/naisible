@@ -44,10 +44,10 @@
   roles:
   - k8s_common
   tasks:
-  - name: Copy .bashrc
-    copy:
-      src: files/bashrc
-      dest: /root/.bashrc
+  - name: Remove /root/.bashrc
+    file:
+      path: /root/.bashrc
+      state: absent
 
 - hosts: masters
   user: "{{ remote_user }}"

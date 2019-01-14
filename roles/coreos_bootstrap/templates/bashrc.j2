@@ -31,4 +31,9 @@ export ETCDCTL_CA_FILE=/etc/ssl/etcd/ca.pem
 export ETCDCTL_CERT_FILE=/etc/kubernetes/pki/etcd.pem
 export ETCDCTL_KEY_FILE=/etc/kubernetes/pki/etcd-key.pem
 export ETCDCTL_CA_FILE=/etc/kubernetes/pki/ca.pem
+{% set etcd = [] -%}
+{% for host in groups.etcd -%}
+  {% set _ = etcd.append("https://%s:2379" % host) -%}
+{% endfor -%}
+export ETCDCTL_ENDPOINTS={{ etcd|join(',') }}
 {% endif -%}

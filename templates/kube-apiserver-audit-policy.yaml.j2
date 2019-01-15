@@ -2,10 +2,6 @@ apiVersion: audit.k8s.io/v1beta1
 kind: Policy
 rules:
   - level: None
-    userGroups:
-      - 'system:masters'
-      - 'system:serviceaccounts'
-  - level: None
     nonResourceURLs:
       - '/healthz*'
       - /version

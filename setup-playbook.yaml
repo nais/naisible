@@ -89,8 +89,8 @@
   - name: Check if flannel config exists (OK if this fails)
     command: "{{ install_dir }}/bin/etcdctl ls /nais/network/config"
     environment:
-      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd.pem
-      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-key.pem
+      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
+      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
       - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
     register: flannelconfig
     ignore_errors: yes
@@ -99,8 +99,8 @@
   - name: Set flannel configuration in etcd
     shell: '"{{ install_dir }}"/bin/etcdctl set /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
     environment:
-      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd.pem
-      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-key.pem
+      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
+      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
       - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
     when: flannelconfig.rc != 0
 
@@ -149,8 +149,8 @@
       src: "target/pki/{{ item }}"
       dest: /etc/kubernetes/pki/ # to ensure idempotency
     loop:
-      - etcd/etcd.pem
-      - etcd/etcd-key.pem
+      - etcd/etcd-client.pem
+      - etcd/etcd-client-key.pem
       - ca.pem
     notify:
       - restart_kubelet

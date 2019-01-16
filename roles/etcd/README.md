@@ -15,8 +15,8 @@ etcd
 **PS**: Husk å legge til miljøvariabler for å snakke med etcd-clusteret via `etcdctl`.
 
 ```
-export ETCDCTL_CERT_FILE=/etc/ssl/etcd/etcd.pem
-export ETCDCTL_KEY_FILE=/etc/ssl/etcd/etcd-key.pem
+export ETCDCTL_CERT_FILE=/etc/ssl/etcd/etcd-client.pem
+export ETCDCTL_KEY_FILE=/etc/ssl/etcd/etcd-client-key.pem
 export ETCDCTL_CA_FILE=/etc/ssl/etcd/ca.pem
 ```
 

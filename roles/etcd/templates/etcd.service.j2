@@ -21,8 +21,8 @@ ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} \
   --initial-cluster-state existing \
   --client-cert-auth \
   --trusted-ca-file=/etc/ssl/etcd/ca.pem \
-  --cert-file=/etc/ssl/etcd/client.pem \
-  --key-file=/etc/ssl/etcd/client-key.pem \
+  --cert-file=/etc/ssl/etcd/server.pem \
+  --key-file=/etc/ssl/etcd/server-key.pem \
   --peer-client-cert-auth \
   --peer-trusted-ca-file=/etc/ssl/etcd/ca.pem \
   --peer-cert-file=/etc/ssl/etcd/peer-{{ ansible_hostname }}.pem \

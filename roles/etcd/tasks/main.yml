@@ -13,10 +13,10 @@
     dest: "/etc/ssl/etcd/"
   loop:
     - ca.pem
-    - /etcd/etcd.pem
-    - /etcd/etcd-key.pem
-    - /etcd/client.pem
-    - /etcd/client-key.pem
+    - /etcd/etcd-client.pem
+    - /etcd/etcd-client-key.pem
+    - /etcd/server.pem
+    - /etcd/server-key.pem
     - "etcd/peer-{{ ansible_hostname }}.pem"
     - "etcd/peer-{{ ansible_hostname }}-key.pem"
   notify:

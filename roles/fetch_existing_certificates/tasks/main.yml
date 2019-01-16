@@ -20,8 +20,8 @@
 - name: Fetch etcd client-certificates
   include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
   loop:
-    - etcd.pem
-    - etcd-key.pem
+    - etcd-client.pem
+    - etcd-client-key.pem
   vars:
     src_path: /etc/kubernetes/pki
     dest_path: target/pki/etcd

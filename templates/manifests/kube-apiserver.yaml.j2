@@ -51,8 +51,8 @@ spec:
     - --advertise-address={{ ansible_default_ipv4.address }}
     - --etcd-servers={{ etcd_urls | join(",") }}
     - --etcd-cafile=/etc/kubernetes/pki/ca.pem
-    - --etcd-certfile=/etc/kubernetes/pki/etcd.pem
-    - --etcd-keyfile=/etc/kubernetes/pki/etcd-key.pem
+    - --etcd-certfile=/etc/kubernetes/pki/etcd-client.pem
+    - --etcd-keyfile=/etc/kubernetes/pki/etcd-client-key.pem
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8

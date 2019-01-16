@@ -1,10 +1,10 @@
 - name: Fetch Etcd certificates
   include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
   loop:
-    - etcd.pem
-    - etcd-key.pem
-    - client.pem
-    - client-key.pem
+    - etcd-client.pem
+    - etcd-client-key.pem
+    - server.pem
+    - server-key.pem
   vars:
     src_path: /etc/ssl/etcd
     dest_path: target/pki/etcd

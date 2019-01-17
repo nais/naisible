@@ -288,13 +288,6 @@
     notify:
       - restart_kubeproxy
 
-  - name: Copy kube-proxy kubeconfig
-    template:
-      src: templates/kubeconfigs/kube-proxy.conf.j2
-      dest: /etc/kubernetes/kubeconfigs/kube-proxy.conf
-    notify:
-      - restart_kubeproxy
-
   - name: Enable kube-proxy
     systemd:
       daemon_reload: yes

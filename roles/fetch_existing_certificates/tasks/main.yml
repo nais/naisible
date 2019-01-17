@@ -13,6 +13,8 @@
     - admin-key.pem
     - front-proxy-client.pem
     - front-proxy-client-key.pem
+    - kube-proxy.pem
+    - kube-proxy-key.pem
   vars:
     src_path: /etc/kubernetes/pki
     dest_path: target/pki

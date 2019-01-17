@@ -11,12 +11,6 @@
          {{ install_dir }}/bin/kubectl config use-context {{ cluster_name }} --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf"
   changed_when: false
 
-- name: Delete kube-proxy.conf
-  file:
-    path: /etc/kubernetes/kubeconfigs/kube-proxy.conf
-    state: absent
-  changed_when: false
-
 - name: Generate kube-proxy kubeconfig
   shell: "{{ install_dir }}/bin/kubectl config set-cluster {{ cluster_name }} --server=https://{{ groups.masters|first }}:6443 --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&
          {{ install_dir }}/bin/kubectl config set-credentials {{ cluster_name }}-kube-proxy --client-certificate=/etc/kubernetes/pki/kube-proxy.pem --client-key=/etc/kubernetes/pki/kube-proxy-key.pem --embed-certs --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf &&

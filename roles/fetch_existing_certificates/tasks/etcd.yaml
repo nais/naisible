@@ -18,11 +18,3 @@
   vars:
     src_path: /etc/ssl/etcd
     dest_path: target/pki/etcd
-
-- name: Fetch ca.pem
-  include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
-  loop:
-    - ca.pem
-  vars:
-    src_path: /etc/ssl/etcd
-    dest_path: target/pki/

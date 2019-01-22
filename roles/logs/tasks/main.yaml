@@ -1,0 +1,11 @@
+- name: Ensure journal logdir exist
+  file:
+    state: directory
+    path: "/var/log/journal"
+
+- name: Install journal config
+  copy:
+    src: "{{ role_path }}/files/journald.conf"
+    dest: "/etc/systemd/journald.conf"
+  notify:
+    - Restart journald

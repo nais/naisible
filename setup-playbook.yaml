@@ -20,6 +20,36 @@
 - hosts: all
   user: "{{ remote_user }}"
   become: yes
+  tasks:
+  - name: Ensure /etc/node_exporter exists
+    file: path=/etc/node_exporter state=directory
+
+  - name: Add node_exporter binary
+    copy:
+      src: files/node_exporter
+      dest: /etc/node_exporter/node_exporter
+      owner: root
+      group: root
+      mode: 0755
+  
+  - name: Add systemd unit to run local node_exporter
+    copy:
+      src: files/node_exporter.service
+      dest: /etc/systemd/system/node_exporter.service
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Enable node_exporter
+    systemd:
+      daemon_reload: yes
+      name: node_exporter.service
+      state: started
+      enabled: yes
+
+- hosts: all
+  user: "{{ remote_user }}"
+  become: yes
   roles:
   -  { role: proxy, when: nais_http_proxy is defined }
   - logs

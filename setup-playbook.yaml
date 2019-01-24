@@ -26,7 +26,7 @@
 
   - name: Add node_exporter binary
     copy:
-      src: files/node_exporter
+      src: files/node_exporter-0.17.0
       dest: /etc/node_exporter/node_exporter
       owner: root
       group: root

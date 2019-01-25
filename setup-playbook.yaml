@@ -53,6 +53,7 @@
   roles:
   -  { role: proxy, when: nais_http_proxy is defined }
   - logs
+  - update-engine
   tasks:
   - name: Add systemd unit to fix issue 32728 (symlinks in /sys)
     copy:

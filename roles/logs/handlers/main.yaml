@@ -1,4 +1,4 @@
 - name: Restart journald
   systemd:
-    name=systemd-journald
-    state=restarted
+    name: systemd-journald
+    state: restarted

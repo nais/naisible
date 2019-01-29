@@ -47,6 +47,33 @@
       state: started
       enabled: yes
 
+- hosts: masters:workers:storage_nodes
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+  - name: 
+    systemd:
+      daemon_reload: yes
+      name: locksmithd.service
+      state: stopped
+      masked: yes
+
+- hosts: etcd
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+    - name: Copy update.conf to etcd nodes
+      copy:
+        src: files/etcd_update.conf
+        dest: /etc/coreos/update.conf
+
+    - name: Ensure locksmithd is started
+      systemd:
+        daemon_reload: yes
+        name: locksmithd.service
+        state: started
+        enabled: yes
+ 
 - hosts: all
   user: "{{ remote_user }}"
   become: yes

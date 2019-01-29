@@ -1,0 +1,9 @@
+[Unit]
+Description=Prometheus
+
+[Service]
+User=prometheus
+ExecStart=/opt/prometheus/prometheus --config.file /opt/prometheus/prometheus.yml --storage.tsdb.path=/data/prometheus --storage.tsdb.retention={{ prometheus.retention }}
+
+[Install]
+WantedBy=multi-user.target

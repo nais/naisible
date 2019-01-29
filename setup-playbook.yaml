@@ -67,6 +67,10 @@
         src: files/etcd_update.conf
         dest: /etc/coreos/update.conf
 
+- hosts: etcd:prometheus
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
     - name: Ensure locksmithd is started
       systemd:
         daemon_reload: yes

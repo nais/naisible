@@ -7,6 +7,7 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
     - targets: ['localhost:9090']
+
   - job_name: 'nodes'
     static_configs:
       - targets:
@@ -37,3 +38,18 @@ scrape_configs:
 {% endfor %}
         labels:
           node_type: etcd
+
+{% for job in prometheus_jobs %}
+  - job_name: "federate-{{ job }}"
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job="{{ job }}"}'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets:
+        - 'prometheus.nais.{{ domain }}'
+{% endfor %}

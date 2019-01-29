@@ -1,10 +1,10 @@
 global:
   scrape_interval: 1m
-  scrape_timeout: 20s
+  scrape_timeout: 50s
   evaluation_interval: 1m
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: 'prometheus-local'
     static_configs:
     - targets: ['localhost:9090']
 
@@ -40,7 +40,7 @@ scrape_configs:
           node_type: etcd
 
 {% for job in prometheus_jobs %}
-  - job_name: "federate-{{ job }}"
+  - job_name: "{{ job }}"
     honor_labels: true
     metrics_path: '/federate'
     params:

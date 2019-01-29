@@ -1,0 +1,39 @@
+global:
+  scrape_interval: 1m
+  scrape_timeout: 20s
+  evaluation_interval: 1m
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+    - targets: ['localhost:9090']
+  - job_name: 'nodes'
+    static_configs:
+      - targets:
+        - localhost:9101
+        labels:
+          node_type: prometheus
+      - targets:
+{% for host in groups['masters'] %}
+        - '{{ host }}:9101'
+{% endfor %}
+        labels:
+          node_type: master
+      - targets:
+{% for host in groups['workers'] %}
+        - '{{ host }}:9101'
+{% endfor %}
+        labels:
+          node_type: worker
+      - targets:
+{% for host in groups['storage_nodes'] %}
+        - '{{ host }}:9101'
+{% endfor %}
+        labels:
+          node_type: storage
+      - targets:
+{% for host in groups['etcd'] %}
+        - '{{ host }}:9101'
+{% endfor %}
+        labels:
+          node_type: etcd

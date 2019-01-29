@@ -1,0 +1,64 @@
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items: [ "/opt", "/data"]
+
+- name: Create prometheus group
+  group:
+    name: prometheus
+    system: yes
+    state: present
+    
+- name: Create prometheus user
+  user:
+    name: prometheus
+    groups:
+      - prometheus
+    system: yes
+    home: /opt/prometheus
+    createhome: no
+    shell: /sbin/nologin
+    state: present
+
+- name: Download prometheus
+  environment: "{{ proxy_env }}"
+  get_url:
+    url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus.version }}/prometheus-{{ prometheus.version }}.linux-amd64.tar.gz"
+    dest: "/opt/prometheus-{{ prometheus.version }}.linux-amd64.tar.gz"
+    checksum: "{{ prometheus.checksum }}"
+    use_proxy: yes
+
+- name: Extract prometheus
+  unarchive:
+    src: "/opt/prometheus-{{ prometheus.version }}.linux-amd64.tar.gz"
+    dest: "/opt"
+    creates: "/opt/prometheus-{{ prometheus.version }}.linux-amd64"
+    remote_src: yes
+
+- name: Create symlink to installation
+  file:
+    src: "/opt/prometheus-{{ prometheus.version }}.linux-amd64"
+    dest: /opt/prometheus
+    state: link
+
+- name: Create data directory
+  file:
+    path: /data/prometheus
+    group: prometheus
+    mode: 02775
+    state: directory
+
+- name: Install systemd unit
+  template:
+    src: templates/prometheus.service
+    dest: /etc/systemd/system/prometheus.service
+  notify:
+    - Restart prometheus
+
+- name: Configure prometheus
+  template:
+    src: templates/prometheus.yml
+    dest: /opt/prometheus
+  notify:
+    - Restart prometheus

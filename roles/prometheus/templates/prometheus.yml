@@ -51,5 +51,22 @@ scrape_configs:
       insecure_skip_verify: true
     static_configs:
       - targets:
+        - '{{ cluster_prometheus_host }}'
+{% endfor %}
+
+{% if cluster_scrape_jobs is defined %}
+{% for job in cluster_scrape_jobs %}
+  - job_name: "{{ job }}"
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job="{{ job }}"}'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets:
         - 'prometheus.nais.{{ domain }}'
 {% endfor %}
+{% endif %}

@@ -17,16 +17,11 @@
       that:
         - ansible_play_hosts == ansible_play_hosts_all
 
-- hosts: all
-  user: "{{ remote_user }}"
-  become: yes
-  tasks:
-
 - hosts: masters:workers:storage_nodes
   user: "{{ remote_user }}"
   become: yes
   tasks:
-  - name: 
+  - name: Ensure locksmithd is stopped
     systemd:
       daemon_reload: yes
       name: locksmithd.service
@@ -52,7 +47,7 @@
         name: locksmithd.service
         state: started
         enabled: yes
- 
+
 - hosts: all
   user: "{{ remote_user }}"
   become: yes

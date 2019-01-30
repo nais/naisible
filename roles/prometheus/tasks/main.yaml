@@ -9,7 +9,7 @@
     name: prometheus
     system: yes
     state: present
-    
+
 - name: Create prometheus user
   user:
     name: prometheus

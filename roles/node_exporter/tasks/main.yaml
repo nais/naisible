@@ -1,0 +1,22 @@
+- name: Ensure /etc/node_exporter exists
+  file: path=/etc/node_exporter state=directory
+
+- name: Add node_exporter binary
+  copy:
+    src: files/node_exporter-0.17.0
+    dest: /etc/node_exporter/node_exporter
+    owner: root
+    group: root
+    mode: 0755
+  notify:
+    - Restart node_exporter
+
+- name: Add systemd unit to run local node_exporter
+  copy:
+    src: files/node_exporter.service
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart node_exporter

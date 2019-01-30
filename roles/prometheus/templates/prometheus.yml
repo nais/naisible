@@ -45,7 +45,7 @@ scrape_configs:
     metrics_path: '/federate'
     params:
       'match[]':
-        - '{job="{{ job }}"}'
+        - '{job="{{ job }}",kubernetes_namespace!="kube-system"}'
     scheme: https
     tls_config:
       insecure_skip_verify: true

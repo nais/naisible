@@ -2,6 +2,9 @@ prometheus:
   version: 2.7.0
   checksum: sha256:960848f9c2ffb2ce6f295dd0bc7186acd1ac12e74a90a1a9a9fbab0a838f8472
   retention: 4w
+  query:
+    max_samples: 5000000
+    timeout: 10s
 
 prometheus_jobs:
   - kubernetes-apiservers

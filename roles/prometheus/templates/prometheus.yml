@@ -11,7 +11,9 @@ scrape_configs:
   - job_name: 'nodes'
     static_configs:
       - targets:
-        - localhost:9101
+{% for host in groups['prometheus'] %}
+        - '{{ host }}:9101'
+{% endfor %}
         labels:
           node_type: prometheus
       - targets:
@@ -22,7 +24,9 @@ scrape_configs:
           node_type: master
       - targets:
 {% for host in groups['workers'] %}
+{% if not host in groups['storage_nodes'] %}
         - '{{ host }}:9101'
+{% endif %}
 {% endfor %}
         labels:
           node_type: worker
@@ -39,13 +43,66 @@ scrape_configs:
         labels:
           node_type: etcd
 
+# Split federation of kubernetes-pods jobs to reduce the amount of timeseries in a single request
+# Scrape traefik pods directly
+
+  - job_name: "kubernetes-pods"
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job="kubernetes-pods",kubernetes_namespace!~"kube-system|{{ prometheus_nais_namespaces|join('|') }}"}'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets:
+        - '{{ cluster_prometheus_host }}'
+
+  - job_name: "kubernetes-pods-kube-system"
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job="kubernetes-pods",kubernetes_namespace="kube-system",name!="traefik-ingress-lb"}'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets:
+        - '{{ cluster_prometheus_host }}'
+
+  - job_name: 'kubernetes-pods-traefik'
+    static_configs:
+      - targets:
+{% for host in groups['workers'] %}
+{% if not host in groups['storage_nodes'] %}
+        - '{{ host }}:8080'
+{% endif %}
+{% endfor %}
+
+{% for namespace in prometheus_nais_namespaces %}
+  - job_name: "kubernetes-pods-{{ namespace }}"
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job="kubernetes-pods",kubernetes_namespace="{{ namespace }}"}'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets:
+        - '{{ cluster_prometheus_host }}'
+{% endfor %}
+
 {% for job in prometheus_jobs %}
   - job_name: "{{ job }}"
     honor_labels: true
     metrics_path: '/federate'
     params:
       'match[]':
-        - '{job="{{ job }}",kubernetes_namespace!="kube-system"}'
+        - '{job="{{ job }}"}'
     scheme: https
     tls_config:
       insecure_skip_verify: true

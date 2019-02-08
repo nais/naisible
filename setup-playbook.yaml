@@ -117,6 +117,15 @@
 - hosts: localhost
   roles:
   - create_certificates
+  tasks:
+  - name: Generate vsphere.conf
+    when: (vsphere_datastore is defined and vsphere_datacenter is defined and vsphere_network is defined and vsphere_resourcepool is defined)
+    template:
+      src: "templates/vsphere.conf.j2"
+      dest: "target/vsphere.conf"
+    vars:
+      vsphere_username: "{{ lookup('env', 'VSPHERE_USERNAME') }}"
+      vsphere_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
 
 - hosts: etcd
   user: "{{ remote_user }}"
@@ -180,6 +189,12 @@
     loop:
       - ".pem"
       - "-key.pem"
+
+  - name: Copy vsphere.conf to master
+    when: (vsphere_datastore is defined and vsphere_datacenter is defined and vsphere_network is defined and vsphere_resourcepool is defined)
+    copy:
+      src: "target/vsphere.conf"
+      dest: "/etc/kubernetes/vsphere.conf"
 
 - hosts: masters:workers
   user: "{{ remote_user }}"
@@ -652,3 +667,12 @@
     environment: "{{ proxy_env }}"
     changed_when: false
 
+  - name: Copy vsphere-storageclass.yaml
+    when: (vsphere_datastore is defined and vsphere_datacenter is defined and vsphere_network is defined and vsphere_resourcepool is defined)
+    template:
+      src: "templates/vsphere-storageclass.yaml.j2"
+      dest: "/tmp/vsphere-storageclass.yaml"
+
+  - name: Apply vsphere storageclass
+    when: (vsphere_datastore is defined and vsphere_datacenter is defined and vsphere_network is defined and vsphere_resourcepool is defined)
+    command: "{{ install_dir }}/bin/kubectl apply -f /tmp/vsphere-storageclass.yaml"

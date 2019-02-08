@@ -16,6 +16,10 @@ ExecStart={{ install_dir }}/bin/kubelet \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
   --runtime-cgroups=/systemd/system.slice \
   --kubelet-cgroups=/systemd/system.slice \
+{% if vsphere_datastore is defined and vsphere_datacenter is defined and vsphere_network is defined and vsphere_resourcepool is defined %}
+  --cloud-provider=vsphere \
+  --cloud-config=/etc/kubernetes/vsphere.conf \
+{% endif %}
   --volume-plugin-dir={{ volume_plugin_dir }}
 Restart=always
 StartLimitInterval=0

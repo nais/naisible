@@ -20,6 +20,9 @@ ExecStart={{ install_dir }}/bin/kubelet \
   --v={{ log_level|default(0) }} \
   --image-gc-high-threshold 80 \
   --image-gc-low-threshold 40 \
+{% if vsphere_datastore is defined and vsphere_datacenter is defined and vsphere_network is defined and vsphere_resourcepool is defined %}
+  --cloud-provider=vsphere \
+{% endif %}
   --volume-plugin-dir={{ volume_plugin_dir }}
 Restart=always
 StartLimitInterval=0

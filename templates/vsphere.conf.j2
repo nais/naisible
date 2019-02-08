@@ -1,0 +1,23 @@
+[Global]
+user="{{ vsphere_username }}"
+password="{{ vsphere_password }}"
+port="443"
+insecure-flag="1"
+datacenters="{{ vsphere_datacenter }}"
+
+[VirtualCenter "10.1.19.41"]
+
+[VirtualCenter "10.1.19.42"]
+
+[Workspace]
+server="10.1.19.42"
+datacenter="{{ vsphere_datacenter }}"
+default-datastore="{{ vsphere_datastore }}"
+resourcepool-path="{{ vsphere_resourcepool }}"
+folder="nais.io"
+
+[Disk]
+scsicontrollertype="pvscsi"
+
+[Network]
+public-network="{{ vsphere_network }}"

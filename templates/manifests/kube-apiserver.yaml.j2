@@ -53,6 +53,10 @@ spec:
     - --etcd-cafile=/etc/kubernetes/pki/ca.pem
     - --etcd-certfile=/etc/kubernetes/pki/etcd-client.pem
     - --etcd-keyfile=/etc/kubernetes/pki/etcd-client-key.pem
+{% if vsphere_datastore is defined and vsphere_datacenter is defined and vsphere_network is defined and vsphere_resourcepool is defined %}
+    - --cloud-provider=vsphere
+    - --cloud-config=/etc/kubernetes/vsphere.conf
+{% endif %}
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8

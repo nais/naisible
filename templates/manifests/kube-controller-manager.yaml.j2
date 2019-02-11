@@ -25,7 +25,7 @@ spec:
     - --use-service-account-credentials=true
     - --horizontal-pod-autoscaler-use-rest-clients=false
     - --v={{log_level | default(0) }}
-{% if vsphere_datastore is defined and vsphere_datacenter is defined and vsphere_network is defined and vsphere_resourcepool is defined %}
+{% if vsphere is defined %}
     - --cloud-provider=vsphere
     - --cloud-config=/etc/kubernetes/vsphere.conf
 {% endif %}

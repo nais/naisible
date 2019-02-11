@@ -4,6 +4,6 @@ metadata:
   name: vsphere
 provisioner: kubernetes.io/vsphere-volume
 parameters:
-  datastore: {{ vsphere_datastore }}
+  datastore: {{ vsphere.datastore }}
   diskformat: thin
   fstype: ext4

@@ -124,8 +124,9 @@
       src: "templates/vsphere.conf.j2"
       dest: "target/vsphere.conf"
     vars:
-      vsphere.username: "{{ lookup('env', 'VSPHERE_USERNAME') }}"
-      vsphere.password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
+      vsphere:
+        username: "{{ lookup('env', 'VSPHERE_USERNAME') }}"
+        password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
 
 - hosts: etcd
   user: "{{ remote_user }}"

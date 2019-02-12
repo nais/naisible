@@ -4,7 +4,7 @@ metadata:
   name: coredns
   namespace: kube-system
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
@@ -22,7 +22,7 @@ rules:
   - list
   - watch
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   annotations:
@@ -62,7 +62,7 @@ data:
         prometheus 0.0.0.0:9153
     }
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: coredns
@@ -76,33 +76,47 @@ spec:
   selector:
     matchLabels:
       k8s-app: coredns
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
   template:
     metadata:
       labels:
         k8s-app: coredns
       annotations:
-        scheduler.alpha.kubernetes.io/critical-pod: ''
-        scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
+        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
         nais.io/logformat: coredns
         prometheus.io/scrape: "true"
         prometheus.io/port: "9153"
     spec:
+      priorityClassName: system-cluster-critical
+      tolerations:
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
       affinity: # never schedule coredns on a node that is already running one
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - topologyKey: kubernetes.io/hostname
-            labelSelector:                               
-              matchLabels:                               
+            labelSelector:
+              matchLabels:
                 k8s-app: coredns
       serviceAccountName: coredns
       containers:
       - name: coredns
         image: coredns/coredns:{{ coredns_version }}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         args: [ "-conf", "/etc/coredns/Corefile" ]
+        resources:
+          limits:
+            memory: 170Mi
+          requests:
+            cpu: 100m
+            memory: 70Mi
         volumeMounts:
         - name: config-volume
           mountPath: /etc/coredns
+          readOnly: true
         ports:
         - containerPort: 53
           name: dns
@@ -122,6 +136,14 @@ spec:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 5
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add:
+            - NET_BIND_SERVICE
+            drop:
+            - all
+          readOnlyRootFilesystem: true
       dnsPolicy: Default
       volumes:
         - name: config-volume

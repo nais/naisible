@@ -201,10 +201,11 @@
 
   - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
-    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{ flannel_version }}/flannel-v{{ flannel_version }}-linux-amd64.tar.gz | tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
+    shell: set -o pipefail && curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{ flannel_version }}/flannel-v{{ flannel_version }}-linux-amd64.tar.gz | tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
            mv /tmp/flanneld {{ install_dir }}/bin/flanneld-{{ flannel_version }} && \
            mv /tmp/mk-docker-opts.sh {{ install_dir }}/libexec
     args:
+      executable: /usr/bin/bash
       creates: "{{ install_dir }}/bin/flanneld-{{ flannel_version }}"
 
   - name: Symlink flannel
@@ -292,12 +293,13 @@
 
   - name: Download kubernetes node binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
-    shell: curl -L --insecure https://dl.k8s.io/v{{ k8s_version }}/kubernetes-node-linux-amd64.tar.gz | \
+    shell: set -o pipefail && curl -L --insecure https://dl.k8s.io/v{{ k8s_version }}/kubernetes-node-linux-amd64.tar.gz | \
            tar xzf - -C /tmp kubernetes/node/bin/kubectl kubernetes/node/bin/kube-proxy kubernetes/node/bin/kubelet && \
            mv /tmp/kubernetes/node/bin/kube-proxy {{ install_dir }}/bin/kube-proxy-{{ k8s_version }} && \
            mv /tmp/kubernetes/node/bin/kubectl {{ install_dir }}/bin/kubectl-{{ k8s_version }} && \
            mv /tmp/kubernetes/node/bin/kubelet {{ install_dir }}/bin/kubelet-{{ k8s_version }}
     args:
+      executable: /usr/bin/bash
       creates: "{{ install_dir }}/bin/kubelet-{{ k8s_version }}"
 
   - name: Symlink kubernetes node binaries
@@ -629,10 +631,11 @@
 
   - name: Download helm binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
-    shell: curl -L --insecure https://storage.googleapis.com/kubernetes-helm/helm-v{{ helm_version }}-linux-amd64.tar.gz | \
+    shell: set -o pipefail && curl -L --insecure https://storage.googleapis.com/kubernetes-helm/helm-v{{ helm_version }}-linux-amd64.tar.gz | \
            tar xzf - -C /tmp linux-amd64/helm && \
            mv /tmp/linux-amd64/helm {{ install_dir }}/bin/helm-{{ helm_version }}
     args:
+      executable: /usr/bin/bash
       creates: "{{ install_dir }}/bin/helm-{{ helm_version }}"
 
   - name: Symlink helm

@@ -30,9 +30,10 @@
     dest: target/pki/ca-config.json
 
 - name: Initializing CA
-  shell: bin/cfssl gencert -initca target/pki/{{ item }}-csr.json | bin/cfssljson -bare target/pki/{{ item }}
+  shell: set -o pipefail && bin/cfssl gencert -initca target/pki/{{ item }}-csr.json | bin/cfssljson -bare target/pki/{{ item }}
   args:
     creates: target/pki/{{ item }}.pem
+    executeable: /usr/bin/bash
   loop:
     - ca
     - front-proxy-ca

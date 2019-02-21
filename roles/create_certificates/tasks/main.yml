@@ -66,7 +66,6 @@
 - name: Creating traefik certificate
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server {{ role_path }}/files/traefik-csr.json | bin/cfssljson -bare target/pki/traefik
   args:
-    executable: /usr/bin/bash
     creates: target/pki/traefik.pem
 
 - name: Creating front-proxy-client certificate

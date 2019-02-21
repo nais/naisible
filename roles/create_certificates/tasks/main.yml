@@ -64,7 +64,7 @@
     creates: target/pki/kube-apiserver-server.pem
 
 - name: Creating traefik certificate
-  shell: set -o pipefail && bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server {{ role_path }}/files/traefik-csr.json | bin/cfssljson -bare target/pki/traefik
+  shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server {{ role_path }}/files/traefik-csr.json | bin/cfssljson -bare target/pki/traefik
   args:
     executable: /usr/bin/bash
     creates: target/pki/traefik.pem

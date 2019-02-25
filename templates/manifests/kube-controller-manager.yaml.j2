@@ -25,6 +25,10 @@ spec:
     - --use-service-account-credentials=true
     - --horizontal-pod-autoscaler-use-rest-clients=false
     - --v={{log_level | default(0) }}
+{% if vsphere is defined %}
+    - --cloud-provider=vsphere
+    - --cloud-config=/etc/kubernetes/vsphere.conf
+{% endif %}
     image: gcr.io/google_containers/kube-controller-manager-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8
@@ -59,4 +63,3 @@ spec:
   - hostPath:
       path: /etc/pki
     name: pki
-status: {}

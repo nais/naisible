@@ -53,6 +53,10 @@ spec:
     - --etcd-cafile=/etc/kubernetes/pki/ca.pem
     - --etcd-certfile=/etc/kubernetes/pki/etcd-client.pem
     - --etcd-keyfile=/etc/kubernetes/pki/etcd-client-key.pem
+{% if vsphere is defined %}
+    - --cloud-provider=vsphere
+    - --cloud-config=/etc/kubernetes/vsphere.conf
+{% endif %}
     image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8
@@ -84,7 +88,6 @@ spec:
     - name: no_proxy
       value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }} 
 {% endif %}
-
   hostNetwork: true
   volumes:
   - hostPath:
@@ -96,5 +99,3 @@ spec:
   - hostPath:
       path: /etc/pki
     name: pki
-
-status: {}

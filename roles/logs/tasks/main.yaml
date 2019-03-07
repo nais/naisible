@@ -1,3 +1,19 @@
+- name: Create logs group
+  group:
+    name: logs
+    gid: 1065
+    state: present
+
+- name: Create fluent user
+  user:
+    name: fluent
+    uid: 1065
+    group: logs
+    home: /
+    createhome: no
+    shell: /sbin/nologin
+    state: present
+
 - name: Ensure journal logdir exist
   file:
     state: directory
@@ -9,3 +25,66 @@
     dest: "/etc/systemd/journald.conf"
   notify:
     - Restart journald
+
+- name: Allow writing to /var/log/es-containers.log.pos
+  file:
+    state: file
+    path: "/var/log/es-containers.log.pos"
+    group: logs
+    mode: 0664
+  ignore_errors: true
+
+- name: Allow writing to /var/log/journald.log.pos
+  file:
+    state: directory
+    path: "/var/log/journald.log.pos"
+    group: logs
+    mode: u=rwX,g=rwX,o=rX
+    recurse: true
+
+- name: Ensure container dir exist
+  file:
+    state: directory
+    path: "/var/lib/docker/containers"
+    owner: root
+    group: root
+
+- name: Create default ACL on container directory
+  acl:
+    default: yes
+    path: "/var/lib/docker/containers"
+    etype: group
+    entity: logs
+    permissions: "r-X"
+    recursive: yes
+    state: present
+
+- name: Create default mask on container directory
+  acl:
+    default: yes
+    path: "/var/lib/docker/containers"
+    etype: mask
+    permissions: "r-x"
+    recursive: yes
+    state: present
+
+- name: Install set-log-dir-acl systemd service
+  copy:
+    src: files/set-log-dir-acl.service
+    dest: /etc/systemd/system/set-log-dir-acl.service
+  notify:
+    - Restart set-log-dir-acl
+
+- name: Install set-container-dir-acl systemd service
+  copy:
+    src: files/set-container-dir-acl.service
+    dest: /etc/systemd/system/set-container-dir-acl.service
+  notify:
+    - Restart set-container-dir-acl
+
+- name: Install set-container-dir-acl systemd timer
+  copy:
+    src: files/set-container-dir-acl.timer
+    dest: /etc/systemd/system/set-container-dir-acl.timer
+  notify:
+    - Restart set-container-dir-acl

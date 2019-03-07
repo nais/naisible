@@ -1,0 +1,6 @@
+[Unit]
+Description=Set ACL on docker container directories
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/sh -c 'find /var/lib/docker/containers -maxdepth 1 -type d -print0 | xargs -0 setfacl -m g:logs:r-x'

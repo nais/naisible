@@ -1,0 +1,9 @@
+[Unit]
+Description=Set ACL on log directories
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/sh -c 'setfacl -m g:logs:rwx /var/log; setfacl -dRm g:logs:r-X /var/log/journal; setfacl -Rm g:logs:r-X /var/log/journal'
+
+[Install]
+WantedBy=multi-user.target

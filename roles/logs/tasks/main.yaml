@@ -26,22 +26,6 @@
   notify:
     - Restart journald
 
-- name: Allow writing to /var/log/es-containers.log.pos
-  file:
-    state: file
-    path: "/var/log/es-containers.log.pos"
-    group: logs
-    mode: 0664
-  ignore_errors: true
-
-- name: Allow writing to /var/log/journald.log.pos
-  file:
-    state: directory
-    path: "/var/log/journald.log.pos"
-    group: logs
-    mode: u=rwX,g=rwX,o=rX
-    recurse: true
-
 - name: Ensure container dir exist
   file:
     state: directory

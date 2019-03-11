@@ -34,9 +34,6 @@
     group: root
     mode: 0711
 
-- name: Remove ACL on container directory
-  command: setfacl -bn /var/lib/docker/containers
-
 - name: Install set-log-dir-acl systemd service
   copy:
     src: files/set-log-dir-acl.service

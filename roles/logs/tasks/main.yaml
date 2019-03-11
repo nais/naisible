@@ -32,25 +32,10 @@
     path: "/var/lib/docker/containers"
     owner: root
     group: root
+    mode: 0711
 
-- name: Create default ACL on container directory
-  acl:
-    default: yes
-    path: "/var/lib/docker/containers"
-    etype: group
-    entity: logs
-    permissions: "r-X"
-    recursive: yes
-    state: present
-
-- name: Create default mask on container directory
-  acl:
-    default: yes
-    path: "/var/lib/docker/containers"
-    etype: mask
-    permissions: "r-x"
-    recursive: yes
-    state: present
+- name: Remove ACL on container directory
+  command: setfacl -bn /var/lib/docker/containers
 
 - name: Install set-log-dir-acl systemd service
   copy:

@@ -3,6 +3,19 @@ global:
   scrape_timeout: 50s
   evaluation_interval: 1m
 
+alerting:
+  alertmanagers:
+  - path_prefix:
+    scheme: https
+    static_configs:
+    - targets:
+      - '{{ prometheus_alertmanager }}'
+    tls_config:
+      insecure_skip_verify: true
+
+rule_files:
+  - /opt/prometheus/alerts.yml
+
 scrape_configs:
   - job_name: 'prometheus-local'
     static_configs:

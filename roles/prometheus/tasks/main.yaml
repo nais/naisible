@@ -62,3 +62,10 @@
     dest: /opt/prometheus
   notify:
     - Restart prometheus
+
+- name: Configure alerts
+  template:
+    src: templates/alerts.yml
+    dest: /opt/prometheus
+  notify:
+    - Reload prometheus

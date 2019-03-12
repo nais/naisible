@@ -4,3 +4,8 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
+
+- name: Reload prometheus
+  systemd:
+    name: prometheus
+    state: reloaded

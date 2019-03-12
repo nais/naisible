@@ -2,11 +2,11 @@ groups:
 - name: prometheus
   rules:
   - alert: DiskUsage
-    expr: 'predict_linear(node_filesystem_avail_bytes{instance="{{ inventory_hostname }}:9101"}[12h], 3*24*60*60) < 0'
+    expr: 'predict_linear(node_filesystem_avail_bytes{instance="{{ inventory_hostname }}:9101"}[8h], 3*24*60*60) < 0'
     for: 2m
     labels:
       team: aura
       cluster: {{ cluster_name }}
     annotations:
-      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Prometheus running low on disk space on {{ $labels.mountpoint }}, predicted empty in 3 days'" }}
+      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Prometheus is running low on disk space on {{ $labels.mountpoint }}, predicted empty in less than 3 days'" }}
       action: "Increase disk space / adjust retention / check for applications having an excessive number of metrics"

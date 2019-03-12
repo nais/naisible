@@ -9,4 +9,4 @@ groups:
       cluster: {{ cluster_name }}
     annotations:
       description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Prometheus running low on disk space on {{ $labels.mountpoint }}, predicted empty in 3 days'" }}
-      action: "Increase disk space / adjust retention / check for applications an excessive number of metrics"
+      action: "Increase disk space / adjust retention / check for applications having an excessive number of metrics"

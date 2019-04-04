@@ -1,0 +1,27 @@
+- name: Create os groups
+  group:
+    name: "{{ item.name }}"
+    gid: "{{ item.gid }}"
+    state: present
+  when: os_groups is defined
+  loop: "{{ os_groups }}"
+
+- name: Create os users
+  user:
+    name: "{{ item.name }}"
+    comment: "{{ item.comment }}"
+    uid: "{{ item.uid }}"
+    shell: "{{ item.shell }}"
+    group: "{{ item.group }}"
+    groups: "{{ item.groups }}"
+    state: present
+  when: os_users is defined
+  loop: "{{ os_users }}"
+
+- name: Add ssh keys
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.authorized_key }}"
+    state: present
+  when: os_users is defined and item.authorized_key is defined
+  loop: "{{ os_users }}"

@@ -53,6 +53,7 @@
   become: yes
   roles:
   -  { role: proxy, when: nais_http_proxy is defined }
+  - os-users
   - logs
   - update-engine
   - node_exporter

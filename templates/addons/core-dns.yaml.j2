@@ -55,7 +55,7 @@ data:
         kubernetes {{ cluster_domain }} {{ service_cidr }} {
             upstream
         }
-        proxy . /etc/resolv.conf {
+        forward . {{ nameservers }} {
             max_fails 0
         }
         cache 30

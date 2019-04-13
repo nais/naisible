@@ -596,7 +596,7 @@
       path: /etc/kubernetes/roles
 
   - name: get nameservers from resolv.conf
-    shell: grep nameserver /etc/resolv.conf | sed 's/nameserver //' | tr "\n" " " | sed -e 's/[[:space:]]*$//'
+    shell: grep "^nameserver" /etc/resolv.conf | sed 's/nameserver //' | tr "\n" " " | sed -e 's/[[:space:]]*$//'
     register: nameservers_output
     changed_when: false
 

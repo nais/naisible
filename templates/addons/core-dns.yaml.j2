@@ -56,7 +56,7 @@ data:
             upstream
         }
         forward . {{ nameservers }} {
-            max_fails 0
+            max_fails 2
         }
         cache 30
         prometheus 0.0.0.0:9153

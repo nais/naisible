@@ -597,7 +597,7 @@
 
   - name: get nameservers from resolv.conf
     shell: grep nameserver /etc/resolv.conf | sed 's/nameserver //' | tr "\n" " " | sed -e 's/[[:space:]]*$//'
-    register: nameservers
+    register: nameservers_output
     changed_when: false
 
   - name: Copy kubernetes-addons manifest templates
@@ -605,7 +605,7 @@
       src: "templates/addons/{{ item }}.j2"
       dest: "/etc/kubernetes/addons/{{ item }}"
     vars:
-      nameservers: "{{ nameservers.stdout }}"
+      nameservers: "{{ nameservers_output.stdout }}"
     loop:
       - core-dns.yaml
       - traefik.yaml

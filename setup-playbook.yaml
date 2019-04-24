@@ -27,6 +27,7 @@
       name: locksmithd.service
       state: stopped
       masked: yes
+    ignore_errors: yes
 
 - hosts: etcd
   user: "{{ remote_user }}"

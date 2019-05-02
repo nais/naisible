@@ -92,8 +92,8 @@ data:
       [metrics.prometheus]
         entryPoint = "traefik"
 ---
-kind: DaemonSet
-apiVersion: extensions/v1beta1
+kind: Deployment
+apiVersion: apps/v1
 metadata:
   name: traefik-ingress-controller
   namespace: kube-system
@@ -103,8 +103,9 @@ spec:
   selector:
     matchLabels:
       k8s-app: traefik-ingress-lb
-  updateStrategy:
+  strategy:
     type: RollingUpdate
+  replicas: {{ traefik_replicas }}
   template:
     metadata:
       labels:
@@ -114,6 +115,13 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
     spec:
+      affinity: # only one pod per node
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchLabels:
+                k8s-app: traefik-ingress-lb
       nodeSelector:
         nais.io/type: worker
       serviceAccountName: traefik-ingress-controller
@@ -129,10 +137,10 @@ spec:
         resources:
           limits:
             cpu: 400m
-            memory: 3200Mi
+            memory: {{ traefik_memory }}
           requests:
             cpu: 200m
-            memory: 3200Mi
+            memory: {{ traefik_memory }}
         ports:
         - containerPort: 443
           hostPort: 443

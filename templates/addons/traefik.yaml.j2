@@ -136,10 +136,10 @@ spec:
             mountPath: /tls
         resources:
           limits:
-            cpu: 800m
+            cpu: {{ traefik_cpu_limit }}
             memory: {{ traefik_memory }}
           requests:
-            cpu: 400m
+            cpu: {{ traefik_cpu_request }}
             memory: {{ traefik_memory }}
         ports:
         - containerPort: 443

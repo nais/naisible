@@ -105,6 +105,9 @@ spec:
       k8s-app: traefik-ingress-lb
   strategy:
     type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 1
   replicas: {{ traefik_replicas }}
   template:
     metadata:

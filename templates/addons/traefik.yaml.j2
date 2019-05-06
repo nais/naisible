@@ -88,9 +88,13 @@ data:
           KeyFile = "/tls/tls.key"
       [entryPoints.traefik]
       address = ":8080"
+      [entryPoints.ping]
+      address = ":8000"
     [metrics]
       [metrics.prometheus]
         entryPoint = "traefik"
+    [ping]
+    entryPoint = "ping"
 ---
 kind: Deployment
 apiVersion: apps/v1

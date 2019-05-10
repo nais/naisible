@@ -18,10 +18,35 @@
   when: os_users is defined
   loop: "{{ os_users }}"
 
-- name: Add ssh keys
+- name: Add os_users ssh keys
   authorized_key:
     user: "{{ item.name }}"
     key: "{{ item.authorized_key }}"
     state: present
   when: os_users is defined and item.authorized_key is defined
   loop: "{{ os_users }}"
+
+- name: Create nais group
+  group:
+    name: nais
+    gid: 1001
+    state: present
+
+- name: Create nais users
+  user:
+    name: "{{ item.name }}"
+    comment: "{{ item.name }}"
+    shell: "/bin/bash"
+    group: "nais"
+    groups: "sudo"
+    state: present
+  when: nais_users is defined
+  loop: "{{ nais_users }}"
+
+- name: Add nais_users ssh keys
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.authorized_key }}"
+    state: present
+  when: nais_users is defined and item.authorized_key is defined
+  loop: "{{ nais_users }}"

@@ -53,6 +53,7 @@ spec:
     - --etcd-cafile=/etc/kubernetes/pki/ca.pem
     - --etcd-certfile=/etc/kubernetes/pki/etcd-client.pem
     - --etcd-keyfile=/etc/kubernetes/pki/etcd-client-key.pem
+    - --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.pem
 {% if vsphere is defined %}
     - --cloud-provider=vsphere
     - --cloud-config=/etc/kubernetes/vsphere.conf

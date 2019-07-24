@@ -179,6 +179,8 @@
       - kube-apiserver-server.pem
       - kube-proxy.pem
       - kube-proxy-key.pem
+      - prometheus-adapter.pem
+      - prometheus-adapter-key.pem
       - sa.key
       - sa.pub
       - traefik.pem

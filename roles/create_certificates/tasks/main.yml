@@ -64,9 +64,14 @@
     creates: target/pki/traefik.pem
 
 - name: Creating front-proxy-client certificate
-  shell: bin/cfssl gencert -ca=target/pki/front-proxy-ca.pem -ca-key=target/pki/front-proxy-ca-key.pem -config=target/pki/ca-config.json -profile=server {{ role_path }}/files/front-proxy-client-csr.json | bin/cfssljson -bare target/pki/front-proxy-client
+  shell: bin/cfssl gencert -ca=target/pki/front-proxy-ca.pem -ca-key=target/pki/front-proxy-ca-key.pem -config=target/pki/ca-config.json -profile=client {{ role_path }}/files/front-proxy-client-csr.json | bin/cfssljson -bare target/pki/front-proxy-client
   args:
     creates: target/pki/front-proxy-client.pem
+
+- name: Creating prometheus-adapter certificate
+  shell: bin/cfssl gencert -ca=target/pki/front-proxy-ca.pem -ca-key=target/pki/front-proxy-ca-key.pem -config=target/pki/ca-config.json -profile=peer {{ role_path }}/files/prometheus-adapter-csr.json | bin/cfssljson -bare target/pki/prometheus-adapter
+  args:
+    creates: target/pki/prometheus-adapter.pem
 
 - name: Creating etcd certificate
   shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server target/pki/etcd-csr.json | bin/cfssljson -bare target/pki/etcd/server

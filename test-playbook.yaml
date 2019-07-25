@@ -5,7 +5,7 @@
   become: yes
   tasks:
   - name: Ensure required processes is running
-    shell: /bin/pgrep etcd | wc -l
+    shell: /bin/pgrep --exact etcd | wc -l
     register: etcd_process_count
     failed_when: etcd_process_count.stdout != "1"
     changed_when: false

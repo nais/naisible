@@ -1,0 +1,5 @@
+[Unit]
+Description=Run etcd-backup service every night
+
+[Timer]
+OnCalendar=*-*-* 03:00:00

@@ -14,7 +14,7 @@ systemctl stop etcd || exit 1
 
 # Creating backup with v2 and v3 data
 mkdir -p ${BACKUP_DIR}/${DATE}
-${ETCDCTL_BIN} backup --data-dir ${DATA_DIR} --backup-dir ${BACKUP_DIR}/${DATE} >> ${BACKUP_DIR}/${DATE}/etcd_backup.log || exit 1
+${ETCDCTL_BIN} backup --data-dir ${DATA_DIR} --backup-dir ${BACKUP_DIR}/${DATE} --with-v3 >> ${BACKUP_DIR}/etcd_backup.log 2>&1
 
 # Starting etcd service
 systemctl start etcd || exit 1

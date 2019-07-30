@@ -43,6 +43,7 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Create cluster certificates, if not fetched from NAIS master
 1. All etcd Nodes
    1. Configure cluster
+   1. Configure etcd backup
 1. First etcd Node
    1. Add flannel configuration to etcd
 1. Master Node

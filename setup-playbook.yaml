@@ -39,7 +39,7 @@
         dest: /etc/coreos/update.conf
 
     - name: Copy backup script to etcd nodes
-      copy: 
+      copy:
         src: files/etcd/etcd_backup.sh
         dest: "/home/{{ remote_user }}/etcd_backup.sh"
         mode: 0744

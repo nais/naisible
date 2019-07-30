@@ -35,8 +35,29 @@
   tasks:
     - name: Copy update.conf to etcd nodes
       copy:
-        src: files/etcd_update.conf
+        src: files/etcd/etcd_update.conf
         dest: /etc/coreos/update.conf
+
+    - name: Copy backup script to etcd nodes
+      copy: 
+        src: files/etcd/etcd_backup.sh
+        dest: "/home/{{ remote_user }}/etcd_backup.sh"
+        mode: 0744
+
+    - name: Copy etcd backup service and timer to etcd nodes
+      copy:
+        src: files/etcd/{{ item }}
+        dest: /etc/systemd/system/
+      loop:
+        - etcd-backup.service
+        - etcd-backup.timer
+
+    - name: Start and enable etcd-backend.timer
+      systemd:
+        daemon_reload: yes
+        name: etcd-backup.timer
+        state: started
+        enabled: yes
 
 - hosts: etcd:prometheus
   user: "{{ remote_user }}"

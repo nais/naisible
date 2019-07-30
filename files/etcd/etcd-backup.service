@@ -1,0 +1,6 @@
+[Unit]
+Description=Creates etcd backup
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '/home/deployer/etcd_backup.sh'

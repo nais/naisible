@@ -606,7 +606,7 @@
     loop:
       - core-dns.yaml
       - traefik.yaml
-      - heapster.yaml
+      - prometheus-adapter.yaml
       - nais.yaml
       - debug.yaml
 
@@ -641,7 +641,7 @@
     loop:
       - core-dns.yaml
       - traefik.yaml
-      - heapster.yaml
+      - prometheus-adapter.yaml
       - nais.yaml
       - debug.yaml
     changed_when: false

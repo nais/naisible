@@ -1,0 +1,10 @@
+- hosts: etcd
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+  - name: Copy the file from etcd node to jenkins
+    synchronize:
+      src: "/tmp/etcd_backup/{{ ansible_date_time.date }}.tar.gz"
+      dest: "/var/lib/jenkins/etcd_backup/{{ ansible_fqdn }}_{{ ansible_date_time.date }}.tar.gz"
+      mode: pull
+      rsync_opts: "-e ssh -p 22"

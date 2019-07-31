@@ -52,18 +52,27 @@
       failed_when: ready_count.stdout != "{{ K8S_HOST_COUNT }}"
       changed_when: false
 
-    - name: Ensure addons are deployed and available
+    - name: Ensure addons (kube-system) are deployed and available
       shell: "{{ install_dir }}/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
       loop:
         - coredns
         - tiller-deploy
-        - heapster
-        - monitoring-influxdb
       register: matches_spec
       retries: 6
       delay: 9
       until: matches_spec.stdout == "1"
       changed_when: false
+
+    - name: Ensure addons (nais) are deployed and available
+      shell: "{{ install_dir }}/bin/kubectl -n nais get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
+      loop:
+        - prometheus-adapter
+      register: matches_spec
+      retries: 6
+      delay: 9
+      until: matches_spec.stdout == "1"
+      changed_when: false
+
 
 - hosts: workers
   user: "{{ remote_user }}"

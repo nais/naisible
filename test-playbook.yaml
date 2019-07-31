@@ -57,8 +57,6 @@
       loop:
         - coredns
         - tiller-deploy
-        - heapster
-        - monitoring-influxdb
       register: matches_spec
       retries: 6
       delay: 9

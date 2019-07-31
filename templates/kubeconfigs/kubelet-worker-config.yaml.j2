@@ -1,8 +1,10 @@
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration 
-clusterDns: "{{ cluster_dns_ip }}"
+clusterDNS: "{{ cluster_dns_ip }}"
 clusterDomain: "{{ cluster_domain }}"
-anonymousAuth: "false"
+authentication:
+  anonymous:
+    enabled: false
 clientCaFile: "/etc/kubernetes/pki/ca.pem"
-imageGcHighThreshold: "80"
-imageGcLowThreshold: "40"
+imageGCHighThresholdPercent: "80"
+imageGCLowThresholdPercent: "40"

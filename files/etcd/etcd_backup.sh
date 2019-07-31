@@ -20,5 +20,5 @@ ${ETCDCTL_BIN} backup --data-dir ${DATA_DIR} --backup-dir ${BACKUP_DIR}/${DATE} 
 systemctl start etcd || exit 1
 
 # Compress backup
-tar -czf ${BACKUP_DIR}/${DATE}.tar.gz ${BACKUP_DIR}/${DATE}
+tar -C ${BACKUP_DIR}/${DATE} -czf ${BACKUP_DIR}/${DATE}.tar.gz member
 

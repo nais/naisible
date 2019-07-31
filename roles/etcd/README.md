@@ -32,6 +32,7 @@ export ETCDCTL_CA_FILE=/etc/ssl/etcd/ca.pem
 3. Run the generated commands on the same etcd node
 4. Run Ansible playbook
 
+
 ## Description of etcd backup configuration
 
 1. etcd backup service and script files are located in files/etcd
@@ -39,3 +40,6 @@ export ETCDCTL_CA_FILE=/etc/ssl/etcd/ca.pem
 3. The files are copied to the etcd nodes during initial setup with the timer defaulting to 10 pm every night
 4. The shell script creates backup og compresses it for easy extraction
 5. Automate the recovery process from server with access to the extracted backups
+
+**Note**: The etcd backup stops the etcd services on all etcd nodes at the same time, which means no updates of resources can be applied during the backup.
+          The backup performs a v2 og v3 backup, because we are using flannel (does not support v3)

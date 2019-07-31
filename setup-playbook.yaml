@@ -546,7 +546,7 @@
   - name: Copy kubelet worker config
     template:
       src: templates/kubeconfigs/kubelet-worker-config.yaml.j2
-      dest: /etc/kubernetes/kubeconfig/kubelet-config.yaml
+      dest: /etc/kubernetes/kubeconfigs/kubelet-config.yaml
     notify:
       - restart_kubelet
 

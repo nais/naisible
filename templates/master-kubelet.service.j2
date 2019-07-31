@@ -8,7 +8,6 @@ Environment="HOME=/root"
 ExecStart={{ install_dir }}/bin/kubelet \
   --hostname-override {{ inventory_hostname }} \
   --node-labels=nais.io/type=master \
-  --allow-privileged=true \
   --image-pull-progress-deadline=10m \
   --pod-manifest-path=/etc/kubernetes/manifests \
   --v={{ log_level|default(2) }} \

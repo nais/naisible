@@ -16,7 +16,6 @@ ExecStart={{ install_dir }}/bin/kubelet \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
   --runtime-cgroups=/systemd/system.slice \
   --kubelet-cgroups=/systemd/system.slice \
-  --allow-privileged=true \
   --v={{ log_level|default(0) }} \
   --image-gc-high-threshold 80 \
   --image-gc-low-threshold 40 \

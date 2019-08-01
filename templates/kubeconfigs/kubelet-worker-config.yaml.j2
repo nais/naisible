@@ -6,6 +6,7 @@ clusterDomain: "{{ cluster_domain }}"
 authentication:
   anonymous:
     enabled: false
-clientCaFile: "/etc/kubernetes/pki/ca.pem"
+  x509:
+    clientCAFile: "/etc/kubernetes/pki/ca.pem"
 imageGCHighThresholdPercent: "80"
 imageGCLowThresholdPercent: "40"

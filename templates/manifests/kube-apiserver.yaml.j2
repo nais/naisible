@@ -22,6 +22,7 @@ spec:
   containers:
   - command:
     - kube-apiserver
+    - --allow-privileged=true
     - --audit-policy-file=/etc/kubernetes/kube-apiserver-audit-policy.yaml
     - --audit-log-path=-
     - --audit-log-format=json

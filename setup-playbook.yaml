@@ -428,6 +428,13 @@
   become: yes
   tasks:
 
+  - name: Copy kubelet master config
+    copy:
+      src: files/kubelet-master-config.yaml
+      dest: /etc/kubernetes/kubeconfigs/kubelet-config.yaml
+    notify:
+      - restart_kubelet
+
   - name: Copy kubelet service manifest
     template:
       src: templates/master-kubelet.service.j2
@@ -535,6 +542,13 @@
       dest: /etc/docker/certs.d/docker.adeo.no:5000/ca.crt
       state: link
       force: yes
+
+  - name: Copy kubelet worker config
+    template:
+      src: templates/kubeconfigs/kubelet-worker-config.yaml.j2
+      dest: /etc/kubernetes/kubeconfigs/kubelet-config.yaml
+    notify:
+      - restart_kubelet
 
   - name: Copy kubelet service manifest
     template:

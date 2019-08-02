@@ -73,7 +73,6 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Install and enable addons:
       1. core-dns
       1. traefik
-      1. heapster
    1. Enable monitoring
 
 
@@ -123,8 +122,6 @@ Variables
 |coredns_version|011|https://github.com/coredns/coredns/releases|
 |traefik_version|1.4-alpine|https://hub.docker.com/r/library/traefik/tags/|
 |helm_version|2.7.0|https://github.com/kubernetes/helm/releases|
-|heapster_version|1.4.3|https://github.com/kubernetes/heapster/releases|
-|heapster_influxdb_version|1.3.3|https://gcr.io/google_containers/heapster-influxdb-amd64|
 
 
 #### Cluster specific variables

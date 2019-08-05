@@ -18,7 +18,7 @@ ExecStart={{ install_dir }}/bin/etcd --name {{ ansible_hostname }} \
   --advertise-client-urls https://{{ local_ip }}:2379 \
   --initial-cluster-token {{ cluster_name }}-etcd \
   --initial-cluster {{all_etcd|join(',')}} \
-  --initial-cluster-state existing \
+  --initial-cluster-state new \
   --client-cert-auth \
   --trusted-ca-file=/etc/ssl/etcd/ca.pem \
   --cert-file=/etc/ssl/etcd/server.pem \

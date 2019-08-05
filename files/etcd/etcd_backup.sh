@@ -2,7 +2,7 @@
 
 DATA_DIR=/var/lib/etcd
 DATE=$(date +%Y-%m-%d)
-BACKUP_DIR=/tmp/etcd_backup
+BACKUP_DIR=/var/etcd_backup
 ETCDCTL_BIN=/usr/bin/etcdctl
 
 # Clean up old backups (older than three days)

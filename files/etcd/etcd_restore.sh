@@ -66,7 +66,7 @@ if [ ! -f "${BACKUP_DIR}/$backup_file" ]; then
 fi
 
 for i in $(seq 0 $((num_nodes - 1))); do
-  echo "Stopping etcd services and deleting data dir"
+  echo "Stopping etcd services and deleting data dir on ${node_names[$i]}"
   ssh ${SSH_USER}@${node_names[$i]} "sudo systemctl stop etcd"
   ssh ${SSH_USER}@${node_names[$i]} "sudo rm -rf ${DATA_DIR}/member"
 done

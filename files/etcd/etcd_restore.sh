@@ -117,7 +117,7 @@ echo "Resetting initial-cluster-state to new and restarting etcd services"
 for i in $(seq 0 $((num_nodes - 1))); do
   # Removing force-new-cluster and changing initial-cluster-state to the default, which is new
   ssh ${SSH_USER}@${node_names[$i]} "sudo sed -i '/--force-new-cluster/d' /etc/systemd/system/etcd.service && sudo sed -i 's/--initial-cluster-state.*/--initial-cluster-state\ new\ \\\\/g' /etc/systemd/system/etcd.service"
-  ssh ${SSH_USER}@${node_names[$i]} "sudo systemctl daemon-reload && sudo systemctl start etcd"
+  ssh ${SSH_USER}@${node_names[$i]} "sudo systemctl daemon-reload && sudo systemctl restart etcd"
 done
 
 echo "Verifying cluster health"

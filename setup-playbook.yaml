@@ -57,7 +57,7 @@
     - name: Start and enable etcd-backend.timer
       systemd:
         daemon_reload: yes
-        name: {{ item }}
+        name: "{{ item }}"
         state: started
         enabled: yes
       loop:

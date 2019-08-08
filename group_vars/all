@@ -10,7 +10,7 @@ remote_user: "{{ nais_remote_user | default('deployer') }}"
 docker_version: 17.03.2.ce
 etcd_version: 3.3.11
 flannel_version: 0.9.0
-k8s_version: 1.15.2
+k8s_version: 1.14.4
 coredns_version: 1.3.0
 traefik_version: 1.7.7-alpine
 helm_version: 2.11.0

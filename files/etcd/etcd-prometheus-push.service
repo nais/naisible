@@ -1,0 +1,6 @@
+[Unit]
+Description=Pushes etcd metrics to prometheus
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'curl -k --cert /etc/ssl/etcd/etcd-client.pem --key /etc/ssl/etcd/etcd-client-key.pem https://$(hostname -f):2379/metrics | curl --data-binary @- https://prometheus-pushgateway.nais.$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)'

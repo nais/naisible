@@ -51,13 +51,18 @@
       loop:
         - etcd-backup.service
         - etcd-backup.timer
+        - etcd-prometheus-push.service
+        - etcd-prometheus-push.timer
 
     - name: Start and enable etcd-backend.timer
       systemd:
         daemon_reload: yes
-        name: etcd-backup.timer
+        name: "{{ item }}"
         state: started
         enabled: yes
+      loop:
+        - etcd-backup.timer
+        - etcd-prometheus-push.timer
 
 - hosts: etcd:prometheus
   user: "{{ remote_user }}"

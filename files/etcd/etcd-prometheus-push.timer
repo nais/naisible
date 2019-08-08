@@ -1,0 +1,5 @@
+[Unit]
+Description=Push metrics to prometheus every minute
+
+[Timer]
+OnCalendar=*:0/1

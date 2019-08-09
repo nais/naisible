@@ -7,6 +7,9 @@ metadata:
     k8s-app: debug
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: debug
   template:
     metadata:
       labels:

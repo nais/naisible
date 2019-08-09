@@ -7,7 +7,6 @@ proxy_env:
 remote_user: "{{ nais_remote_user | default('deployer') }}"
 
 # Version specific variables
-docker_version: 17.03.2.ce
 etcd_version: 3.3.11
 flannel_version: 0.9.0
 k8s_version: 1.15.2

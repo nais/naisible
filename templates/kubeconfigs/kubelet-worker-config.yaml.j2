@@ -1,6 +1,5 @@
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
-kubeletCgroups: "/systemd/system.slice"
 clusterDNS: ["{{ cluster_dns_ip }}"]
 clusterDomain: "{{ cluster_domain }}"
 authentication:

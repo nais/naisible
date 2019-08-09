@@ -8,4 +8,3 @@ authentication:
 authorization:
   mode: AlwaysAllow
 staticPodPath: "/etc/kubernetes/manifests"
-kubeletCgroups: "/systemd/system.slice"

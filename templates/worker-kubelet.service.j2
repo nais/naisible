@@ -11,7 +11,6 @@ ExecStart={{ install_dir }}/bin/kubelet \
   --node-labels=nais.io/type=worker \
   --image-pull-progress-deadline=10m \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
-  --runtime-cgroups=/systemd/system.slice \
   --v={{ log_level|default(0) }} \
 {% if vsphere is defined %}
   --cloud-provider=vsphere \
@@ -20,6 +19,8 @@ ExecStart={{ install_dir }}/bin/kubelet \
 Restart=always
 StartLimitInterval=0
 RestartSec=10
+CPUAccounting=true
+MemoryAccounting=true
 
 [Install]
 WantedBy=multi-user.target

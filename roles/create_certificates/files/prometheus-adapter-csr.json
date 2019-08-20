@@ -1,5 +1,5 @@
 {
-  "CN": "prometheus-adapter.nais.svc",
+  "CN": "prometheus-adapter.kube-system.svc",
   "key": {
     "algo": "rsa",
     "size": 2048

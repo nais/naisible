@@ -3,13 +3,17 @@ user="{{ username }}"
 password="{{ password }}"
 port="443"
 insecure-flag="1"
-datacenters="{{ vsphere['datacenter'] }}"
+# datacenters="{{ vsphere['datacenter'] }}"
+datacenters="PROD-METRO, SO8-PROD-LIN-WIN, U89-PROD-LIN-WIN"
 
 [VirtualCenter "10.1.19.40"]
+datacenters="PROD-METRO"
 
 [VirtualCenter "10.1.19.41"]
+datacenters="SO8-PROD-LIN-WIN"
 
 [VirtualCenter "10.1.19.42"]
+datacenters="U89-PROD-LIN-WIN"
 
 [Workspace]
 server="10.1.19.42"

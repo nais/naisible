@@ -57,22 +57,12 @@
       loop:
         - coredns
         - tiller-deploy
-      register: matches_spec
-      retries: 6
-      delay: 9
-      until: matches_spec.stdout == "1"
-      changed_when: false
-
-    - name: Ensure addons (nais) are deployed and available
-      shell: "{{ install_dir }}/bin/kubectl -n nais get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
-      loop:
         - prometheus-adapter
       register: matches_spec
       retries: 6
       delay: 9
       until: matches_spec.stdout == "1"
       changed_when: false
-
 
 - hosts: workers
   user: "{{ remote_user }}"

@@ -22,9 +22,9 @@ spec:
     - --controllers=*,bootstrapsigner,tokencleaner
     - --cluster-signing-key-file=/etc/kubernetes/pki/ca-key.pem
     - --leader-elect=true
-    - --feature-gates="TTLAfterFinished=true"
+    - --feature-gates=TTLAfterFinished=true
     - --use-service-account-credentials=true
-    - --v={{log_level | default(0) }}
+    - --v={{log_level | default(0) }}
 {% if vsphere is defined %}
     - --cloud-provider=vsphere
     - --cloud-config=/etc/kubernetes/vsphere.conf

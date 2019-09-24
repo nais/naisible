@@ -2,7 +2,7 @@ groups:
 - name: prometheus
   rules:
   - alert: PrometheusDiskUsage
-    expr: 'predict_linear(node_filesystem_avail_bytes{instance="{{ inventory_hostname }}:9101"}[8h], 3*24*60*60) < 0'
+    expr: 'predict_linear(node_filesystem_avail_bytes{instance="{{ inventory_hostname }}:9101",mountpoint="/data"}[8h], 3*24*60*60) < 0'
     for: 4h
     labels:
       team: aura
@@ -18,4 +18,4 @@ groups:
       cluster: {{ cluster_name }}
     annotations:
       description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Less than 5% available disk space on {{ $labels.mountpoint }}'" }}
-      action: "Cleanup / increase disk size / adjust retention / check for applications having an excessive number of metrics"
+      action: "Cleanup / increase disk size / adjust retention"

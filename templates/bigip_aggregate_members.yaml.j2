@@ -2,4 +2,4 @@
 - host: "{{ lookup('dig', item) }}"
   port: 443
   partition "{{ bigip_partition }}"
-{% end %}
+{% endfor %}

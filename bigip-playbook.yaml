@@ -12,6 +12,8 @@
       partition: "{{ bigip_partition }}"
       provider:
         server: "{{ bigip_address }}"
+        user: "{{ lookup('env','F5_USER') }}"
+        password: "{{ lookup('env','F5_PASSWORD') }}"
         timeout: 10
         validate_certs: no
       pool: "{{ bigip_pool_name }}"

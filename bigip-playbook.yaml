@@ -1,7 +1,7 @@
 - hosts: localhost
   tasks:
   - name: Add pool member to first bigip
-    ignore_errors: true
+    check_mode: yes
     poll: 0
     when:
     - bigip_pool_name is defined
@@ -15,6 +15,5 @@
         timeout: 10
         validate_certs: no
       pool: "{{ bigip_pool_name }}"
-      host: "{{ lookup('dig', item) }}"
-      port: 443
-    loop: "{{ query('inventory_hostnames', 'workers:!storage_nodes') }}"
+      aggregate: "{{ lookup('template', 'bigip_aggregate_members.yaml.j2') | from_yaml }}"
+      replace_all_with: yes

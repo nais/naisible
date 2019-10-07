@@ -87,22 +87,18 @@ node_taints:
 
 node_labels:
   - nais.io/storage-nodei=true
-  - nais.io/role=worker
 ```
 
 
-## When cluster contains coreos-nodes
+### file: group_vars/ceph_nodes
 
-```ini
-install_dir=/opt
-cert_dir=/etc/ssl/certs
-cert_bin=/sbin/update-ca-certificates
+```yaml
+node_taints:
+  - nais.io/ceph-node=true:NoSchedule
 
-ansible_pypy_home=/home/deployer/pypy
-ansible_pypy_bootstrap_file=/home/deployer/.bootstrapped
-ansible_python_interpreter=/home/deployer/bin/python
+node_labels:
+  - nais.io/ceph-nodei=true
 ```
-
 
 ## Simple complete inventory
 
@@ -121,6 +117,10 @@ ansible_python_interpreter=/home/deployer/bin/python
 [storage_nodes]
 <storage-node-hostname-1>
 <storage-node-hostname-n>
+
+[ceph_nodes]
+<ceph-node-hostname-1>
+<ceph-node-hostname-n>
 
 [all:vars]
 cluster_name=nais-dev

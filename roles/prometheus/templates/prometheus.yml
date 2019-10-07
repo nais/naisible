@@ -37,7 +37,7 @@ scrape_configs:
           node_type: master
       - targets:
 {% for host in groups['workers'] %}
-{% if not host in groups['storage_nodes'] %}
+{% if not host in groups['storage_nodes']['ceph_nodes'] %}
         - '{{ host }}:9101'
 {% endif %}
 {% endfor %}
@@ -49,6 +49,12 @@ scrape_configs:
 {% endfor %}
         labels:
           node_type: storage
+      - targets:
+{% for host in groups['ceph_nodes'] %}
+        - '{{ host }}:9101'
+{% endfor %}
+        labels:
+          node_type: ceph
       - targets:
 {% for host in groups['etcd'] %}
         - '{{ host }}:9101'

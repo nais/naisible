@@ -65,10 +65,18 @@ master.domain.com
 worker1.domain.com
 worker2.domain.com
 worker3.domain.com
+worker4.domain.com
+worker5.domain.com
 
+# Rook 0.7.1
 [storage_nodes]
 worker2.domain.com
 worker3.domain.com
+
+# Rook 1.1.2
+[ceph_nodes]
+worker4.domain.com
+worker5.domain.com
 ```
 
 ### file: group_vars/storage_nodes

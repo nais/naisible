@@ -11,6 +11,7 @@ ExecStart={{ install_dir }}/bin/kubelet \
   --node-labels={{ node_labels|default(["nais.io/type=worker"])|join(',') }} \
   --image-pull-progress-deadline=10m \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
+  --register-with-taints={{ node_taints|default([""])|join(',') }} \
   --v={{ log_level|default(0) }} \
 {% if vsphere is defined %}
   --cloud-provider=vsphere \

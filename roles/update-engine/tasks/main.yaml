@@ -2,5 +2,6 @@
   template:
     src: "{{ role_path }}/templates/update-engine-envs.conf.j2"
     dest: /etc/systemd/system/update-engine.service.d/30-default-envs.conf
+    mode: 0644
   notify:
     - Restart update-engine

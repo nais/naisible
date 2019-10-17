@@ -27,4 +27,4 @@ groups:
       cluster: {{ cluster_name }}
     annotations:
       description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Federation of in-cluster Prometheus failed'" }}
-      action: {{ "'Check status on Prometheus pod / try accessing https://{{ cluster_prometheus_host }}/'" }}
+      action: 'Check status on Prometheus pod / try accessing https://{{ cluster_prometheus_host }}/'

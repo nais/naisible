@@ -19,3 +19,12 @@ groups:
     annotations:
       description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Less than 5% available disk space on {{ $labels.mountpoint }}'" }}
       action: "Cleanup / increase disk size / adjust retention"
+  - alert: PrometheusFederationDown
+    expr: 'sum(up{instance="{{ cluster_prometheus_host }}:443",job=~"kubernetes-(apiservers|cadvisor|pods)"}) < 3'
+    for: 5m
+    labels:
+      team: aura
+      cluster: {{ cluster_name }}
+    annotations:
+      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Federation of in-cluster Prometheus failed'" }}
+      action: {{ "'Check status on Prometheus pod / try accessing https://{{ cluster_prometheus_host }}/'" }}

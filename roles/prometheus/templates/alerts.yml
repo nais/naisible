@@ -28,3 +28,12 @@ groups:
     annotations:
       description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Federation of in-cluster Prometheus failed'" }}
       action: 'Check status on Prometheus pod / try accessing https://{{ cluster_prometheus_host }}/'
+  - alert: PrometheusReload
+    expr: 'prometheus_config_last_reload_successful{job="prometheus-local"} < 1'
+    for: 3m
+    labels:
+      team: aura
+      cluster: {{ cluster_name }}
+    annotations:
+      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Reloading of Prometheus config failed'" }}
+      action: "Check Prometheus logs"

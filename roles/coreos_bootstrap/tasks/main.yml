@@ -21,7 +21,6 @@
     - restart systemd-timesyncd
 
 - name: Setup timezone
-  ignore_errors: yes
   become: yes
   timezone:
     name: "{{ timezone }}"

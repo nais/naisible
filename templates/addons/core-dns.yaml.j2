@@ -53,13 +53,13 @@ data:
         }
         health
         kubernetes {{ cluster_domain }} {{ service_cidr }} {
-            upstream
+            fallthrough in-addr.arpa ip6.arpa
+            pods verified
         }
-        proxy . /etc/resolv.conf {
-            max_fails 0
-        }
+        forward . /etc/resolv.conf
         cache 30
         prometheus 0.0.0.0:9153
+        loop
     }
 ---
 apiVersion: apps/v1

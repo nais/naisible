@@ -140,3 +140,15 @@ scrape_configs:
         - 'prometheus.nais.{{ domain }}'
 {% endfor %}
 {% endif %}
+
+{% if consul_servers is defined %}
+  - job_name: "consul-servers"
+    honor_labels: true
+    metrics_path: '/metrics'
+    scheme: http
+    static_configs:
+      - targets:
+     {% for host in consul_servers %}
+        - '{{ host }}:9102'
+     {% endfor %}
+{% endif %}

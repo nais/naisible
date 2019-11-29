@@ -148,7 +148,7 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets:
-     {% for host in consul_servers %}
+{% for host in consul_servers %}
         - '{{ host }}:9102'
-     {% endfor %}
+{% endfor %}
 {% endif %}

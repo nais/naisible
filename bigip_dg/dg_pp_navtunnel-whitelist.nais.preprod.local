@@ -1,2 +1,2 @@
-alertmanager.nais.preprod.local := Prometheus Alertmanager,
+alertmanager.nais.preprod.local := Prometheus Alertmanager
 prometheus.nais.preprod.local := Prometheus

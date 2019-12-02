@@ -1,2 +1,2 @@
-alertmanager.nais.oera.no := Prometheus Alertmanager,
+alertmanager.nais.oera.no := Prometheus Alertmanager
 prometheus.nais.oera.no := Prometheus

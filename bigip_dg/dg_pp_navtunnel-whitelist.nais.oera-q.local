@@ -1,2 +1,2 @@
-alertmanager.nais.oera-q.local := Prometheus Alertmanager,
+alertmanager.nais.oera-q.local := Prometheus Alertmanager
 prometheus.nais.oera-q.local := Prometheus Server

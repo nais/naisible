@@ -1,2 +1,2 @@
-alertmanager.nais.adeo.no :=,
-prometheus.nais.adeo.no :=
+alertmanager.nais.adeo.no := Prometheus Alertmanager,
+prometheus.nais.adeo.no := Prometheus

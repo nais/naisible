@@ -28,4 +28,4 @@
       provider: "{{ provider }}"
       name: "{{ bigip_navtunnel_whitelist_dg }}"
       partition: "{{ bigip_partition }}"
-      records_src: "bigip_dg/{{ bigip_navtunnel_whitelist_dg }}"
+      records_src: "inventory/bigip_dg/{{ bigip_navtunnel_whitelist_dg }}"

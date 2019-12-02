@@ -25,6 +25,7 @@
     - bigip_navtunnel_whitelist_dg is defined
     - bigip_partition is defined
     bigip_data_group:
+      provider: "{{ provider }}"
       name: "{{ bigip_navtunnel_whitelist_dg }}"
       partition: "{{ bigip_partition }}"
       records_src: "bigip_dg/{{ bigip_navtunnel_whitelist_dg }}"

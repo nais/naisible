@@ -1,2 +1,2 @@
-alertmanager.nais.oera.no := "",
-prometheus.nais.oera.no := ""
+alertmanager.nais.oera.no :=,
+prometheus.nais.oera.no :=

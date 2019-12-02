@@ -27,4 +27,4 @@
     bigip_data_group:
       name: "{{ bigip_navtunnel_whitelist_dg }}"
       partition: "{{ bigip_partition }}"
-      records_file: "bigip_dg/{{ bigip_navtunnel_whitelist_dg }}"
+      records_src: "bigip_dg/{{ bigip_navtunnel_whitelist_dg }}"

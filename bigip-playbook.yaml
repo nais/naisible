@@ -21,7 +21,10 @@
       replace_all_with: yes
 
   - name: Whitelist hosts
+    when:
+    - bigip_navtunnel_whitelist_dg is defined
+    - bigip_partition is defined
     bigip_data_group:
       name: "{{ bigip_navtunnel_whitelist_dg }}"
       partition: "{{ bigip_partition }}"
-      records_file: "dg/{{ cluster-name }}-navtunnel-whitelist.dg"
+      records_file: "bigip_dg/{{ bigip_navtunnel_whitelist_dg }}"

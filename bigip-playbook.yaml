@@ -1,4 +1,11 @@
 - hosts: localhost
+  vars:
+    provider:
+      server: "{{ bigip_address }}"
+      user: "{{ lookup('env','F5_USER') }}"
+      password: "{{ lookup('env','F5_PASSWORD') }}"
+      timeout: 10
+      validate_certs: no
   tasks:
   - name: Add pool member to first bigip
     when:
@@ -8,12 +15,13 @@
     bigip_pool_member:
       state: present
       partition: "{{ bigip_partition }}"
-      provider:
-        server: "{{ bigip_address }}"
-        user: "{{ lookup('env','F5_USER') }}"
-        password: "{{ lookup('env','F5_PASSWORD') }}"
-        timeout: 10
-        validate_certs: no
+      provider: "{{ provider }}"
       pool: "{{ bigip_pool_name }}"
       aggregate: "{{ lookup('template', 'bigip_aggregate_members.yaml.j2') | from_yaml }}"
       replace_all_with: yes
+
+  - name: Whitelist hosts
+    bigip_data_group:
+      name: "{{ bigip_navtunnel_whitelist_dg }}"
+      partition: "{{ bigip_partition }}"
+      records_file: "dg/{{ cluster-name }}-navtunnel-whitelist.dg"

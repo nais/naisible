@@ -20,3 +20,4 @@ prometheus_jobs:
 prometheus_nais_namespaces:
   - nais
   - rook-ceph
+  - loki

@@ -3,7 +3,6 @@ Description=Prometheus
 
 [Service]
 User=prometheus
-Environment=GODEBUG=madvdontneed=1
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStart=/opt/prometheus/prometheus --config.file /opt/prometheus/prometheus.yml --storage.tsdb.path=/data/prometheus --storage.tsdb.retention.time={{ prometheus_retention }} --query.timeout={{ prometheus.query.timeout }} --query.max-samples={{ prometheus.query.max_samples }} --web.external-url=https://{{ prometheus_host }}
 Restart=always

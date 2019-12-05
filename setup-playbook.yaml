@@ -368,6 +368,12 @@
       - kube-proxy
       - kubelet
 
+  - name: Install conntrack binary
+    copy:
+      src: files/bin/conntrack
+      dest: /opt/bin/conntrack
+      mode: 0755
+
   - name: Copy kube-proxy service file
     template:
       src: templates/kube-proxy.service.j2

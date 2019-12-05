@@ -19,4 +19,4 @@ prometheus_jobs:
 
 prometheus_nais_namespaces:
   - nais
-  - nais-rook
+  - rook-ceph

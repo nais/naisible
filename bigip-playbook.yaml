@@ -20,13 +20,13 @@
       aggregate: "{{ lookup('template', 'bigip_aggregate_members.yaml.j2') | from_yaml }}"
       replace_all_with: yes
 
-  - name: Whitelist hosts
-    when:
-    - bigip_navtunnel_whitelist_dg is defined
-    - bigip_partition is defined
-    bigip_data_group:
-      provider: "{{ provider }}"
-      name: "{{ bigip_navtunnel_whitelist_dg }}"
-      partition: "{{ bigip_partition }}"
-      records_src: "bigip_dg/{{ bigip_navtunnel_whitelist_dg }}"
-      type: string
+ #- name: Whitelist hosts
+ #  when:
+ #  - bigip_navtunnel_whitelist_dg is defined
+ #  - bigip_partition is defined
+ #  bigip_data_group:
+ #    provider: "{{ provider }}"
+ #    name: "{{ bigip_navtunnel_whitelist_dg }}"
+ #    partition: "{{ bigip_partition }}"
+ #    records_src: "bigip_dg/{{ bigip_navtunnel_whitelist_dg }}"
+ #    type: string

@@ -16,6 +16,7 @@ prometheus_jobs:
   - prometheus
   - prometheus-pushgateway
   - black box scraping of ingresses
+  - jenkins
 
 prometheus_nais_namespaces:
   - nais

@@ -68,27 +68,10 @@ worker3.domain.com
 worker4.domain.com
 worker5.domain.com
 
-# Rook 0.7.1
-[storage_nodes]
-worker2.domain.com
-worker3.domain.com
-
-# Rook 1.1.2
 [ceph_nodes]
 worker4.domain.com
 worker5.domain.com
 ```
-
-### file: group_vars/storage_nodes
-
-```yaml
-node_taints:
-  - nais.io/storage-node=true:NoSchedule
-
-node_labels:
-  - nais.io/storage-nodei=true
-```
-
 
 ### file: group_vars/ceph_nodes
 
@@ -97,7 +80,7 @@ node_taints:
   - nais.io/ceph-node=true:NoSchedule
 
 node_labels:
-  - nais.io/ceph-nodei=true
+  - nais.io/ceph-node=true
 ```
 
 ## Simple complete inventory
@@ -113,10 +96,6 @@ node_labels:
 [etcd]
 <etcd-node-hostname-1>
 <etcd-node-hostname-n>
-
-[storage_nodes]
-<storage-node-hostname-1>
-<storage-node-hostname-n>
 
 [ceph_nodes]
 <ceph-node-hostname-1>

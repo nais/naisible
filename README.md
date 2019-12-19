@@ -102,10 +102,6 @@ Hosts
 <etcd-node-hostname-1>
 <etcd-node-hostname-n>
 
-[storage_nodes]
-<storage-node-hostname-1>
-<storage-node-hostname-n>
-
 [ceph_nodes]
 <ceph-node-hostname-1>
 <ceph-node-hostname-n>

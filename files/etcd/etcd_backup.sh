@@ -9,6 +9,7 @@ if [[ $(grep initial-cluster-token /etc/systemd/system/etcd.service | cut -d" " 
 else
   PROM_DOMAIN=nais
 fi
+PROM_CLUSTER=$(sed -nr '/initial-cluster-token/ s/.* (\S+)-etcd.*/\1/p' /etc/systemd/system/etcd.service)
 
 # Clean up old backups (older than three days)
 if [ "$(ls ${BACKUP_DIR} | wc -w)" -gt "3" ]; then
@@ -32,9 +33,9 @@ ${ETCDCTL_BIN} backup --data-dir ${DATA_DIR} --backup-dir ${BACKUP_DIR}/${DATE} 
 
 # Push backup status to prometheus
 if [ "$?" == "0" ]; then
-  echo "etcd_backup_status 0" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)
+  echo "etcd_backup_status 0" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$PROM_CLUSTER
 else
-  echo "etcd_backup_status 1" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)
+  echo "etcd_backup_status 1" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$PROM_CLUSTER
 fi
 
 # Starting etcd service

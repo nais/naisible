@@ -21,7 +21,7 @@ fi
 SERVERNAME=$(hostname -s)
 LASTNUMBER=$(echo "${SERVERNAME: -1}")
 if [ $((LASTNUMBER%2)) -eq 0 ]; then
-    sleep 30s
+    sleep 45s
 fi
 
 # Stopping etcd service

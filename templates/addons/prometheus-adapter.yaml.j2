@@ -23,10 +23,10 @@ data:
     rules:
     resourceRules:
       cpu:
-        containerLabel: container_name
-        containerQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>}[3m]))
+        containerLabel: container
+        containerQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>}[1m]))
           by (<<.GroupBy>>)
-        nodeQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>, id='/'}[3m]))
+        nodeQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>, id='/'}[1m]))
           by (<<.GroupBy>>)
         resources:
           overrides:
@@ -34,10 +34,10 @@ data:
               resource: node
             namespace:
               resource: namespace
-            pod_name:
+            pod:
               resource: pod
       memory:
-        containerLabel: container_name
+        containerLabel: container
         containerQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>}) by (<<.GroupBy>>)
         nodeQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>,id='/'}) by
           (<<.GroupBy>>)
@@ -47,9 +47,9 @@ data:
               resource: node
             namespace:
               resource: namespace
-            pod_name:
+            pod:
               resource: pod
-      window: 3m
+      window: 1m
 ---
 apiVersion: v1
 kind: ServiceAccount

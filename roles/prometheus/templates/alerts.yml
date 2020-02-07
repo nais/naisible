@@ -8,7 +8,7 @@ groups:
       team: aura
       cluster: {{ cluster_name }}
     annotations:
-      description: '{{ "<!subteam^SB8KS4WAV|nais-vakt> <!here> Prometheus is running low on disk space on {{ $labels.mountpoint }}" }} on {{ inventory_hostname }}, predicted empty in less than 3 days'
+      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Prometheus is running low on disk space on {{ $labels.mountpoint }} on " }}{{ inventory_hostname }}{{ ", predicted empty in less than 3 days'" }}
       action: "Cleanup / increase disk size / adjust retention / check for applications having an excessive number of metrics"
   - alert: PrometheusDiskUsagePercent
     expr: '100 * node_filesystem_avail_bytes{instance="{{ inventory_hostname }}:9101"} / node_filesystem_size_bytes{instance="{{ inventory_hostname }}:9101"} < 5'
@@ -17,7 +17,7 @@ groups:
       team: aura
       cluster: {{ cluster_name }}
     annotations:
-      description: '{{ "<!subteam^SB8KS4WAV|nais-vakt> <!here> Less than 5% available disk space on {{ $labels.mountpoint }}" }} on {{ inventory_hostname }}'
+      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Less than 5% available disk space on {{ $labels.mountpoint }}"  on }}{{ inventory_hostname }}{{ "'" }}
       action: "Cleanup / increase disk size / adjust retention"
   - alert: PrometheusFederationDown
     expr: 'sum(up{instance="{{ cluster_prometheus_host }}:443",job=~"kubernetes-(apiservers|cadvisor|pods)"}) < 3'
@@ -35,5 +35,5 @@ groups:
       team: aura
       cluster: {{ cluster_name }}
     annotations:
-      description: {{ '"<!subteam^SB8KS4WAV|nais-vakt> <!here> Reloading of Prometheus config failed" }} on {{ inventory_hostname }}'
+      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Reloading of Prometheus config failed on " }}{{ inventory_hostname }}{{ "'" }}
       action: "Check Prometheus logs"

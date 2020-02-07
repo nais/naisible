@@ -8,6 +8,7 @@ Documentation=https://coreos.com/flannel
 Before=docker.service
 
 [Service]
+Environment=GODEBUG=netdns=go
 ExecStart={{ install_dir }}/bin/flanneld \
   --etcd-endpoints={{ etcd_urls | join(",") }} \
   --etcd-prefix=/nais/network \

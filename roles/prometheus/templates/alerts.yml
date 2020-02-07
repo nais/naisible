@@ -17,7 +17,7 @@ groups:
       team: aura
       cluster: {{ cluster_name }}
     annotations:
-      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Less than 5% available disk space on {{ $labels.mountpoint }}"  on }}{{ inventory_hostname }}{{ "'" }}
+      description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Less than 5% available disk space on {{ $labels.mountpoint }} on "}}{{ inventory_hostname }}{{ "'" }}
       action: "Cleanup / increase disk size / adjust retention"
   - alert: PrometheusFederationDown
     expr: 'sum(up{instance="{{ cluster_prometheus_host }}:443",job=~"kubernetes-(apiservers|cadvisor|pods)"}) < 3'

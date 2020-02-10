@@ -12,7 +12,7 @@ groups:
       action: "Cleanup / increase disk size / adjust retention / check for applications having an excessive number of metrics"
   - alert: PrometheusDiskUsagePercent
     expr: '100 * node_filesystem_avail_bytes{instance="{{ inventory_hostname }}:9101"} / node_filesystem_size_bytes{instance="{{ inventory_hostname }}:9101"} < 5'
-    for: 2m
+    for: 5m
     labels:
       team: aura
       cluster: {{ cluster_name }}

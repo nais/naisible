@@ -5,7 +5,7 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 [Service]
 Environment="TZ=UTC"
 Environment="PATH=/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
-ExecStart={{ install_dir }}/bin/kube-proxy-1.15.4 \
+ExecStart={{ install_dir }}/bin/kube-proxy \
   --cluster-cidr={{ pod_network_cidr }} \
   --masquerade-all=true \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kube-proxy.conf \

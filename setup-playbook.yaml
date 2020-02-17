@@ -334,7 +334,7 @@
   - name: Disable swap
     command: swapoff -a
     changed_when: false
-  
+
   - name: Download kube-proxy 1.15.4 binary # Remove after network issue with 1.16 is resolved. Using curl as get_url gave protocol error (most likely caused by internal webproxy)
     environment: "{{ proxy_env }}"
     shell: curl -L --insecure https://dl.k8s.io/v{{ kube-proxy_version }}/kubernetes-node-linux-amd64.tar.gz | \

@@ -11,6 +11,9 @@ else
 fi
 PROM_CLUSTER=$(sed -nr '/initial-cluster-token/ s/.* (\S+)-etcd.*/\1/p' /etc/systemd/system/etcd.service)
 
+# Push metric for backup running
+echo "etcd_backup_running 1" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$PROM_CLUSTER
+
 # Clean up old backups (older than three days)
 if [ "$(ls ${BACKUP_DIR} | wc -w)" -gt "3" ]; then
   find ${BACKUP_DIR} -type d -mtime +3 -delete
@@ -43,3 +46,6 @@ systemctl start etcd || exit 1
 
 # Compress backup
 tar -C ${BACKUP_DIR}/${DATE} -czf ${BACKUP_DIR}/${DATE}.tar.gz member && rm -rf ${BACKUP_DIR}/${DATE}
+
+# Push metric for backup done
+echo "etcd_backup_running 0" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$PROM_CLUSTER

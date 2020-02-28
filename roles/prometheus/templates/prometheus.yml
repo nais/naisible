@@ -141,6 +141,23 @@ scrape_configs:
 {% endfor %}
 {% endif %}
 
+{% if vault_prometheus_ingress is defined %}
+  - job_name: "vault-prometheus"
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job="vault"}'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets:
+        - '{{ vault_prometheus_ingress }}'
+        labels:
+          vault_cluster: prod       
+{% endif %}
+
 {% if consul_servers is defined %}
   - job_name: "consul-servers"
     honor_labels: true
@@ -152,3 +169,4 @@ scrape_configs:
         - '{{ host }}:9102'
 {% endfor %}
 {% endif %}
+

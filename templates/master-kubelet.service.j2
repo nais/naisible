@@ -8,7 +8,7 @@ Environment="HOME=/root"
 ExecStart={{ install_dir }}/bin/kubelet \
   --config=/etc/kubernetes/kubeconfigs/kubelet-config.yaml \
   --hostname-override {{ inventory_hostname }} \
-  --node-labels=nais.io/type=master,kubernetes.io/role=master \
+  --node-labels=nais.io/type=master \
   --image-pull-progress-deadline=10m \
   --v={{ log_level|default(2) }} \
   --register-with-taints=node.alpha.kubernetes.io/ismaster=:NoSchedule \

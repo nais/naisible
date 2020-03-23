@@ -26,7 +26,11 @@ spec:
     - --audit-policy-file=/etc/kubernetes/kube-apiserver-audit-policy.yaml
     - --audit-log-path=-
     - --audit-log-format=json
-    - --feature-gates=TTLAfterFinished=true
+    - --feature-gates=TTLAfterFinished=true{% if kubeflow is defined %},TokenRequest=true{% endif %}
+{% if kubeflow is defined %}
+    - --service-account-issuer=kubernetes.default.svc
+    - --service-account-signing-key-file=/etc/kubernetes/pki/sa.key
+{% endif %}
     - --kubelet-client-certificate=/etc/kubernetes/pki/admin.pem
     - --kubelet-client-key=/etc/kubernetes/pki/admin-key.pem
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
@@ -94,8 +98,7 @@ spec:
       value: {{ proxy_env.http_proxy }}
 {% if nais_no_proxy is defined %}
     - name: no_proxy
-      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %}
-
+      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %}{% if kubeflow is defined %},10.254.134.227{% endif %}
 {% endif %}
   hostNetwork: true
   volumes:

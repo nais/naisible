@@ -115,12 +115,12 @@ Variables
 
 |Variable name|Version|Version information location|
 |---|---|---|
-|etcd_version|3.2.9|https://github.com/coreos/etcd/releases/|
-|flannel_version|0.9.0|https://github.com/coreos/flannel/releases|
-|k8s_version|1.14.4|https://github.com/kubernetes/kubernetes/releases|
-|coredns_version|011|https://github.com/coredns/coredns/releases|
-|traefik_version|1.4-alpine|https://hub.docker.com/r/library/traefik/tags/|
-|helm_version|2.7.0|https://github.com/kubernetes/helm/releases|
+|etcd_version|3.3.11|https://github.com/coreos/etcd/releases/|
+|flannel_version|0.11.0|https://github.com/coreos/flannel/releases|
+|k8s_version|1.16.7|https://github.com/kubernetes/kubernetes/releases|
+|coredns_version|1.6.6|https://github.com/coredns/coredns/releases|
+|traefik_version|1.7.7-alpine|https://hub.docker.com/r/library/traefik/tags/|
+|helm_version|2.16.1|https://github.com/kubernetes/helm/releases|
 
 
 #### Cluster specific variables

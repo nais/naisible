@@ -44,7 +44,7 @@ spec:
     - --insecure-bind-address=127.0.0.1
     - --enable-admission-plugins=PodSecurityPolicy,PodPreset
     - --authorization-mode=Node,RBAC
-    - --runtime-config=extensions/v1beta1/daemonsets=true,settings.k8s.io/v1alpha1=true
+    - --runtime-config=settings.k8s.io/v1alpha1=true
 {% if oidc_issuer_url is defined %}
     - --oidc-issuer-url={{ oidc_issuer_url }}
     - --oidc-client-id={{ oidc_client_id }}

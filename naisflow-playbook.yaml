@@ -1,0 +1,9 @@
+- hosts: notebooks
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+    - name: Setup node labels
+      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
+      loop:
+        - node-role.kubernetes.io/notebook=true
+      changed_when: false

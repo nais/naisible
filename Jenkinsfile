@@ -20,6 +20,10 @@ pipeline {
 	withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'vsphere', usernameVariable: 'VSPHERE_USERNAME', passwordVariable: 'VSPHERE_PASSWORD']]) {
           sh("./ansible-playbook -f 20 --key-file=/home/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/setup-playbook.yaml")
         }
+
+	steps {
+	  sh("./ansible-playbook -f 20 --key-file=/home/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/naisflow-playbook.yaml")
+	}
       }
 
       post {

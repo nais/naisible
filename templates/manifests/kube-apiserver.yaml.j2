@@ -26,7 +26,7 @@ spec:
     - --audit-policy-file=/etc/kubernetes/kube-apiserver-audit-policy.yaml
     - --audit-log-path=-
     - --audit-log-format=json
-    - --feature-gates=TTLAfterFinished=true
+    - --feature-gates=TTLAfterFinished=true,HPAScaleToZer=true
     - --kubelet-client-certificate=/etc/kubernetes/pki/admin.pem
     - --kubelet-client-key=/etc/kubernetes/pki/admin-key.pem
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname

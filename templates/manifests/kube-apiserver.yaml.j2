@@ -26,7 +26,9 @@ spec:
     - --audit-policy-file=/etc/kubernetes/kube-apiserver-audit-policy.yaml
     - --audit-log-path=-
     - --audit-log-format=json
-    - --feature-gates=TTLAfterFinished=true,HPAScaleToZero=true
+    - --feature-gates=TTLAfterFinished=true,TokenRequest=true,HPAScaleToZero=true
+    - --service-account-issuer=kubernetes.default.svc
+    - --service-account-signing-key-file=/etc/kubernetes/pki/sa.key
     - --kubelet-client-certificate=/etc/kubernetes/pki/admin.pem
     - --kubelet-client-key=/etc/kubernetes/pki/admin-key.pem
     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
@@ -40,9 +42,9 @@ spec:
     - --client-ca-file=/etc/kubernetes/pki/ca.pem
     - --insecure-port=8080
     - --insecure-bind-address=127.0.0.1
-    - --enable-admission-plugins=PodSecurityPolicy
+    - --enable-admission-plugins=PodSecurityPolicy,PodPreset
     - --authorization-mode=Node,RBAC
-    - --runtime-config=extensions/v1beta1/daemonsets=true
+    - --runtime-config=settings.k8s.io/v1alpha1=true
 {% if oidc_issuer_url is defined %}
     - --oidc-issuer-url={{ oidc_issuer_url }}
     - --oidc-client-id={{ oidc_client_id }}
@@ -94,7 +96,7 @@ spec:
       value: {{ proxy_env.http_proxy }}
 {% if nais_no_proxy is defined %}
     - name: no_proxy
-      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %}
+      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %},10.254.134.227,10.254.87.115
 
 {% endif %}
   hostNetwork: true

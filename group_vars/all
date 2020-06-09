@@ -11,7 +11,7 @@ etcd_version: 3.3.11
 flannel_version: 0.11.0
 k8s_version: 1.16.7
 kube_proxy_version: 1.15.4
-coredns_version: 1.6.6
+coredns_version: 1.6.9
 traefik_version: 1.7.7-alpine
 helm_version: 2.16.1
 

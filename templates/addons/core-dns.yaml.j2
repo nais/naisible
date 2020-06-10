@@ -123,8 +123,9 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 60
           timeoutSeconds: 5
+          periodSeconds: 2
           successThreshold: 1
-          failureThreshold: 5
+          failureThreshold: 1
         readinessProbe:
           httpGet:
             path: /ready

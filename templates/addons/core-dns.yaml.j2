@@ -51,7 +51,9 @@ data:
         log . {
             class error
         }
-        health :8080
+        health :8080 {
+          lameduck 5s
+        }
         ready :8081
         kubernetes {{ cluster_domain }} {{ service_cidr }} {
             fallthrough in-addr.arpa ip6.arpa

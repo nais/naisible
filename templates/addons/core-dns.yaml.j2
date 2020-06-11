@@ -51,7 +51,9 @@ data:
         log . {
             class error
         }
-        health :8080
+        health :8080 {
+          lameduck 5s
+        }
         ready :8081
         kubernetes {{ cluster_domain }} {{ service_cidr }} {
             fallthrough in-addr.arpa ip6.arpa
@@ -121,8 +123,9 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 60
           timeoutSeconds: 5
+          periodSeconds: 2
           successThreshold: 1
-          failureThreshold: 5
+          failureThreshold: 1
         readinessProbe:
           httpGet:
             path: /ready

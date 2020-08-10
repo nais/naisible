@@ -5,6 +5,7 @@ Documentation=http://kubernetes.io/docs/
 [Service]
 Environment="TZ=UTC"
 Environment="HOME=/root"
+Environment="PATH=/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
 ExecStart={{ install_dir }}/bin/kubelet \
   --config=/etc/kubernetes/kubeconfigs/kubelet-config.yaml \
   --hostname-override {{ inventory_hostname }} \

@@ -14,9 +14,6 @@ ExecStart={{ install_dir }}/bin/kubelet \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
   --register-with-taints={{ node_taints|default([""])|join(',') }} \
   --v={{ log_level|default(0) }} \
-{% if vsphere is defined %}
-  --cloud-provider=vsphere \
-{% endif %}
   --volume-plugin-dir={{ volume_plugin_dir }}
 Restart=always
 StartLimitInterval=0

@@ -25,10 +25,6 @@ spec:
     - --feature-gates=TTLAfterFinished=true
     - --use-service-account-credentials=true
     - --v={{log_level | default(0) }}
-{% if vsphere is defined %}
-    - --cloud-provider=vsphere
-    - --cloud-config=/etc/kubernetes/vsphere.conf
-{% endif %}
     image: gcr.io/google_containers/kube-controller-manager-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8

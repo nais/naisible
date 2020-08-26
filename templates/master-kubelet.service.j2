@@ -14,10 +14,6 @@ ExecStart={{ install_dir }}/bin/kubelet \
   --v={{ log_level|default(2) }} \
   --register-with-taints=node.alpha.kubernetes.io/ismaster=:NoSchedule \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
-{% if vsphere is defined %}
-  --cloud-provider=vsphere \
-  --cloud-config=/etc/kubernetes/vsphere.conf \
-{% endif %}
   --volume-plugin-dir={{ volume_plugin_dir }}
 Restart=always
 StartLimitInterval=0

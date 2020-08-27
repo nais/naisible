@@ -142,6 +142,10 @@
     tags:
       - fetch_etcd_certs
 
+- hosts: localhost
+  roles:
+  - create_certificates
+
 - hosts: etcd
   user: "{{ remote_user }}"
   become: yes

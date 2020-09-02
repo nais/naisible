@@ -121,9 +121,6 @@
         path: "{{ item }}"
         state: absent
       loop:
-        - /root/.helm/repository/repositories.yaml
-        - "{{ install_dir }}/bin/helm-{{helm_version}}"
-        - "{{ install_dir }}/bin/helm"
         - /etc/sensu/conf.d/nais_master_metrics.json
 
 - hosts: etcd

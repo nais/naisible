@@ -69,7 +69,6 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Label nodes
 1. Master Node
    1. Install and enable Kubelet
-   1. Install and enable Helm
    1. Install and enable addons:
       1. core-dns
       1. traefik
@@ -120,7 +119,6 @@ Variables
 |k8s_version|1.16.7|https://github.com/kubernetes/kubernetes/releases|
 |coredns_version|1.6.6|https://github.com/coredns/coredns/releases|
 |traefik_version|1.7.7-alpine|https://hub.docker.com/r/library/traefik/tags/|
-|helm_version|2.16.1|https://github.com/kubernetes/helm/releases|
 
 
 #### Cluster specific variables

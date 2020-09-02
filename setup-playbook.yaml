@@ -684,11 +684,3 @@
       - nais.yaml
       - debug.yaml
     changed_when: false
-
-  - name: Remove helm
-    file:
-      path: "{{ item }}"
-      state: absent
-    with_items:
-      - "{{ install_dir }}/bin/helm-{{ helm_version }}"
-      - "{{ install_dir }}/bin/helm"

@@ -10,12 +10,11 @@ prometheus_retention: 4w
 prometheus_jobs:
   - kubernetes-apiservers
   - kubernetes-cadvisor
-  - kubernetes-nodes
   - kubernetes-service-endpoints
   - kubernetes-services
   - prometheus
   - prometheus-pushgateway
-  - black box scraping of ingresses
+  - blackbox-exporter-ingresses
   - jenkins
 
 prometheus_nais_namespaces:

@@ -16,7 +16,7 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
   name: df17de8a-e293-4253-96f3-46544e57cc5a
-# naisflow
+# knada
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
-  name: d980f6eb-9ad0-4f6d-8337-64945032aa6f
+  name: 5c1e1527-37b4-4382-8feb-b9425d8ca542

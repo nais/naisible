@@ -19,7 +19,8 @@ else
   wget -O - https://bitbucket.org/pypy/pypy/downloads/pypy$PYTHON_VERSION-$PYPY_VERSION-linux64.tar.bz2 |tar -xjf -
 fi
 
-mv -n pypy$PYTHON_VERSION-$PYPY_VERSION-linux64 pypy
+rm -rf pypy
+mv pypy$PYTHON_VERSION-$PYPY_VERSION-linux64 pypy
 
 ## library fixup
 mkdir -p pypy/lib

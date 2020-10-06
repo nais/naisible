@@ -52,7 +52,7 @@ data:
             class error
         }
         health :8080 {
-          lameduck 5s
+          lameduck 15s
         }
         ready :8081
         kubernetes {{ cluster_domain }} {{ service_cidr }} {

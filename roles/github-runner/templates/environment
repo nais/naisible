@@ -1,0 +1,7 @@
+export LD_LIBRARY_PATH=/opt/icu/usr/local/lib
+export HTTP_PROXY={{ proxy_env.http_proxy }}
+export HTTPS_PROXY={{ proxy_env.https_proxy }}
+export NO_PROXY={{ proxy_env.no_proxy }}
+export http_proxy={{ proxy_env.http_proxy }}
+export https_proxy={{ proxy_env.https_proxy }}
+export no_proxy={{ proxy_env.no_proxy }}

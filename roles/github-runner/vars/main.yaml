@@ -1,0 +1,4 @@
+runner:
+  yq_version: 3.4.1
+  ghr_version: 2.274.2
+  home_dir: /data/runner

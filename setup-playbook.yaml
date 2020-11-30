@@ -64,7 +64,7 @@
         - etcd-backup.timer
         - etcd-prometheus-push.timer
 
-- hosts: etcd:prometheus
+- hosts: etcd:prometheus:githubrunner
   user: "{{ remote_user }}"
   become: yes
   tasks:
@@ -607,6 +607,16 @@
         timeout: 240
       changed_when: false
 
+- hosts: masters[0]
+  user: "{{ remote_user }}"
+  become: yes
+  tasks:
+    - name: Copy kubeconfig
+      fetch:
+        src: "/etc/kubernetes/kubeconfigs/cluster-admin.conf"
+        dest: "target/kubeconfigs/cluster-admin.conf"
+        flat: yes
+
 - hosts: masters:workers
   user: "{{ remote_user }}"
   become: yes
@@ -684,3 +694,11 @@
       - nais.yaml
       - debug.yaml
     changed_when: false
+
+- hosts: githubrunner
+  gather_facts: true
+  user: "{{ remote_user }}"
+  become: yes
+  any_errors_fatal: true
+  roles:
+    - github-runner

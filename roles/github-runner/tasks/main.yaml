@@ -1,0 +1,104 @@
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /opt/download
+    - /opt/bin
+    - /opt/etc/systemd
+    - /etc/systemd/system/docker.service.d
+    - "{{ runner.home_dir }}"
+    - "{{ runner.home_dir }}/.kube"
+
+- name: Docker proxy settings
+  template:
+    src: "{{ role_path }}/templates/docker-proxy.conf"
+    dest: /etc/systemd/system/docker.service.d/proxy.conf
+  when: nais_http_proxy is defined
+  notify:
+    - Restart docker
+
+- name: Set enviroment variables
+  template:
+    src: "{{ role_path }}/templates/environment"
+    dest: /etc/environment
+
+- name: Start and enable docker
+  systemd:
+    daemon_reload: yes
+    name: docker.service
+    state: started
+    enabled: yes
+
+- name: Install yq
+  environment: "{{ proxy_env }}"
+  get_url:
+    url: "https://github.com/mikefarah/yq/releases/download/{{ runner.yq_version }}/yq_linux_amd64"
+    dest: "{{ install_dir }}/bin/yq"
+    mode: 0755
+    use_proxy: yes
+
+- name: Install kubectl
+  environment: "{{ proxy_env }}"
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/v{{ k8s_version }}/bin/linux/amd64/kubectl"
+    dest: "{{ install_dir }}/bin/kubectl"
+    mode: 0755
+    use_proxy: yes
+
+- name: Create OS user
+  user:
+    name: github-runner
+    comment: Github runner user
+    home: "{{ runner.home_dir }}"
+    shell: "/bin/bash"
+    groups: "sudo,docker"
+    state: present
+
+- name: Download icu
+  environment: "{{ proxy_env }}"
+  get_url:
+    url: "https://github.com/unicode-org/icu/releases/download/release-68-1/icu4c-68_1-Ubuntu20.04-x64.tgz"
+    dest: "/opt/download/icu4c-68_1-Fedora32-x64.tgz"
+    use_proxy: yes
+
+- name: Unpack icu
+  unarchive:
+    remote_src: yes
+    src: "/opt/download/icu4c-68_1-Fedora32-x64.tgz"
+    dest: "/opt/"
+    owner: root
+    group: root
+
+- name: Github runner service environment
+  template:
+    src: "{{ role_path }}/templates/github-runner-environment.conf"
+    dest: /opt/etc/systemd/github-runner-environment.conf
+
+- name: Download actions runner
+  environment: "{{ proxy_env }}"
+  get_url:
+    url: "https://github.com/actions/runner/releases/download/v{{ runner.ghr_version }}/actions-runner-linux-x64-{{ runner.ghr_version }}.tar.gz"
+    dest: "/opt/download/actions-runner-linux-x64-{{ runner.ghr_version }}.tar.gz"
+    use_proxy: yes
+
+- name: Create runner directories
+  file:
+    path: "{{ runner.home_dir }}/{{ item }}"
+    owner: github-runner
+    group: github-runner
+    state: directory
+  with_items: [ "actions-runner", "actions-workdir"]
+
+- name: Unpack actions runner
+  unarchive:
+    remote_src: yes
+    src: "/opt/download/actions-runner-linux-x64-{{ runner.ghr_version }}.tar.gz"
+    dest: "{{ runner.home_dir }}/actions-runner/"
+    owner: github-runner
+    group: github-runner
+    
+- name: Install kubeconfig
+  copy:
+    src: "target/kubeconfigs/cluster-admin.conf"
+    dest: "{{ runner.home_dir }}/.kube/config"

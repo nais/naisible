@@ -4,7 +4,7 @@ pipeline {
     stage('Clone') {
       steps {
 	dir("naisible") {
-	  git(url: 'https://github.com/navikt/naisflow-naisible.git')
+	  git(url: 'https://github.com/navikt/knada-naisible.git')
 	}
 
 	dir("nais-inventory") {

@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  environment {
+    clusterName = 'knada'
+  }
+
   stages {
     stage('Clone') {
       steps {

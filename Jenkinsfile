@@ -21,14 +21,14 @@ pipeline {
 
     stage('Ansible run') {
       steps {
-          sh("./ansible-playbook -f 20 --key-file=/home/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/setup-playbook.yaml")
-	  sh("./ansible-playbook -f 20 --key-file=/home/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/naisflow-playbook.yaml")
+          sh("./ansible-playbook -f 20 --key-file=/var/lib/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/setup-playbook.yaml")
+	  sh("./ansible-playbook -f 20 --key-file=/var/lib/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/naisflow-playbook.yaml")
       }
 
       post {
         success {
           sleep 15
-          sh("./ansible-playbook -f 20 --key-file=/home/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/test-playbook.yaml")
+          sh("./ansible-playbook -f 20 --key-file=/var/lib/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/test-playbook.yaml")
         }
       }
     }

@@ -8,4 +8,4 @@ docker run --security-opt label:disable --rm -i \
   -v "$(pwd)"/nais-inventory:/ansible/inventory \
   -v "$(pwd)"/ansible.cfg:/ansible.cfg \
   -e ANSIBLE_CONFIG=/ansible.cfg \
-  navikt/ansible-playbook:2.8.5-nada "$@"
+  navikt/ansible-playbook:2.8.5 "$@"

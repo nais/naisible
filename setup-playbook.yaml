@@ -242,7 +242,7 @@
   - name: Copy mk-docker-opts file
     template:
       src: files/mk-docker-opts.sh
-      dest: {{ install_dir }}/libexec/mk-docker-opts.sh
+      dest: "{{ install_dir }}/libexec/mk-docker-opts.sh"
 
   - name: Copy flannel service file
     template:

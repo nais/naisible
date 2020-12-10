@@ -9,12 +9,15 @@ Before=docker.service
 
 [Service]
 Environment=GODEBUG=netdns=go
-ExecStart={{ install_dir }}/bin/flanneld \
+Environment=FLANNEL_IMAGE_TAG=v{{ flannel_version }}
+Environment=HTTPS_PROXY={{ nais_https_proxy }}
+Environment=NO_PROXY={{ nais_no_proxy }}
+ExecStart=/usr/lib/flatcar/flannel-wrapper \
   --etcd-endpoints={{ etcd_urls | join(",") }} \
   --etcd-prefix=/nais/network \
-  --etcd-cafile=/etc/kubernetes/pki/ca.pem \
-  --etcd-certfile=/etc/kubernetes/pki/etcd-client.pem \
-  --etcd-keyfile=/etc/kubernetes/pki/etcd-client-key.pem
+  --etcd-cafile=/etc/ssl/certs/ca.pem \
+  --etcd-certfile=/etc/ssl/certs/etcd-client.pem \
+  --etcd-keyfile=/etc/ssl/certs/etcd-client-key.pem
 Restart=always
 StartLimitInterval=0
 RestartSec=10

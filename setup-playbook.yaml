@@ -243,7 +243,6 @@
     template:
       src: files/mk-docker-opts.sh
       dest: {{ install_dir }}/libexec/mk-docker-opts.sh
-    notify:
 
   - name: Copy flannel service file
     template:

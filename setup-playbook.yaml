@@ -227,21 +227,23 @@
     notify:
       - restart_kubelet
       - restart_kubeproxy
+
+  - name: Copy etcd certificates to default cert directory
+    copy:
+      src: "target/pki/{{ item }}"
+      dest: /etc/ssl/certs/ # bundled flannel needs certificates here
+    loop:
+      - etcd/etcd-client.pem
+      - etcd/etcd-client-key.pem
+      - ca.pem
+    notify:
       - restart_flannel
 
-  - name: Download flannel binaries # using curl as get_url gave protocol error (most likely caused by internal webproxy)
-    environment: "{{ proxy_env }}"
-    shell: curl -L --insecure https://github.com/coreos/flannel/releases/download/v{{ flannel_version }}/flannel-v{{ flannel_version }}-linux-amd64.tar.gz | tar xzf - -C /tmp flanneld mk-docker-opts.sh && \
-           mv /tmp/flanneld {{ install_dir }}/bin/flanneld-{{ flannel_version }} && \
-           mv /tmp/mk-docker-opts.sh {{ install_dir }}/libexec
-    args:
-      creates: "{{ install_dir }}/bin/flanneld-{{ flannel_version }}"
-
-  - name: Symlink flannel
-    file:
-      src: "{{ install_dir }}/bin/flanneld-{{ flannel_version }}"
-      dest: "{{ install_dir }}/bin/flanneld"
-      state: link
+  - name: Copy mk-docker-opts file
+    template:
+      src: files/mk-docker-opts.sh
+      dest: {{ install_dir }}/libexec/mk-docker-opts.sh
+    notify:
 
   - name: Copy flannel service file
     template:

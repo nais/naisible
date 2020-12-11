@@ -5,7 +5,7 @@ After=flannel.service
 
 [Service]
 EnvironmentFile=/var/lib/docker/docker_opts.env
-ExecStart=/usr/bin/dockerd $DOCKER_OPTS --default-ulimit nofile=65536:65536
+ExecStart=/usr/bin/dockerd $DOCKER_OPTS --default-ulimit nofile=131072:131072
 ExecStartPost=/sbin/iptables -A FORWARD -i flannel.1 -j ACCEPT
 
 Restart=always

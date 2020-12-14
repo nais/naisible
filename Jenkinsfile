@@ -1,42 +1,12 @@
-pipeline {
-  agent any
-  environment {
-    clusterName = 'knada'
-  }
+node {
+  stage("trigger nais-cd-pipeline") {
+    git(url: "https://github.com/nais/naisible.git")
 
-  stages {
-    stage('Clone') {
-      steps {
-	dir("naisible") {
-	  git(url: 'https://github.com/navikt/knada-naisible.git')
-	}
-
-	dir("nais-inventory") {
-	  git(credentialsId: 'nais-inventory',
-	      url: "git@github.com:navikt/nais-inventory.git",
-	      changelog: false)
-	}
-      }
-    }
-
-    stage('Ansible run') {
-      steps {
-          sh("./ansible-playbook -f 20 --key-file=/home/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/setup-playbook.yaml")
-	  sh("./ansible-playbook -f 20 --key-file=/home/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/naisflow-playbook.yaml")
-      }
-
-      post {
-        success {
-          sleep 15
-          sh("./ansible-playbook -f 20 --key-file=/home/jenkins/.ssh/id_rsa -i inventory/${clusterName} -e @inventory/${clusterName}-vars.yaml playbooks/test-playbook.yaml")
-        }
-      }
-    }
-  }
-
-  post {
-    always {
-      deleteDir()
+    skipCi = sh(script: "git log --pretty=format:'%s' -1 | grep -P '\\[skip[- ]ci\\]'", returnStatus: true)
+    if ( skipCi == 0 ) {
+      echo "Skipping"
+    } else {
+      build(job: "nais_cd_pipeline")
     }
   }
 }

@@ -5,7 +5,8 @@ After=flannel.service
 
 [Service]
 EnvironmentFile=/var/lib/docker/docker_opts.env
-ExecStart=/usr/bin/dockerd $DOCKER_OPTS
+
+ExecStart=/usr/bin/dockerd $DOCKER_OPTS --default-ulimit nofile=393216:393216
 ExecStartPost=/sbin/iptables -A FORWARD -i flannel.1 -j ACCEPT
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStopPost=/bin/echo "docker daemon exited"

@@ -1,0 +1,11 @@
+#!/bin/bash
+docker run --security-opt label:disable --rm -i \
+  --ulimit nofile=1048576:1048576 \
+  -u jenkins:jenkins \
+  -v /var/log/ansible/ansible.log \
+  -v /var/lib/jenkins/.ssh:/home/jenkins/.ssh \
+  -v "$(pwd)"/naisible:/ansible/playbooks \
+  -v "$(pwd)"/nais-inventory:/ansible/inventory \
+  -v "$(pwd)"/ansible.cfg:/ansible.cfg \
+  -e ANSIBLE_CONFIG=/ansible.cfg \
+  navikt/ansible-playbook:2.8.5 "$@"

@@ -16,7 +16,3 @@ subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
   name: df17de8a-e293-4253-96f3-46544e57cc5a
-# knada
-- apiGroup: rbac.authorization.k8s.io
-  kind: Group
-  name: 5c1e1527-37b4-4382-8feb-b9425d8ca542

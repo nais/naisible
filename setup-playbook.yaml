@@ -644,10 +644,10 @@
       state: directory
       path: /etc/kubernetes/addons
 
-  - name: Ensure roles directory exists
+  - name: Ensure manifests directory exists
     file:
       state: directory
-      path: /etc/kubernetes/roles
+      path: /etc/kubernetes/manifests
 
   - name: Copy kubernetes-addons manifest templates
     template:
@@ -660,13 +660,14 @@
       - nais.yaml
       - debug.yaml
 
-
-  - name: Copy kubernetes clusterrolebindings
+  - name: Copy kubernetes manifests
     copy:
-      src: "files/roles/{{ item }}"
-      dest: "/etc/kubernetes/roles/{{ item }}"
+      src: "files/manifests/{{ item }}"
+      dest: "/etc/kubernetes/manifests/{{ item }}"
     loop:
       - clusterrolebindings.yaml
+      - psp-kube-system.yaml
+      - psp-rbac.yaml
 
   - name: Wait for API server to become available
     wait_for:
@@ -675,10 +676,12 @@
       delay: 5
     changed_when: false
 
-  - name: Create clusterrole and clusterrolebindings
-    command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/roles/{{ item }}"
+  - name: Apply kubernetes manifests
+    command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/manifests/{{ item }}"
     loop:
-    - clusterrolebindings.yaml
+      - clusterrolebindings.yaml
+      - psp-kube-system.yaml
+      - psp-rbac.yaml
     changed_when: false
 
   - name: Create traefik tls secret

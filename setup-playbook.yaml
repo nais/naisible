@@ -644,11 +644,6 @@
       state: directory
       path: /etc/kubernetes/addons
 
-  - name: Ensure manifests directory exists
-    file:
-      state: directory
-      path: /etc/kubernetes/manifests
-
   - name: Copy kubernetes-addons manifest templates
     template:
       src: "templates/addons/{{ item }}.j2"
@@ -660,10 +655,10 @@
       - nais.yaml
       - debug.yaml
 
-  - name: Copy kubernetes manifests
+  - name: Copy kubernetes-addons manifests
     copy:
-      src: "files/manifests/{{ item }}"
-      dest: "/etc/kubernetes/manifests/{{ item }}"
+      src: "files/addons/{{ item }}"
+      dest: "/etc/kubernetes/addons/{{ item }}"
     loop:
       - clusterrolebindings.yaml
       - psp-kube-system.yaml
@@ -676,22 +671,17 @@
       delay: 5
     changed_when: false
 
-  - name: Apply kubernetes manifests
-    command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/manifests/{{ item }}"
-    loop:
-      - clusterrolebindings.yaml
-      - psp-kube-system.yaml
-      - psp-rbac.yaml
-    changed_when: false
-
   - name: Create traefik tls secret
     command: "{{ install_dir }}/bin/kubectl -n kube-system create secret tls traefik-cert --key=/etc/kubernetes/pki/traefik-key.pem --cert=/etc/kubernetes/pki/traefik.pem"
     ignore_errors: yes
     changed_when: false
 
-  - name: Create addons
+  - name: Apply addons
     command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}"
     loop:
+      - clusterrolebindings.yaml
+      - psp-kube-system.yaml
+      - psp-rbac.yaml
       - core-dns.yaml
       - traefik.yaml
       - prometheus-adapter.yaml

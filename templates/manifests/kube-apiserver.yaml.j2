@@ -91,6 +91,7 @@ spec:
 {% if nais_no_proxy is defined %}
     - name: no_proxy
       value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %}
+
 {% endif %}
   hostNetwork: true
   volumes:

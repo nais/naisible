@@ -10,7 +10,7 @@ remote_user: "{{ nais_remote_user | default('deployer') }}"
 etcd_version: 3.3.11
 flannel_version: 0.13.0
 k8s_version: 1.17.16
-coredns_version: 1.7.1
+coredns_version: 1.8.0
 traefik_version: 1.7.26-alpine
 
 traefik_replicas: 2

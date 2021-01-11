@@ -61,7 +61,7 @@ spec:
     - --requestheader-extra-headers-prefix=X-Remote-Extra-
     - --requestheader-group-headers=X-Remote-Group
     - --requestheader-username-headers=X-Remote-User
-    image: gcr.io/google_containers/kube-apiserver-amd64:v{{ k8s_version }}
+    image: k8s.gcr.io/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8
       httpGet:

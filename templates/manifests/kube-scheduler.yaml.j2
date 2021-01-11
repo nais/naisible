@@ -19,7 +19,7 @@ spec:
     - --feature-gates=TTLAfterFinished=true
     - --kubeconfig=/etc/kubernetes/kubeconfigs/kube-scheduler.conf
     - --v={{log_level | default(0) }}
-    image: gcr.io/google_containers/kube-scheduler-amd64:v{{ k8s_version }}
+    image: k8s.gcr.io/kube-scheduler-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8
       httpGet:

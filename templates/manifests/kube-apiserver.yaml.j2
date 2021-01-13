@@ -60,6 +60,11 @@ spec:
     - --requestheader-extra-headers-prefix=X-Remote-Extra-
     - --requestheader-group-headers=X-Remote-Group
     - --requestheader-username-headers=X-Remote-User
+{% if apiserver.extra_opts|default(false) %}
+{% for opts in apiserver.extra_opts %}
+    - {{ opts }}
+{% endfor %}
+{% endif %}
     image: k8s.gcr.io/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8

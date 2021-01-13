@@ -42,7 +42,6 @@ spec:
     - --insecure-bind-address=127.0.0.1
     - --enable-admission-plugins=PodSecurityPolicy
     - --authorization-mode=Node,RBAC
-    - --runtime-config=extensions/v1beta1/daemonsets=true
 {% if oidc_issuer_url is defined %}
     - --oidc-issuer-url={{ oidc_issuer_url }}
     - --oidc-client-id={{ oidc_client_id }}
@@ -61,6 +60,11 @@ spec:
     - --requestheader-extra-headers-prefix=X-Remote-Extra-
     - --requestheader-group-headers=X-Remote-Group
     - --requestheader-username-headers=X-Remote-User
+{% if apiserver.extra_opts|default(false) %}
+{% for opts in apiserver.extra_opts %}
+    - {{ opts }}
+{% endfor %}
+{% endif %}
     image: k8s.gcr.io/kube-apiserver-amd64:v{{ k8s_version }}
     livenessProbe:
       failureThreshold: 8
@@ -90,7 +94,7 @@ spec:
       value: {{ proxy_env.http_proxy }}
 {% if nais_no_proxy is defined %}
     - name: no_proxy
-      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %}
+      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %}{% if no_proxy_extra_addresses is defined %},{{ no_proxy_extra_addresses }}{% endif %}
 
 {% endif %}
   hostNetwork: true

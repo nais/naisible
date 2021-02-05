@@ -645,7 +645,7 @@
       - core-dns.yaml
       - traefik.yaml
       - prometheus-adapter.yaml
-      - nais.yaml
+      - namespaces.yaml
       - debug.yaml
 
   - name: Copy kubernetes-addons manifests
@@ -672,13 +672,13 @@
   - name: Apply addons
     command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}"
     loop:
+      - namespaces.yaml
       - clusterrolebindings.yaml
       - psp-kube-system.yaml
       - psp-rbac.yaml
       - core-dns.yaml
       - traefik.yaml
       - prometheus-adapter.yaml
-      - nais.yaml
       - debug.yaml
     changed_when: false
 

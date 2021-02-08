@@ -71,7 +71,6 @@ ansible-playbook -i inventory-file teardown-playbook.yaml
    1. Install and enable Kubelet
    1. Install and enable addons:
       1. core-dns
-      1. traefik
    1. Enable monitoring
 
 
@@ -118,7 +117,6 @@ Variables
 |flannel_version|0.13.0|https://github.com/coreos/flannel/releases|
 |k8s_version|1.16.7|https://github.com/kubernetes/kubernetes/releases|
 |coredns_version|1.6.6|https://github.com/coredns/coredns/releases|
-|traefik_version|1.7.7-alpine|https://hub.docker.com/r/library/traefik/tags/|
 
 
 #### Cluster specific variables

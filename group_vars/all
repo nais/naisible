@@ -11,9 +11,3 @@ etcd_version: 3.3.11
 flannel_version: 0.13.0
 k8s_version: 1.17.16
 coredns_version: 1.8.0
-traefik_version: 1.7.26-alpine
-
-traefik_replicas: 2
-traefik_memory: 512Mi
-traefik_cpu_request: 200m
-traefik_cpu_limit: 400m

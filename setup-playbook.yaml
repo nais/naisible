@@ -200,8 +200,6 @@
       - prometheus-adapter-key.pem
       - sa.key
       - sa.pub
-      - traefik.pem
-      - traefik-key.pem
 
   - name: Copy kubelet certificates
     copy:
@@ -643,7 +641,6 @@
       dest: "/etc/kubernetes/addons/{{ item }}"
     loop:
       - core-dns.yaml
-      - traefik.yaml
       - prometheus-adapter.yaml
       - namespaces.yaml
       - debug.yaml
@@ -664,11 +661,6 @@
       delay: 5
     changed_when: false
 
-  - name: Create traefik tls secret
-    command: "{{ install_dir }}/bin/kubectl -n kube-system create secret tls traefik-cert --key=/etc/kubernetes/pki/traefik-key.pem --cert=/etc/kubernetes/pki/traefik.pem"
-    ignore_errors: yes
-    changed_when: false
-
   - name: Apply addons
     command: "{{ install_dir }}/bin/kubectl apply -f /etc/kubernetes/addons/{{ item }}"
     loop:
@@ -677,7 +669,6 @@
       - psp-kube-system.yaml
       - psp-rbac.yaml
       - core-dns.yaml
-      - traefik.yaml
       - prometheus-adapter.yaml
       - debug.yaml
     changed_when: false

@@ -58,11 +58,6 @@
   args:
     creates: target/pki/kube-apiserver-server.pem
 
-- name: Creating traefik certificate
-  shell: bin/cfssl gencert -ca=target/pki/ca.pem -ca-key=target/pki/ca-key.pem -config=target/pki/ca-config.json -profile=server {{ role_path }}/files/traefik-csr.json | bin/cfssljson -bare target/pki/traefik
-  args:
-    creates: target/pki/traefik.pem
-
 - name: Creating front-proxy-client certificate
   shell: bin/cfssl gencert -ca=target/pki/front-proxy-ca.pem -ca-key=target/pki/front-proxy-ca-key.pem -config=target/pki/ca-config.json -profile=client {{ role_path }}/files/front-proxy-client-csr.json | bin/cfssljson -bare target/pki/front-proxy-client
   args:

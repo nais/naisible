@@ -665,7 +665,7 @@
     changed_when: false
 
   - name: Create traefik tls secret
-    command: "{{ install_dir }}/bin/kubectl -n kube-system create secret tls traefik-cert --key=/etc/kubernetes/pki/traefik-key.pem --cert=/etc/kubernetes/pki/traefik.pem"
+    command: "{{ install_dir }}/bin/kubectl -n nais create secret tls traefik-cert --key=/etc/kubernetes/pki/traefik-key.pem --cert=/etc/kubernetes/pki/traefik.pem"
     ignore_errors: yes
     changed_when: false
 

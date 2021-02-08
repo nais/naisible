@@ -1,3 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nais
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -35,19 +39,19 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: traefik-ingress-controller
-  namespace: kube-system
+  namespace: nais
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: traefik-ingress-controller
-  namespace: kube-system
+  namespace: nais
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: traefik
-  namespace: kube-system
+  namespace: nais
 data:
   traefik.toml: |
     defaultEntryPoints = ["https"]
@@ -102,7 +106,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: traefik-ingress-controller
-  namespace: kube-system
+  namespace: nais
   labels:
     k8s-app: traefik-ingress-lb
 spec:

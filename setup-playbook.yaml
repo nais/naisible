@@ -100,6 +100,11 @@
       state: started
       enabled: yes
 
+  - name: Add nsswitch.conf
+    copy:
+      src: "files/nsswitch.conf"
+      dest: "/etc/nsswitch.conf"
+
 - hosts: prometheus
   gather_facts: true
   user: "{{ remote_user }}"

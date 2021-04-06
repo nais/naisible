@@ -52,11 +52,11 @@
       failed_when: ready_count.stdout != "{{ K8S_HOST_COUNT }}"
       changed_when: false
 
-    - name: Ensure addons (kube-system) are deployed and available
-      shell: "{{ install_dir }}/bin/kubectl -n kube-system get deploy {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
+    - name: Ensure addons (namespace deployment) are deployed and available
+      shell: "{{ install_dir }}/bin/kubectl get deploy -n {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
       loop:
-        - coredns
-        - prometheus-adapter
+        - "nais coredns"
+        - "kube-system prometheus-adapter"
       register: matches_spec
       retries: 6
       delay: 9

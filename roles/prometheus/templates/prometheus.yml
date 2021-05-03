@@ -37,14 +37,14 @@ scrape_configs:
           node_type: master
       - targets:
 {% for host in groups['workers'] %}
-{% if not host in groups['ceph_nodes'] %}
+{% if not host in groups['ceph_nodes','ceph_daemon_nodes'] %}
         - '{{ host }}:9101'
 {% endif %}
 {% endfor %}
         labels:
           node_type: worker
       - targets:
-{% for host in groups['ceph_nodes'] %}
+{% for host in groups['ceph_nodes','ceph_daemon_nodes'] %}
         - '{{ host }}:9101'
 {% endfor %}
         labels:
@@ -89,7 +89,7 @@ scrape_configs:
     static_configs:
       - targets:
 {% for host in groups['workers'] %}
-{% if not host in groups['ceph_nodes'] %}
+{% if not host in groups['ceph_nodes','ceph_daemon_nodes'] %}
         - '{{ host }}:8080'
 {% endif %}
 {% endfor %}

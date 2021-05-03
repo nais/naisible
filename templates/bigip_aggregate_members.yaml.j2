@@ -1,4 +1,4 @@
-{% for item in query('inventory_hostnames', 'workers:!ceph_nodes') %}
+{% for item in query('inventory_hostnames', 'workers:!ceph_nodes:!ceph_daemon_nodes') %}
 - host: "{{ lookup('dig', item) }}"
   port: {{ bigip_port | default(443) }}
   partition: "{{ bigip_partition }}"

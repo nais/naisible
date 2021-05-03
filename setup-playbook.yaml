@@ -17,7 +17,7 @@
       that:
         - ansible_play_hosts == ansible_play_hosts_all
 
-- hosts: masters:workers:ceph_nodes
+- hosts: masters:workers:ceph_nodes:ceph_daemon_nodes
   user: "{{ remote_user }}"
   become: yes
   tasks:

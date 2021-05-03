@@ -103,6 +103,11 @@ Hosts
 [ceph_nodes]
 <ceph-node-hostname-1>
 <ceph-node-hostname-n>
+
+[ceph_daemon_nodes]
+<ceph-daemon-node-hostname-1>
+<ceph-daemon-node-hostname-n>
+
 ```
 
 

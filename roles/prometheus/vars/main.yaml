@@ -14,7 +14,9 @@ prometheus_jobs:
   - kubernetes-services
   - prometheus
   - prometheus-pushgateway
+  - blackbox-exporter
   - blackbox-exporter-ingresses
+  - blackbox-exporter-tls-certificates
   - jenkins
 
 prometheus_nais_namespaces:

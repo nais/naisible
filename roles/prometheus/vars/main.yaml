@@ -17,6 +17,7 @@ prometheus_jobs:
   - blackbox-exporter
   - blackbox-exporter-ingresses
   - blackbox-exporter-tls-certificates
+  - blackbox-exporter-tls-certificates-traefik
   - jenkins
 
 prometheus_nais_namespaces:

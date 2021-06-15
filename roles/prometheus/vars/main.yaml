@@ -19,6 +19,7 @@ prometheus_jobs:
   - blackbox-exporter-tls-certificates
   - blackbox-exporter-tls-certificates-traefik
   - jenkins
+  - slo
 
 prometheus_nais_namespaces:
   - nais

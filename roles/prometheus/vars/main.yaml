@@ -1,6 +1,6 @@
 prometheus:
-  version: 2.26.0
-  checksum: sha256:8dd6786c338dc62728e8891c13b62eda66c7f28a01398869f2b3712895b441b9
+  version: 2.27.1
+  checksum: sha256:ce637d0167d5e6d2561f3bd37e1c58fe8601e13e4e1ea745653c068f6e1317ae
   query:
     max_samples: 10000000
     timeout: 10s

@@ -15,4 +15,4 @@ subjects:
 # aura group
 - apiGroup: rbac.authorization.k8s.io
   kind: Group
-  name: df17de8a-e293-4253-96f3-46544e57cc5a
+  name: 59dbf5e6-8243-471c-bd57-162346f08d75

@@ -17,7 +17,7 @@ prometheus_jobs:
   - blackbox-exporter
   - blackbox-exporter-ingresses
   - tls-certificates
-  - tls-certificates-traefik
+  - tls-certificates-kubernetes
   - jenkins
   - slo
 

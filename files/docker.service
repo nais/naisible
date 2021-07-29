@@ -1,7 +1,6 @@
 [Unit]
 Description=Docker Application Container Engine
 Documentation=http://docs.docker.com
-After=flannel.service
 
 [Service]
 EnvironmentFile=/var/lib/docker/docker_opts.env

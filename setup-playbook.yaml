@@ -161,23 +161,23 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
-  - name: Check if flannel config exists (OK if this fails)
+  - name: Check if flanneld config exists (OK if this fails)
     command: "{{ install_dir }}/bin/etcdctl ls /nais/network/config"
     environment:
       - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
       - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
       - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
-    register: flannelconfig
+    register: flanneldconfig
     ignore_errors: yes
     changed_when: false
 
-  - name: Set flannel configuration in etcd
+  - name: Set flanneld configuration in etcd
     shell: '"{{ install_dir }}"/bin/etcdctl set /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
     environment:
       - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
       - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
       - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
-    when: flannelconfig.rc != 0
+    when: flanneldconfig.rc != 0
 
 # Configure kubernetes Master node
 - hosts: masters
@@ -234,13 +234,13 @@
   - name: Copy etcd certificates to default cert directory
     copy:
       src: "target/pki/{{ item }}"
-      dest: /etc/ssl/certs/ # bundled flannel needs certificates here
+      dest: /etc/ssl/certs/ # bundled flanneld needs certificates here
     loop:
       - etcd/etcd-client.pem
       - etcd/etcd-client-key.pem
       - ca.pem
     notify:
-      - restart_flannel
+      - restart_flanneld
 
   - name: Ensure delete mk-docker-opts file
     file:
@@ -270,6 +270,7 @@
       name: flannel.service
       state: stopped
       enabled: no
+      ignore_errors: yes
 
   - name: Enable flanneld
     systemd:
@@ -415,10 +416,10 @@
       # on new nodes kublet will not yet be install, ignore errors
       ignore_errors: yes
 
-    - name: restart_flannel
+    - name: restart_flanneld
       systemd:
         daemon_reload: yes
-        name: flannel.service
+        name: flanneld.service
         state: restarted
 
     - name: restart_kubeproxy

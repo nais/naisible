@@ -272,13 +272,13 @@
       path: /var/lib/docker/docker_opts.env
       state: absent
 
-  # - name: Wait for flannel to write subnet and mtu values
-  #   wait_for:
-  #     path: /run/flannel/subnet.env
-  #     state: present
-  #     timeout: 60
-  #     search_regex: FLANNEL_SUBNET
-  #     msg: Timeout waiting for flannel to write subnet and mtu values
+  - name: Wait for flannel to write subnet and mtu values
+    wait_for:
+      path: /run/flannel/subnet.env
+      state: present
+      timeout: 60
+      search_regex: FLANNEL_SUBNET
+      msg: Timeout waiting for flannel to write subnet and mtu values
 
   - name: Make flannel configuration for docker
     command: "{{ install_dir }}/libexec/mk-docker-opts.sh -k DOCKER_OPTS -f /run/flannel/subnet.env -d /var/lib/docker/docker_opts.env"

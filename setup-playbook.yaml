@@ -290,6 +290,11 @@
 
   - name: Copy docker service file
     copy:
+      src: files/docker.service.d/selinux.conf
+      dest: /etc/systemd/system/docker.service.d/selinux.conf
+
+  - name: Copy docker service file
+    copy:
       src: files/docker.service
       dest: /etc/systemd/system/docker.service
     notify:

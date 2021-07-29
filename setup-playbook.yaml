@@ -247,11 +247,6 @@
       path: "{{ install_dir }}/libexec/mk-docker-opts.sh"
       state: absent
 
-  - name: Delete custom nais flannel
-    file:
-      path: /etc/systemd/system/flannel.service
-      state: absent
-
   - name: Ensure flanneld.service.d exists
     file:
       path: /etc/systemd/system/flanneld.service.d/
@@ -266,11 +261,15 @@
 
   - name: Disable flannel
     systemd:
-      daemon_reload: yes
       name: flannel.service
       state: stopped
       enabled: no
     ignore_errors: yes
+
+  - name: Delete custom nais flannel
+    file:
+      path: /etc/systemd/system/flannel.service
+      state: absent
 
   - name: Enable flanneld
     systemd:

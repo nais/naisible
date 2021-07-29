@@ -270,7 +270,7 @@
       name: flannel.service
       state: stopped
       enabled: no
-      ignore_errors: yes
+    ignore_errors: yes
 
   - name: Enable flanneld
     systemd:

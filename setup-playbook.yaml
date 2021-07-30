@@ -292,6 +292,8 @@
     copy:
       src: files/docker.service.d/selinux.conf
       dest: /etc/systemd/system/docker.service.d/selinux.conf
+    notify:
+      - restart_docker
 
   - name: Copy docker service file
     copy:

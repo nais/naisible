@@ -257,7 +257,7 @@
       src: templates/flanneld.service.d/etcd.conf
       dest: /etc/systemd/system/flanneld.service.d/etcd.conf
     notify:
-      - restart_flannel
+      - restart_flanneld
 
   - name: Disable flannel
     systemd:

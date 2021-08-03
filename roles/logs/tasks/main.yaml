@@ -34,20 +34,20 @@
     group: root
     mode: 0711
 
-- name: Install set-log-dir-acl systemd service
-  copy:
-    src: files/set-log-dir-acl.service
-    dest: /etc/systemd/system/set-log-dir-acl.service
+- name: Remove set-log-dir-acl systemd service
+  file:
+    path: /etc/systemd/system/set-log-dir-acl.service
+    state: absent
 
-- name: Install set-container-dir-acl systemd service
-  copy:
-    src: files/set-container-dir-acl.service
-    dest: /etc/systemd/system/set-container-dir-acl.service
+- name: Remove set-container-dir-acl systemd service
+  file:
+    path: /etc/systemd/system/set-container-dir-acl.service
+    state: absent
 
-- name: Install set-container-dir-acl systemd timer
-  copy:
-    src: files/set-container-dir-acl.timer
-    dest: /etc/systemd/system/set-container-dir-acl.timer
+- name: Remove set-container-dir-acl systemd timer
+  file:
+    path: /etc/systemd/system/set-container-dir-acl.timer
+    state: absent
 
 - name: Disable set-log-dir-acl
   systemd:
@@ -55,6 +55,7 @@
     state: stopped
     enabled: no
     daemon_reload: yes
+  ignore_errors: yes
 
 - name: Disable set-container-dir-acl
   systemd:
@@ -62,3 +63,12 @@
     state: stopped
     enabled: no
     daemon_reload: yes
+  ignore_errors: yes
+
+  - name: Disable set-container-dir-acl service
+  systemd:
+    name: set-container-dir-acl.service
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  ignore_errors: yes

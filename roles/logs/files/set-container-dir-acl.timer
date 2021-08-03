@@ -1,8 +1,0 @@
-[Unit]
-Description=Run set-container-dir-acl every 30 seconds
-
-[Timer]
-OnCalendar=*:*:0/30
-
-[Install]
-WantedBy=timers.target

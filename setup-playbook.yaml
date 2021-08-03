@@ -242,11 +242,6 @@
     notify:
       - restart_flanneld
 
-  - name: Ensure delete mk-docker-opts file
-    file:
-      path: "{{ install_dir }}/libexec/mk-docker-opts.sh"
-      state: absent
-
   - name: Ensure flanneld.service.d exists
     file:
       path: /etc/systemd/system/flanneld.service.d/
@@ -258,18 +253,6 @@
       dest: /etc/systemd/system/flanneld.service.d/etcd.conf
     notify:
       - restart_flanneld
-
-  - name: Disable flannel
-    systemd:
-      name: flannel.service
-      state: stopped
-      enabled: no
-    ignore_errors: yes
-
-  - name: Delete custom nais flannel
-    file:
-      path: /etc/systemd/system/flannel.service
-      state: absent
 
   - name: Enable flanneld
     systemd:
@@ -283,12 +266,7 @@
       path: /var/lib/docker
       state: directory
 
-  - name: Force delete docker_opts.env
-    file:
-      path: /var/lib/docker/docker_opts.env
-      state: absent
-
-  - name: Copy docker service file
+  - name: Copy docker selinux drop-in file
     copy:
       src: files/docker.service.d/selinux.conf
       dest: /etc/systemd/system/docker.service.d/selinux.conf

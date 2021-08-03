@@ -65,7 +65,7 @@
     daemon_reload: yes
   ignore_errors: yes
 
-  - name: Disable set-container-dir-acl service
+- name: Disable set-container-dir-acl service
   systemd:
     name: set-container-dir-acl.service
     state: stopped

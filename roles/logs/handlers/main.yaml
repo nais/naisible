@@ -2,17 +2,3 @@
   systemd:
     name: systemd-journald
     state: restarted
-
-- name: Restart set-log-dir-acl
-  systemd:
-    name: set-log-dir-acl.service
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
-
-- name: Restart set-container-dir-acl
-  systemd:
-    name: set-container-dir-acl.timer
-    state: restarted
-    enabled: yes
-    daemon_reload: yes

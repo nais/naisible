@@ -38,19 +38,27 @@
   copy:
     src: files/set-log-dir-acl.service
     dest: /etc/systemd/system/set-log-dir-acl.service
-  notify:
-    - Restart set-log-dir-acl
 
 - name: Install set-container-dir-acl systemd service
   copy:
     src: files/set-container-dir-acl.service
     dest: /etc/systemd/system/set-container-dir-acl.service
-  notify:
-    - Restart set-container-dir-acl
 
 - name: Install set-container-dir-acl systemd timer
   copy:
     src: files/set-container-dir-acl.timer
     dest: /etc/systemd/system/set-container-dir-acl.timer
-  notify:
-    - Restart set-container-dir-acl
+
+- name: Disable set-log-dir-acl
+  systemd:
+    name: set-log-dir-acl.service
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+
+- name: Disable set-container-dir-acl
+  systemd:
+    name: set-container-dir-acl.timer
+    state: stopped
+    enabled: no
+    daemon_reload: yes

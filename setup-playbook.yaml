@@ -273,16 +273,6 @@
     notify:
       - restart_docker
 
-  # remove custom docker service file
-  # trigger daemon-reload to get service to use system default
-  # restarting service has been verified working, but don't do this now to avoid all containers restarting
-  - name: Remove docker service file
-    file:
-      path: /etc/systemd/system/docker.service
-      state: absent
-    notify:
-      - daemon_reload
-
   - name: Setup docker daemon
     copy:
       src: files/daemon.json
@@ -389,10 +379,6 @@
       reload: yes
 
   handlers:
-    - name: daemon_reload
-      systemd:
-        daemon_reload: yes
-
     - name: restart_docker
       systemd:
         daemon_reload: yes

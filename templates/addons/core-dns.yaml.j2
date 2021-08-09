@@ -58,16 +58,14 @@ data:
         prometheus 0.0.0.0:9153
         loop
     }
-{% for deployment in ["coredns1", "coredns2"] %}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ deployment }}
+  name: coredns
   namespace: nais
   labels:
     k8s-app: coredns
-    dns-instance: {{ deployment }}
 spec:
   replicas: 2
   selector:
@@ -77,7 +75,6 @@ spec:
     metadata:
       labels:
         k8s-app: coredns
-        dns-instance: {{ deployment }}
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
         scheduler.alpha.kubernetes.io/tolerations: '[{"key":"CriticalAddonsOnly", "operator":"Exists"}]'
@@ -138,19 +135,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ deployment }}
+  name: coredns
   namespace: nais
   labels:
     k8s-app: coredns
 spec:
   selector:
     k8s-app: coredns
-    dns-instance: {{ deployment }}
-{% if deployment == "coredns1" %}
-  clusterIP: {{ cluster_dns1_ip }}
-{% else %}
-  clusterIP: {{ cluster_dns2_ip }}
-{% endif %}
+  clusterIP: {{ cluster_dns_ip }}
   ports:
   - name: dns
     port: 53
@@ -161,4 +153,4 @@ spec:
   - name: metrics
     port: 9153
     protocol: TCP
-{% endfor %}
+---

@@ -53,7 +53,7 @@
       changed_when: false
 
     - name: Ensure addons (namespace deployment) are deployed and available
-      shell: "{{ install_dir }}/bin/kubectl get deploy -n {{ item }} -o json | grep availableReplicas | grep -v 0 | wc -l"
+      shell: "{{ install_dir }}/bin/kubectl get deploy -n {{ item }} -o json | grep \"availableReplicas\": | grep -v 0 | wc -l"
       loop:
         - "nais coredns"
         - "kube-system prometheus-adapter"

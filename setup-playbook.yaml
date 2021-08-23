@@ -85,6 +85,12 @@
   - update-engine
   - node_exporter
   tasks:
+
+  - name: Render and copy /etc/resolv.conf
+    template:
+      src: templates/resolv.conf.j2
+      dest: /etc/resolv.conf
+
   - name: Add systemd unit to fix issue 32728 (symlinks in /sys)
     copy:
       src: files/kube-issue-32728-fix.service

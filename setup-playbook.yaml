@@ -666,6 +666,7 @@
       - psp-rbac.yaml
       - core-dns.yaml
       - prometheus-adapter.yaml
+      - prometheus-adapter-custom-metrics.yaml
       - debug.yaml
     changed_when: false
 

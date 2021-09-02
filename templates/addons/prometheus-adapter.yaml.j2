@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
   labels:
     app: prometheus-adapter
 type: kubernetes.io/tls
@@ -15,7 +15,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
   labels:
     app: prometheus-adapter
 data:
@@ -53,7 +53,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
   labels:
     app: prometheus-adapter
 ---
@@ -118,7 +118,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -133,7 +133,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -148,7 +148,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -163,13 +163,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: prometheus-adapter-auth-reader
-  namespace: kube-system
+  namespace: nais
   labels:
     app: prometheus-adapter
 roleRef:
@@ -179,13 +179,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
   labels:
     app: prometheus-adapter
 spec:
@@ -202,7 +202,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-adapter
-  namespace: kube-system
+  namespace: nais
   labels:
     app: prometheus-adapter
 spec:
@@ -284,7 +284,7 @@ metadata:
 spec:
   service:
     name: prometheus-adapter
-    namespace: kube-system
+    namespace: nais
   caBundle: {{ lookup('file', 'target/pki/front-proxy-ca.pem') | b64encode }}
   group: metrics.k8s.io
   version: v1beta1

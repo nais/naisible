@@ -637,6 +637,7 @@
     loop:
       - core-dns.yaml
       - prometheus-adapter.yaml
+      - prometheus-adapter-custom-metrics.yaml
       - namespaces.yaml
       - debug.yaml
 

@@ -56,7 +56,7 @@
       shell: "{{ install_dir }}/bin/kubectl get deploy -n {{ item }} -o json | grep '\"availableReplicas\":' | grep -v 0 | wc -l"
       loop:
         - "nais coredns"
-        - "kube-system prometheus-adapter"
+        - "nais prometheus-adapter"
       register: matches_spec
       retries: 6
       delay: 9

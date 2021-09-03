@@ -94,7 +94,7 @@ spec:
       value: {{ proxy_env.http_proxy }}
 {% if nais_no_proxy is defined %}
     - name: no_proxy
-      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %}{% if no_proxy_extra_addresses is defined %},{{ no_proxy_extra_addresses }}{% endif %}
+      value: localhost,127.0.0.1,.local,.svc,{{ proxy_env.no_proxy }},{{ worker_ips | join(",") }}{% if prometheus_adapter_service_ip is defined %},{{ prometheus_adapter_service_ip }}{% endif %}{% if prometheus_adapter_custom_metrics_service_ip is defined %},{{ prometheus_adapter_custom_metrics_service_ip }}{% endif %}{% if no_proxy_extra_addresses is defined %},{{ no_proxy_extra_addresses }}{% endif %}
 
 {% endif %}
   hostNetwork: true

@@ -1,0 +1,19 @@
+name: Trigger nsync
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  trigger:
+    name: Trigger nsync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch event
+        run: |
+          curl \
+          -X POST \
+          -u "srvnais:${{secrets.SRVNAIS_REPO_PUSH_PAT}}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/navikt/nsync/dispatches \
+          -d '{"event_type":"trigger"}'

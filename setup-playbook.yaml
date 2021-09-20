@@ -386,6 +386,12 @@
       sysctl_set: yes
       reload: yes
 
+  - name: Start and enable systemd-timesyncd
+    systemd:
+      name: systemd-timesyncd.service
+      state: started
+      enabled: yes
+
   handlers:
     - name: restart_docker
       systemd:

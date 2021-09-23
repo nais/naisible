@@ -88,6 +88,8 @@ spec:
     - mountPath: /etc/pki
       name: pki
     env:
+    - name: GODEBUG
+      value: x509ignoreCN=0
     - name: https_proxy
       value: {{ proxy_env.https_proxy }}
     - name: http_proxy

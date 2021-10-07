@@ -4,11 +4,7 @@ DATA_DIR=/var/lib/etcd
 DATE=$(date +%Y-%m-%d)
 BACKUP_DIR=/var/etcd_backup
 ETCDCTL_BIN=/usr/bin/etcdctl
-if [[ $(grep initial-cluster-token /etc/systemd/system/etcd.service | cut -d" " -f4) == "nais-ci-etcd" ]]; then
-  PROM_DOMAIN=nais-ci
-else
-  PROM_DOMAIN=nais
-fi
+PROM_DOMAIN=nais
 PROM_CLUSTER=$(sed -nr '/initial-cluster-token/ s/.* (\S+)-etcd.*/\1/p' /etc/systemd/system/etcd.service)
 
 # Push metric for backup running

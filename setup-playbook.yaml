@@ -163,28 +163,6 @@
   roles:
     - etcd
 
-- hosts: etcd[0]
-  user: "{{ remote_user }}"
-  become: yes
-  tasks:
-  - name: Check if flanneld config exists (OK if this fails)
-    command: "{{ install_dir }}/bin/etcdctl ls /nais/network/config"
-    environment:
-      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
-      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
-      - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
-    register: flanneldconfig
-    ignore_errors: yes
-    changed_when: false
-
-  - name: Set flanneld configuration in etcd
-    shell: '"{{ install_dir }}"/bin/etcdctl set /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
-    environment:
-      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
-      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
-      - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
-    when: flanneldconfig.rc != 0
-
 # Configure kubernetes Master node
 - hosts: masters
   user: "{{ remote_user }}"
@@ -238,36 +216,6 @@
     notify:
       - restart_kubelet
       - restart_kubeproxy
-
-  - name: Copy etcd certificates to default cert directory
-    copy:
-      src: "target/pki/{{ item }}"
-      dest: /etc/ssl/certs/ # bundled flanneld needs certificates here
-    loop:
-      - etcd/etcd-client.pem
-      - etcd/etcd-client-key.pem
-      - ca.pem
-    notify:
-      - restart_flanneld
-
-  - name: Ensure flanneld.service.d exists
-    file:
-      path: /etc/systemd/system/flanneld.service.d/
-      state: directory
-
-  - name: Copy flanneld.service.d opt-file
-    template:
-      src: templates/flanneld.service.d/etcd.conf
-      dest: /etc/systemd/system/flanneld.service.d/etcd.conf
-    notify:
-      - restart_flanneld
-
-  - name: Enable flanneld
-    systemd:
-      daemon_reload: yes
-      name: flanneld.service
-      state: started
-      enabled: yes
 
   - name: Ensure /var/lib/docker exists
     file:
@@ -406,12 +354,6 @@
         state: restarted
       # on new nodes kublet will not yet be install, ignore errors
       ignore_errors: yes
-
-    - name: restart_flanneld
-      systemd:
-        daemon_reload: yes
-        name: flanneld.service
-        state: restarted
 
     - name: restart_kubeproxy
       systemd:
@@ -641,6 +583,7 @@
       src: "templates/addons/{{ item }}.j2"
       dest: "/etc/kubernetes/addons/{{ item }}"
     loop:
+      - flannel.yaml
       - core-dns.yaml
       - prometheus-adapter.yaml
       - prometheus-adapter-custom-metrics.yaml
@@ -670,6 +613,7 @@
       - clusterrolebindings.yaml
       - psp-kube-system.yaml
       - psp-rbac.yaml
+      - flannel.yaml
       - core-dns.yaml
       - prometheus-adapter.yaml
       - prometheus-adapter-custom-metrics.yaml

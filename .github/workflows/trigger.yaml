@@ -9,11 +9,17 @@ jobs:
     name: Trigger nsync
     runs-on: ubuntu-latest
     steps:
+      - uses: navikt/github-app-token-generator@v1
+        id: get-token
+        with:
+          private-key: ${{ secrets.NAIS_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.NAIS_APP_ID }}
+          repo: navikt/nsync
       - name: Dispatch event
         run: |
           curl \
           -X POST \
-          -u "srvnais:${{secrets.SRVNAIS_REPO_PUSH_PAT}}" \
+          -u "${{ secrets.NAIS_APP_ID }}:${{ steps.get-token.outputs.token }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/navikt/nsync/dispatches \
           -d '{"event_type":"trigger"}'

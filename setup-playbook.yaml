@@ -262,6 +262,18 @@
     notify:
       - restart_flanneld
 
+  - name: Ensure flannel config dir exists
+    file:
+      path: /etc/kubernetes/flannel
+      state: directory
+
+  - name: Copy flanneld net conf
+    template:
+      src: templates/flannel-net-conf.j2
+      dest: /etc/kubernetes/flannel/net-conf.json
+    notify:
+      - restart_flanneld
+
   - name: Enable flanneld
     systemd:
       daemon_reload: yes

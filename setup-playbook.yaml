@@ -163,28 +163,6 @@
   roles:
     - etcd
 
-- hosts: etcd[0]
-  user: "{{ remote_user }}"
-  become: yes
-  tasks:
-  - name: Check if flanneld config exists (OK if this fails)
-    command: "{{ install_dir }}/bin/etcdctl ls /nais/network/config"
-    environment:
-      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
-      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
-      - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
-    register: flanneldconfig
-    ignore_errors: yes
-    changed_when: false
-
-  - name: Set flanneld configuration in etcd
-    shell: '"{{ install_dir }}"/bin/etcdctl set /nais/network/config  "{ \"Network\": \"{{ pod_network_cidr }}\", \"SubnetLen\": 23, \"Backend\": { \"Type\": \"vxlan\" }}"'
-    environment:
-      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
-      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
-      - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
-    when: flanneldconfig.rc != 0
-
 # Configure kubernetes Master node
 - hosts: masters
   user: "{{ remote_user }}"

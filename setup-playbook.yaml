@@ -205,66 +205,15 @@
   become: yes
   tasks:
 
-  - name: Copy etcd certificates
+  - name: Copy ca certificate
     copy:
       src: "target/pki/{{ item }}"
       dest: /etc/kubernetes/pki/ # to ensure idempotency
     loop:
-      - etcd/etcd-client.pem
-      - etcd/etcd-client-key.pem
       - ca.pem
     notify:
       - restart_kubelet
       - restart_kubeproxy
-
-  - name: Copy etcd certificates to default cert directory
-    copy:
-      src: "target/pki/{{ item }}"
-      dest: /etc/ssl/certs/ # bundled flanneld needs certificates here
-    loop:
-      - etcd/etcd-client.pem
-      - etcd/etcd-client-key.pem
-      - ca.pem
-    notify:
-      - restart_flanneld
-
-  - name: Ensure flanneld.service.d exists
-    file:
-      path: /etc/systemd/system/flanneld.service.d/
-      state: directory
-
-  - name: Remove flanneld.service.d etcd file
-    file:
-      path: /etc/systemd/system/flanneld.service.d/etcd.conf
-      state: absent
-    notify:
-      - restart_flanneld
-
-  - name: Copy flanneld.service.d opt-file
-    template:
-      src: templates/flanneld.service.d/flannel_opts.conf
-      dest: /etc/systemd/system/flanneld.service.d/flannel_opts.conf
-    notify:
-      - restart_flanneld
-
-  - name: Ensure flannel config dir exists
-    file:
-      path: /etc/kubernetes/flannel
-      state: directory
-
-  - name: Copy flanneld net conf
-    template:
-      src: templates/flannel-net-conf.j2
-      dest: /etc/kubernetes/flannel/net-conf.json
-    notify:
-      - restart_flanneld
-
-  - name: Enable flanneld
-    systemd:
-      daemon_reload: yes
-      name: flanneld.service
-      state: started
-      enabled: yes
 
   - name: Ensure /var/lib/docker exists
     file:
@@ -403,12 +352,6 @@
         state: restarted
       # on new nodes kublet will not yet be install, ignore errors
       ignore_errors: yes
-
-    - name: restart_flanneld
-      systemd:
-        daemon_reload: yes
-        name: flanneld.service
-        state: restarted
 
     - name: restart_kubeproxy
       systemd:
@@ -622,6 +565,57 @@
       command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
       loop: "{{ extra_node_labels|default([]) }}"
       changed_when: false
+
+    - name: Ensure flanneld.service.d exists
+      file:
+        path: /etc/systemd/system/flanneld.service.d/
+        state: directory
+
+    - name: Remove flanneld.service.d etcd file
+      file:
+        path: /etc/systemd/system/flanneld.service.d/etcd.conf
+        state: absent
+      notify:
+        - restart_flanneld_and_docker
+
+    - name: Copy flanneld.service.d opt-file
+      template:
+        src: templates/flanneld.service.d/flannel_opts.conf
+        dest: /etc/systemd/system/flanneld.service.d/flannel_opts.conf
+      notify:
+        - restart_flanneld_and_docker
+
+    - name: Ensure flannel config dir exists
+      file:
+        path: /etc/kubernetes/flannel
+        state: directory
+
+    - name: Copy flanneld net conf
+      template:
+        src: templates/flannel-net-conf.j2
+        dest: /etc/kubernetes/flannel/net-conf.json
+      notify:
+        - restart_flanneld_and_docker
+
+    - name: Enable flanneld
+      systemd:
+        daemon_reload: yes
+        name: flanneld.service
+        enabled: yes
+
+  handlers:
+    - name: restart_flanneld
+      systemd:
+        daemon_reload: yes
+        name: flanneld.service
+        state: restarted
+      listen: restart_flanneld_and_docker
+    - name: restart_docker
+      systemd:
+        daemon_reload: yes
+        name: docker.service
+        state: restarted
+      listen: restart_flanneld_and_docker
 
 - hosts: masters
   user: "{{ remote_user }}"

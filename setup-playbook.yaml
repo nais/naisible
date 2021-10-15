@@ -255,10 +255,17 @@
       path: /etc/systemd/system/flanneld.service.d/
       state: directory
 
+  - name: Remove flanneld.service.d etcd file
+    file:
+      path: /etc/systemd/system/flanneld.service.d/etcd.conf
+      ensure: absent
+    notify:
+      - restart_flanneld
+
   - name: Copy flanneld.service.d opt-file
     template:
-      src: templates/flanneld.service.d/etcd.conf
-      dest: /etc/systemd/system/flanneld.service.d/etcd.conf
+      src: templates/flanneld.service.d/flannel_opts.conf
+      dest: /etc/systemd/system/flanneld.service.d/flannel_opts.conf
     notify:
       - restart_flanneld
 

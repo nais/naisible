@@ -258,7 +258,7 @@
   - name: Remove flanneld.service.d etcd file
     file:
       path: /etc/systemd/system/flanneld.service.d/etcd.conf
-      ensure: absent
+      state: absent
     notify:
       - restart_flanneld
 

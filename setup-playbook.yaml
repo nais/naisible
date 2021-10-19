@@ -224,21 +224,16 @@
     copy:
       src: files/docker.service.d/selinux.conf
       dest: /etc/systemd/system/docker.service.d/selinux.conf
-    notify:
-      - restart_docker
 
   - name: Setup docker daemon
     copy:
       src: files/daemon.json
       dest: /etc/docker/daemon.json
-    notify:
-      - restart_docker
 
   - name: Start and enable docker
     systemd:
       daemon_reload: yes
       name: docker.service
-      state: started
       enabled: yes
 
   - name: Ensure /root/.docker exists
@@ -421,8 +416,6 @@
       - manifests/kube-controller-manager.yaml
       - kubeconfigs/kube-scheduler.conf
       - kubeconfigs/kube-controller-manager.conf
-    notify:
-      - restart_docker
 
   handlers:
     - name: restart_docker
@@ -576,14 +569,14 @@
         path: /etc/systemd/system/flanneld.service.d/etcd.conf
         state: absent
       notify:
-        - restart_flanneld_and_docker
+        - restart_flanneld
 
     - name: Copy flanneld.service.d opt-file
       template:
         src: templates/flanneld.service.d/flannel_opts.conf
         dest: /etc/systemd/system/flanneld.service.d/flannel_opts.conf
       notify:
-        - restart_flanneld_and_docker
+        - restart_flanneld
 
     - name: Ensure flannel config dir exists
       file:
@@ -595,7 +588,7 @@
         src: templates/flannel-net-conf.j2
         dest: /etc/kubernetes/flannel/net-conf.json
       notify:
-        - restart_flanneld_and_docker
+        - restart_flanneld
 
     - name: Enable flanneld
       systemd:
@@ -609,13 +602,7 @@
         daemon_reload: yes
         name: flanneld.service
         state: restarted
-      listen: restart_flanneld_and_docker
-    - name: restart_docker
-      systemd:
-        daemon_reload: yes
-        name: docker.service
-        state: restarted
-      listen: restart_flanneld_and_docker
+      ignore_errors: yes
 
 - hosts: masters
   user: "{{ remote_user }}"

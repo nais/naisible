@@ -24,6 +24,9 @@ spec:
     - --leader-elect=true
     - --feature-gates=TTLAfterFinished=true
     - --use-service-account-credentials=true
+    - --cluster-cidr={{ pod_network_cidr }}
+    - --allocate-node-cidrs=true
+    - --node-cidr-mask-size=23
     - --v={{log_level | default(0) }}
     image: k8s.gcr.io/kube-controller-manager-amd64:v{{ k8s_version }}
     livenessProbe:

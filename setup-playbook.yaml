@@ -220,17 +220,26 @@
       path: /var/lib/docker
       state: directory
 
+  - name: Check docker service status
+    shell: systemctl status docker.service 2>&1 > /dev/null
+    register: docker_status
+    ignore_errors: true
+
   - name: Copy docker selinux drop-in file
     copy:
       src: files/docker.service.d/selinux.conf
       dest: /etc/systemd/system/docker.service.d/selinux.conf
+    notify:
+      - restart_docker_if_running
 
   - name: Setup docker daemon
     copy:
       src: files/daemon.json
       dest: /etc/docker/daemon.json
+    notify:
+      - restart_docker_if_running
 
-  - name: Start and enable docker
+  - name: Enable docker
     systemd:
       daemon_reload: yes
       name: docker.service
@@ -334,11 +343,14 @@
       enabled: yes
 
   handlers:
-    - name: restart_docker
+    # Only restart docker if already running at this stage so it don't start with wrong docker0 subnet on new nodes.
+    # Flannel will start docker on new nodes
+    - name: restart_docker_if_running
       systemd:
         daemon_reload: yes
         name: docker.service
         state: restarted
+      when: docker_status.rc == 0
 
     - name: restart_kubelet
       systemd:

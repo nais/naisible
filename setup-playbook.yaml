@@ -576,13 +576,6 @@
         path: /etc/systemd/system/flanneld.service.d/
         state: directory
 
-    - name: Remove flanneld.service.d etcd file
-      file:
-        path: /etc/systemd/system/flanneld.service.d/etcd.conf
-        state: absent
-      notify:
-        - restart_flanneld
-
     - name: Copy flanneld.service.d opt-file
       template:
         src: templates/flanneld.service.d/flannel_opts.conf

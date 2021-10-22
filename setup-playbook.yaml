@@ -447,6 +447,10 @@
   user: "{{ remote_user }}"
   become: yes
   tasks:
+  - name: Check kubelet service status
+    shell: systemctl status kubelet.service 2>&1 > /dev/null
+    register: kubelet_status
+    ignore_errors: true
   - name: Copy kubelet certificates
     copy:
       src: "target/pki/kubelet/{{ ansible_hostname.split('.')[0] }}{{ item }}"
@@ -455,7 +459,7 @@
       - ".pem"
       - "-key.pem"
     notify:
-      - restart_kubelet
+      - restart_kubelet_if_running
 
   - name: Copy kube-proxy certificates
     copy:
@@ -490,27 +494,34 @@
       src: templates/kubeconfigs/kubelet-worker-config.yaml.j2
       dest: /etc/kubernetes/kubeconfigs/kubelet-config.yaml
     notify:
-      - restart_kubelet
+      - restart_kubelet_if_running
 
   - name: Copy kubelet service manifest
     template:
       src: templates/worker-kubelet.service.j2
       dest: /etc/systemd/system/kubelet.service
     notify:
-      - restart_kubelet
+      - restart_kubelet_if_running
 
   - name: Copy kubelet kubeconfig
     template:
       src: templates/kubeconfigs/worker-kubelet.conf.j2
       dest: /etc/kubernetes/kubeconfigs/kubelet.conf
     notify:
-      - restart_kubelet
+      - restart_kubelet_if_running
+
+  # - name: Check if node is registered with api-server
+  #   shell: "kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf get nodes -o name | grep {{ inventory_hostname }}"
+  #   register: node_status
+
+  # - name: Register node if unregistered
+  #   shell: echo todo register node
+  #   when: node_status.rc != 0
 
   - name: Enable kubelet
     systemd:
       daemon_reload: yes
       name: kubelet.service
-      state: started
       enabled: yes
 
   handlers:
@@ -520,11 +531,12 @@
         name: kube-proxy.service
         state: restarted
 
-    - name: restart_kubelet
+    - name: restart_kubelet_if_running
       systemd:
         daemon_reload: yes
         name: kubelet.service
         state: restarted
+      when: kubelet_status.rc == 0
 
 - hosts: masters
   user: "{{ remote_user }}"
@@ -608,6 +620,11 @@
         name: flanneld.service
         state: restarted
       ignore_errors: yes
+    - name: ensure_kubelet_is_running
+      listen: restart_flanneld
+      systemd:
+        name: kubelet.service
+        state: started
 
 - hosts: masters
   user: "{{ remote_user }}"

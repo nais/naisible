@@ -2,7 +2,7 @@
 Description=Run etcd-backup service every night
 
 [Timer]
-OnCalendar=*-*-* 22:00:00
+OnCalendar=*-*-* 21:00:00
 
 [Install]
 WantedBy=multi-user.target

@@ -510,14 +510,6 @@
     notify:
       - restart_kubelet_if_running
 
-  # - name: Check if node is registered with api-server
-  #   shell: "kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf get nodes -o name | grep {{ inventory_hostname }}"
-  #   register: node_status
-
-  # - name: Register node if unregistered
-  #   shell: echo todo register node
-  #   when: node_status.rc != 0
-
   - name: Enable kubelet
     systemd:
       daemon_reload: yes
@@ -582,6 +574,18 @@
       command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
       loop: "{{ extra_node_labels|default([]) }}"
       changed_when: false
+
+    - name: Check if node is registered with api-server
+      shell: "/opt/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf get nodes -o name | grep {{ inventory_hostname }}"
+      ignore_errors: yes
+      register: node_status
+
+    - name: Register node if unregistered
+      shell: |
+        cat <<EOF | /opt/bin/kubectl --kubeconfig /etc/kubernetes/kubeconfigs/kubelet.conf apply -f -
+        { "kind": "Node", "apiVersion": "v1", "metadata": { "name": "{{ inventory_hostname }}" } }
+        EOF
+      when: node_status.stdout is not match("^node/.*")
 
     - name: Ensure flanneld.service.d exists
       file:

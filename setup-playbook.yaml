@@ -565,16 +565,6 @@
   roles:
     - generate_kubeconfigs
   tasks:
-    - name: Setup node taints
-      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
-      loop: "{{ node_taints|default([]) }}"
-      changed_when: false
-
-    - name: Setup node labels
-      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
-      loop: "{{ extra_node_labels|default([]) }}"
-      changed_when: false
-
     - name: Check if node is registered with api-server
       shell: "/opt/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf get nodes -o name | grep {{ inventory_hostname }}"
       ignore_errors: yes
@@ -586,6 +576,16 @@
         { "kind": "Node", "apiVersion": "v1", "metadata": { "name": "{{ inventory_hostname }}" } }
         EOF
       when: node_status.stdout is not match("^node/.*")
+
+    - name: Setup node taints
+      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf  --overwrite=true taint nodes {{ inventory_hostname }} {{ item }}"
+      loop: "{{ node_taints|default([]) }}"
+      changed_when: false
+
+    - name: Setup node labels
+      command: "{{ install_dir }}/bin/kubectl --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf --overwrite=true label nodes {{ inventory_hostname }} {{ item }}"
+      loop: "{{ extra_node_labels|default([]) }}"
+      changed_when: false
 
     - name: Ensure flanneld.service.d exists
       file:

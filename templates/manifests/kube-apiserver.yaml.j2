@@ -60,6 +60,8 @@ spec:
     - --requestheader-extra-headers-prefix=X-Remote-Extra-
     - --requestheader-group-headers=X-Remote-Group
     - --requestheader-username-headers=X-Remote-User
+    - --max-requests-inflight=50
+    - --max-mutating-requests-inflight=20
 {% if apiserver.extra_opts|default(false) %}
 {% for opts in apiserver.extra_opts %}
     - {{ opts }}

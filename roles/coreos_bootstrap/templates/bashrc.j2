@@ -24,13 +24,13 @@ alias ks='kubectl --namespace kube-system'
 alias kn='kubectl --namespace nais'
 
 {% if inventory_hostname in groups.etcd -%}
-export ETCDCTL_CERT_FILE=/etc/ssl/etcd/etcd-client.pem
-export ETCDCTL_KEY_FILE=/etc/ssl/etcd/etcd-client-key.pem
-export ETCDCTL_CA_FILE=/etc/ssl/etcd/ca.pem
+export ETCDCTL_CERT=/etc/ssl/etcd/etcd-client.pem
+export ETCDCTL_KEY=/etc/ssl/etcd/etcd-client-key.pem
+export ETCDCTL_CACERT=/etc/ssl/etcd/ca.pem
 {% elif inventory_hostname in groups.masters -%}
-export ETCDCTL_CERT_FILE=/etc/kubernetes/pki/etcd-client.pem
-export ETCDCTL_KEY_FILE=/etc/kubernetes/pki/etcd-client-key.pem
-export ETCDCTL_CA_FILE=/etc/kubernetes/pki/ca.pem
+export ETCDCTL_CERT=/etc/kubernetes/pki/etcd-client.pem
+export ETCDCTL_KEY=/etc/kubernetes/pki/etcd-client-key.pem
+export ETCDCTL_CACERT=/etc/kubernetes/pki/ca.pem
 {% set etcd = [] -%}
 {% for host in groups.etcd -%}
   {% set _ = etcd.append("https://%s:2379" % host) -%}

@@ -11,13 +11,13 @@
     changed_when: false
 
   - name: Ensure cluster is healthy
-    shell: "{{ install_dir }}/bin/etcdctl cluster-health | tail -n1"
+    shell: "{{ install_dir }}/bin/etcdctl endpoint health | tail -n1"
     environment:
-      - ETCDCTL_CERT_FILE: /etc/ssl/etcd/etcd-client.pem
-      - ETCDCTL_KEY_FILE: /etc/ssl/etcd/etcd-client-key.pem
-      - ETCDCTL_CA_FILE: /etc/ssl/etcd/ca.pem
+      - ETCDCTL_CERT: /etc/ssl/etcd/etcd-client.pem
+      - ETCDCTL_KEY: /etc/ssl/etcd/etcd-client-key.pem
+      - ETCDCTL_CACERT: /etc/ssl/etcd/ca.pem
     register: etcd_health_status
-    failed_when: etcd_health_status.stdout != "cluster is healthy"
+    failed_when: etcd_health_status.stdout.find('is healthy') != -1
     changed_when: false
 
 

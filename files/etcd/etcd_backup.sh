@@ -3,7 +3,7 @@
 DATA_DIR=/var/lib/etcd
 DATE=$(date +%Y-%m-%d)
 BACKUP_DIR=/var/etcd_backup
-ETCDCTL_BIN=/usr/bin/etcdctl
+ETCDCTL_BIN=/opt/bin/etcdctl
 PROM_DOMAIN=nais
 PROM_CLUSTER=$(sed -nr '/initial-cluster-token/ s/.* (\S+)-etcd.*/\1/p' /etc/systemd/system/etcd.service)
 

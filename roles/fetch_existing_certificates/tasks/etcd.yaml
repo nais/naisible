@@ -1,9 +1,5 @@
 - name: Fetch Etcd certificates
-  #include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
-  fetch:
-    src: "{{ src_path }}/{{ item }}"
-    dest: "{{ dest_path }}/"
-    flat: yes
+  include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
   loop:
     - etcd-client.pem
     - etcd-client-key.pem
@@ -15,11 +11,7 @@
   run_once: true
 
 - name: Fetch Etcd peer-certificates
-  #include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
-  fetch:
-    src: "{{ src_path }}/{{ item }}"
-    dest: "{{ dest_path }}/"
-    flat: yes
+  include_tasks: "{{ role_path }}/tasks/fetch_if_exists.yaml"
   loop:
     - "peer-{{ ansible_hostname }}.pem"
     - "peer-{{ ansible_hostname }}-key.pem"

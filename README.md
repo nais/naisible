@@ -118,7 +118,7 @@ Variables
 
 |Variable name|Version|Version information location|
 |---|---|---|
-|etcd_version|3.3.11|https://github.com/coreos/etcd/releases/|
+|etcd_version|3.5.1|https://github.com/coreos/etcd/releases/|
 |flannel_version|0.13.0|https://github.com/coreos/flannel/releases|
 |k8s_version|1.16.7|https://github.com/kubernetes/kubernetes/releases|
 |coredns_version|1.6.6|https://github.com/coredns/coredns/releases|

@@ -7,7 +7,7 @@ proxy_env:
 remote_user: "{{ nais_remote_user | default('deployer') }}"
 
 # Version specific variables
-etcd_version: 3.3.11
+etcd_version: 3.5.1
 flannel_version: 0.13.0
 k8s_version: 1.19.13
 coredns_version: 1.8.0

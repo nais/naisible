@@ -8,7 +8,7 @@ PROM_DOMAIN=nais
 PROM_CLUSTER=$(sed -nr '/initial-cluster-token/ s/.* (\S+)-etcd.*/\1/p' /etc/systemd/system/etcd.service)
 
 # Push metric for backup running
-echo "etcd_backup_running 1" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$PROM_CLUSTER
+echo "etcd_backup_running 1" | curl -k --data-binary @- https://prometheus-pushgateway.${PROM_CLUSTER}.nais.io/metrics/job/etcd/instance/$(hostname -f)/cluster/${PROM_CLUSTER}
 
 # Clean up old backups (older than three days)
 if [ "$(ls ${BACKUP_DIR} | wc -w)" -gt "7" ]; then
@@ -29,13 +29,13 @@ ${ETCDCTL_BIN} snapshot save ${BACKUP_DIR}/${DATE}/backupdb >> ${BACKUP_DIR}/etc
 
 # Push backup status to prometheus
 if [ "$?" == "0" ]; then
-  echo "etcd_backup_status 0" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$PROM_CLUSTER
+  echo "etcd_backup_status 0" | curl -k --data-binary @- https://prometheus-pushgateway.${PROM_CLUSTER}.nais.io/metrics/job/etcd/instance/$(hostname -f)/cluster/${PROM_CLUSTER}
 else
-  echo "etcd_backup_status 1" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$PROM_CLUSTER
+  echo "etcd_backup_status 1" | curl -k --data-binary @- https://prometheus-pushgateway.${PROM_CLUSTER}.nais.io/metrics/job/etcd/instance/$(hostname -f)/cluster/${PROM_CLUSTER}
 fi
 
 # Compress backup
 tar -C ${BACKUP_DIR}/${DATE} -czf ${BACKUP_DIR}/${DATE}.tar.gz backupdb && rm -rf ${BACKUP_DIR}/${DATE}
 
 # Push metric for backup done
-echo "etcd_backup_running 0" | curl -k --data-binary @- https://prometheus-pushgateway.$(echo $PROM_DOMAIN).$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$PROM_CLUSTER
+echo "etcd_backup_running 0" | curl -k --data-binary @- https://prometheus-pushgateway.${PROM_CLUSTER}.nais.io/metrics/job/etcd/instance/$(hostname -f)/cluster/${PROM_CLUSTER}

@@ -3,4 +3,4 @@ Description=Pushes etcd metrics to prometheus
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c 'CLUSTER=$(sed -nr \'/initial-cluster-token/ s/.* (\S+)-etcd.*/\1/p\' /etc/systemd/system/etcd.service);curl -k --cert /etc/ssl/etcd/etcd-client.pem --key /etc/ssl/etcd/etcd-client-key.pem https://$(hostname -f):2379/metrics | curl -k --data-binary @- https://prometheus-pushgateway.nais.$(hostname -d)/metrics/job/etcd/instance/$(hostname -f)/cluster/$CLUSTER'
+ExecStart=/bin/bash -c 'CLUSTER=$(sed -nr \'/initial-cluster-token/ s/.* (\S+)-etcd.*/\1/p\' /etc/systemd/system/etcd.service);curl -k --cert /etc/ssl/etcd/etcd-client.pem --key /etc/ssl/etcd/etcd-client-key.pem https://$(hostname -f):2379/metrics | curl -k --data-binary @- https://prometheus-pushgateway.$CLUSTER.nais.io/metrics/job/etcd/instance/$(hostname -f)/cluster/$CLUSTER'

@@ -3,7 +3,7 @@ Description=Node Exporter
 
 [Service]
 User=nobody
-ExecStart=/etc/node_exporter/node_exporter --no-collector.bcache --no-collector.bonding --no-collector.hwmon --no-collector.infiniband --no-collector.mdadm --no-collector.zfs --no-collector.xfs --collector.buddyinfo --collector.drbd --collector.interrupts --collector.mountstats --collector.processes --collector.qdisc --collector.systemd --web.listen-address=:9101
+ExecStart=/etc/node_exporter/node_exporter --collector.filesystem.ignored-mount-points="^/var/lib/kubelet/.+" --no-collector.bcache --no-collector.bonding --no-collector.hwmon --no-collector.infiniband --no-collector.mdadm --no-collector.zfs --no-collector.xfs --collector.buddyinfo --collector.drbd --collector.interrupts --collector.mountstats --collector.processes --collector.qdisc --collector.systemd --web.listen-address=:9101
 Restart=always
 
 [Install]

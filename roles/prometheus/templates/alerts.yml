@@ -20,7 +20,9 @@ groups:
       cluster: {{ cluster_name }}
     annotations:
       description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Less than 5% available disk space on {{ $labels.mountpoint }} on "}}{{ inventory_hostname }}{{ "'" }}
-      action: "Cleanup / increase disk size / adjust retention"
+      action: |
+        Increase disk size / adjust retention / check for applications having an excessive number of metrics.
+        Check for compaction errors in log, a restart might fix a corrupted segment blocking compaction.
   - alert: PrometheusFederationDown
     expr: 'sum(up{instance="{{ cluster_prometheus_host }}:443",job=~"kubernetes-(apiservers|cadvisor|pods)"}) < 3'
     for: 5m
@@ -29,9 +31,7 @@ groups:
       cluster: {{ cluster_name }}
     annotations:
       description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Federation of in-cluster Prometheus failed'" }}
-      action: |
-        Increase disk size / adjust retention / check for applications having an excessive number of metrics.
-        Check for compaction errors in log, a restart might fix a corrupted segment blocking compaction.
+      action: 'Check status on Prometheus pod / try accessing https://{{ cluster_prometheus_host }}/'
   - alert: PrometheusReload
     expr: 'prometheus_config_last_reload_successful{job="prometheus-local"} < 1'
     for: 3m

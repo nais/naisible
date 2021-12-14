@@ -9,7 +9,9 @@ groups:
       cluster: {{ cluster_name }}
     annotations:
       description: {{ "'<!here> Prometheus is running low on disk space on {{ $labels.mountpoint }} on " }}{{ inventory_hostname }}{{ ", predicted empty in less than 3 days'" }}
-      action: "Cleanup / increase disk size / adjust retention / check for applications having an excessive number of metrics"
+      action: |
+        Increase disk size / adjust retention / check for applications having an excessive number of metrics.
+        Check for compaction errors in log, a restart might fix a corrupted segment blocking compaction.
   - alert: PrometheusDiskUsagePercent
     expr: '100 * node_filesystem_avail_bytes{instance="{{ inventory_hostname }}:9101",mountpoint!="/usr"} / node_filesystem_size_bytes{instance="{{ inventory_hostname }}:9101"} < 5'
     for: 5m
@@ -27,7 +29,9 @@ groups:
       cluster: {{ cluster_name }}
     annotations:
       description: {{ "'<!subteam^SB8KS4WAV|nais-vakt> <!here> Federation of in-cluster Prometheus failed'" }}
-      action: 'Check status on Prometheus pod / try accessing https://{{ cluster_prometheus_host }}/'
+      action: |
+        Increase disk size / adjust retention / check for applications having an excessive number of metrics.
+        Check for compaction errors in log, a restart might fix a corrupted segment blocking compaction.
   - alert: PrometheusReload
     expr: 'prometheus_config_last_reload_successful{job="prometheus-local"} < 1'
     for: 3m

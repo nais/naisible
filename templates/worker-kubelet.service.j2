@@ -10,7 +10,7 @@ ExecStart={{ install_dir }}/bin/kubelet \
   --config=/etc/kubernetes/kubeconfigs/kubelet-config.yaml \
   --hostname-override {{ inventory_hostname }} \
   --node-labels={{ node_labels|default(["nais.io/type=worker"])|join(',') }} \
-  --image-pull-progress-deadline=20m \
+  --image-pull-progress-deadline=30m \
   --kubeconfig=/etc/kubernetes/kubeconfigs/kubelet.conf \
   --register-with-taints={{ node_taints|default([""])|join(',') }} \
   --v={{ log_level|default(0) }} \

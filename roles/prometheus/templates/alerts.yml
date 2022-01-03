@@ -24,7 +24,7 @@ groups:
         Increase disk size / adjust retention / check for applications having an excessive number of metrics.
         Check for compaction errors in log, a restart might fix a corrupted segment blocking compaction.
   - alert: PrometheusFederationDown
-    expr: 'sum(up{instance="{{ cluster_prometheus_host }}:443",job=~"kubernetes-(apiservers|cadvisor|pods)"}) < 3'
+    expr: 'sum(up{instance="{{ cluster_prometheus_host }}:443",job=~"kubernetes-(apiservers|cadvisor|pods-a-m|pods-n-z)"}) < 4'
     for: 5m
     labels:
       alert: nais-nais-alerts

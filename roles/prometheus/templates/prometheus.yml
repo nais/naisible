@@ -101,7 +101,7 @@ scrape_configs:
     metrics_path: '/federate'
     params:
       'match[]':
-        - '{job="kubernetes-pods",kubernetes_namespace="{{ namespace }}"}'
+        - '{job="kubernetes-pods",kubernetes_namespace="{{ namespace }}",name!="traefik-ingress-lb"}'
     scheme: https
     tls_config:
       insecure_skip_verify: true

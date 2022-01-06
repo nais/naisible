@@ -60,6 +60,19 @@ scrape_configs:
 # Split federation of kubernetes-pods jobs to reduce the amount of timeseries in a single request
 # Scrape traefik pods directly
 
+  - job_name: "kubernetes-pods"
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job="kubernetes-pods",kubernetes_namespace=""'
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets:
+        - '{{ cluster_prometheus_host }}'
+
   - job_name: "kubernetes-pods-a-m"
     honor_labels: true
     metrics_path: '/federate'

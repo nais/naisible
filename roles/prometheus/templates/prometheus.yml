@@ -22,7 +22,7 @@ scrape_configs:
     - targets: ['localhost:9090']
 
   - job_name: 'nodes'
-    scrape_interval: 5s
+    scrape_interval: 20s
     static_configs:
       - targets:
 {% for host in groups['prometheus'] %}

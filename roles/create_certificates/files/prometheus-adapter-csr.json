@@ -1,7 +1,0 @@
-{
-  "CN": "prometheus-adapter.nais.svc",
-  "key": {
-    "algo": "rsa",
-    "size": 2048
-  }
-}

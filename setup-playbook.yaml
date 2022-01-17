@@ -185,10 +185,6 @@
       - kube-apiserver-server.pem
       - kube-proxy.pem
       - kube-proxy-key.pem
-      - prometheus-adapter.pem
-      - prometheus-adapter-key.pem
-      - prometheus-adapter-custom-metrics.pem
-      - prometheus-adapter-custom-metrics-key.pem
       - sa.key
       - sa.pub
 
@@ -646,8 +642,6 @@
       dest: "/etc/kubernetes/addons/{{ item }}"
     loop:
       - core-dns.yaml
-      - prometheus-adapter.yaml
-      - prometheus-adapter-custom-metrics.yaml
       - namespaces.yaml
       - debug.yaml
 
@@ -675,8 +669,6 @@
       - psp-kube-system.yaml
       - psp-rbac.yaml
       - core-dns.yaml
-      - prometheus-adapter.yaml
-      - prometheus-adapter-custom-metrics.yaml
       - debug.yaml
     changed_when: false
 

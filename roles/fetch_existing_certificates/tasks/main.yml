@@ -15,10 +15,6 @@
     - front-proxy-client-key.pem
     - kube-proxy.pem
     - kube-proxy-key.pem
-    - prometheus-adapter.pem
-    - prometheus-adapter-key.pem
-    - prometheus-adapter-custom-metrics.pem
-    - prometheus-adapter-custom-metrics-key.pem
   vars:
     src_path: /etc/kubernetes/pki
     dest_path: target/pki

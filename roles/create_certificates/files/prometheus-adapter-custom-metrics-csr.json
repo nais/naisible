@@ -1,7 +1,0 @@
-{
-  "CN": "nais-prometheus-adapter-custom-metrics.nais.svc",
-  "key": {
-    "algo": "rsa",
-    "size": 2048
-  }
-}
